@@ -1,0 +1,42 @@
+# Le site est engendré : les fichiers HTML du dépôt doivent être exactement
+# ceux que `scripts/construire_site.py` écrirait. Sans ce contrôle, une
+# correction faite à la main dans une page survivrait jusqu'à la construction
+# suivante, puis disparaîtrait sans bruit — et personne ne saurait dire laquelle
+# des deux versions le site a servie entre-temps.
+#
+# Aucune dépendance à installer : le script et les témoins n'utilisent que la
+# bibliothèque standard.
+
+name: Site
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Reconstruire le site
+        run: python3 scripts/construire_site.py
+
+      - name: Les pages du dépôt sont-elles à jour ?
+        run: |
+          if ! git diff --quiet; then
+            echo "::error::Des pages engendrées ont divergé de leur texte."
+            echo "Relancer : python3 scripts/construire_site.py"
+            git diff --stat
+            exit 1
+          fi
+
+      - name: Témoins
+        run: python3 -m unittest discover -s tests -v

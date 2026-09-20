@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- La couleur du bandeau de tête : sur un téléphone, la barre du navigateur
+     la reprend, et la page commence où elle commence. -->
+<meta name="theme-color" content="#0b3d3a">
+<title>Ce que la santé vous coûte vraiment — le simulateur</title>
+<meta name="description" content="Cotisation maladie de l&#x27;employeur, part de CSG, complémentaire, participations : quatre prélèvements, dont trois invisibles. Le simulateur les additionne dans votre navigateur, sans rien envoyer nulle part.">
+<link rel="icon" href="moteur/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="moteur/icone.svg">
+<link rel="stylesheet" href="moteur/style.css">
+<!-- Écrit par scripts/construire_site.py depuis src/sante/. Ne pas modifier
+     ici : la prochaine construction effacerait la correction. -->
+</head>
+<body>
+<a class="evitement" href="#contenu">Aller au contenu</a>
+<header class="bandeau"><div class="interieur">
+  <p class="nom"><a href="index.html"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg><span>Santé : reprendre le choix</span></a></p>
+  <nav aria-label="Navigation principale"><span class="groupe"><span class="etiquette">Le programme</span><span class="liens"><a href="index.html">Programme</a></span></span><span class="groupe"><span class="etiquette">Le constat</span><span class="liens"><a href="diagnostic.html">Le système actuel</a><a href="comparaisons.html">Ailleurs</a></span></span><span class="groupe"><span class="etiquette">L&#x27;alternative</span><span class="liens"><a href="reforme.html">La réforme</a><a href="simulateur.html" aria-current="page">Ce que vous payez</a><a href="objections.html">Objections</a></span></span><span class="groupe"><span class="etiquette">La confiance</span><span class="liens"><a href="donnees.html">Données et sources</a></span></span></nav>
+</div></header>
+<main id="contenu" tabindex="-1">
+
+<div class="affiche"><p class="surtitre">Ce que vous payez</p><h1>Votre santé vous coûte <strong class="cle-texte">bien plus</strong> que votre mutuelle.</h1><p class="chapeau">Cotisation maladie de l'employeur, part de la CSG, cotisation de complémentaire, participations forfaitaires : quatre prélèvements, dont trois n'apparaissent nulle part en clair. Ce simulateur les additionne. Tout se calcule dans votre navigateur : <strong class="cle-texte">rien n'est envoyé nulle part</strong>.</p></div>
+
+
+<form class="creme simulateur-court" id="formulaire" method="get" action="#resultat">
+  <div class="tete">
+    <h2 class="serif">Et vous, ça fait combien&nbsp;?</h2>
+    <span class="etiquette">Le simulateur</span>
+  </div>
+  <div class="grille">
+    <div>
+      <label for="statut">Situation<span class="aide">celle qui finance votre
+      couverture</span></label>
+      <select id="statut" name="statut">
+        <option value="salarie" selected>Salarié du privé</option>
+        <option value="independant">Indépendant</option>
+        <option value="retraite">Retraité</option>
+      </select>
+    </div>
+    <div>
+      <label for="revenu">Revenu brut mensuel<span class="aide">salaire brut,
+      ou pension brute</span></label>
+      <input id="revenu" name="revenu" type="number" inputmode="numeric"
+             min="0" max="100000" step="10" value="2500">
+    </div>
+    <div>
+      <label for="mutuelle">Complémentaire, par mois<span class="aide">ce que
+      vous payez vous-même</span></label>
+      <input id="mutuelle" name="mutuelle" type="number" inputmode="numeric"
+             min="0" max="1000" step="1" value="35">
+    </div>
+    <div>
+      <label for="franchise">Franchise annuelle souhaitée<span class="aide">dans
+      le système proposé</span></label>
+      <select id="franchise" name="franchise">
+        <option value="0">Aucune franchise</option>
+        <option value="300" selected>300 € par an</option>
+        <option value="600">600 € par an</option>
+        <option value="1200">1 200 € par an</option>
+      </select>
+    </div>
+    <div class="action"><button type="submit">Calculer →</button></div>
+  </div>
+  <p class="discret" style="margin:0.9rem 0 0">Deux totaux côte à côte : ce que
+  le système actuel prélève sur votre travail pour la santé, et ce que la
+  réforme proposée prélèverait sous des hypothèses écrites noir sur blanc.</p>
+</form>
+
+
+<div id="resultat" tabindex="-1">
+  <noscript>
+    <div class="erreur">Ce simulateur a besoin de JavaScript : le calcul se
+    fait dans votre navigateur, il n'y a pas de serveur pour le faire à sa
+    place. Les hypothèses et la formule sont lisibles sur la page
+    <a href="donnees.html#simulateur">Données et sources</a>.</div>
+  </noscript>
+</div>
+
+<details class="section" id="methode-simulateur"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Comment ce calcul est fait</span></summary><div class="dedans">
+<p>Le simulateur n'a aucun secret : il applique quatre taux publics à votre
+revenu, et compare le total à une hypothèse de prime. Voici la formule, dans
+l'ordre où elle s'applique.</p>
+<h4>Ce que le système actuel prélève</h4>
+<ul class="serree">
+  <li><strong>Cotisation maladie de l'employeur</strong> :
+  7 % ou 13 % du salaire brut — 7 % jusqu'à 2,5 SMIC annuels,
+  13 % sur la totalité au-delà. Elle ne figure pas dans votre salaire net,
+  mais elle fait partie de ce que votre travail rapporte.</li>
+  <li><strong>Part de la <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">CSG</span><span class="bulle" role="note" hidden>Contribution sociale généralisée : un prélèvement de 9,2 % sur les revenus d&#x27;activité, qui finance notamment l&#x27;assurance maladie. Contrairement aux cotisations, elle pèse aussi sur les retraites et les revenus du capital.</span></span> affectée à la maladie</strong> :
+  9,2 % appliqués à 98,25 % du brut, dont une fraction revient à la
+  branche maladie. Cette fraction est fixée chaque année par la loi de
+  financement ; la valeur retenue ici est un ordre de grandeur, et elle est
+  écrite dans <a href="donnees.html#simulateur">les hypothèses</a>.</li>
+  <li><strong>Complémentaire santé</strong> : ce que vous versez, plus la part
+  payée par votre employeur — au moins 50 % en contrat collectif, et c'est une
+  part de votre rémunération, pas un cadeau.</li>
+  <li><strong>Participations forfaitaires et franchises médicales</strong> :
+  2 € et 1 € par consultation et par boîte, plafonnées à 50 € par an
+  chacune.</li>
+</ul>
+<h4>Ce que le système proposé prélèverait</h4>
+<ul class="serree">
+  <li><strong>Une prime unique</strong>, calculée en part du revenu brut, qui
+  remplace les trois premiers prélèvements ci-dessus. Le taux retenu est une
+  <strong>hypothèse de travail</strong>, choisie pour que le total reste à peu
+  près constant à couverture égale — ce n'est pas une mesure, et la page
+  Données le dit.</li>
+  <li><strong>La franchise que vous choisissez</strong>, dans la limite de
+  votre dépense réelle de petit risque. Le simulateur retient une dépense
+  moyenne ; la vôtre peut être nulle comme elle peut la dépasser.</li>
+  <li><strong>Rien au-delà du bouclier</strong> : le total est plafonné en part
+  du revenu, ce que le calcul applique.</li>
+</ul>
+<div class="note avertissement"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img"><title>Attention</title><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div><p>Ce simulateur illustre des ORDRES DE GRANDEUR. Il ne prédit ni votre prime future, ni votre dépense de santé, et il ne chiffre pas la réforme à l'échelle du pays — voir <a href='reforme.html#financement'>ce que nous pouvons affirmer et ce que nous ne pouvons pas</a>. Chacune de ses hypothèses est écrite, datée et discutable sur la page <a href='donnees.html#simulateur'>Données et sources</a>.</p></div></div></div></details>
+
+<div class="creme">
+<p class="surtitre">Ce que vous pouvez faire</p>
+<h2 class="serif" style="margin:0">Le total vous surprend ? C'est le sujet.</h2>
+<p>Un prélèvement qu'on ne voit pas n'est jamais discuté. Rendre le prix de la santé visible est la première mesure de ce programme, et la seule qui ne coûte rien.</p>
+<p class="actions"><a class="bouton" href="reforme.html">La réforme en six mesures</a><a href="diagnostic.html">Pourquoi ça coûte autant</a></p>
+</div>
+
+</main>
+<footer>
+  <p><strong>Ce site est un document politique, pas une source officielle.</strong>
+  Il compare le système de santé français à une alternative libérale ; il ne
+  vaut ni conseil médical, ni information sur vos droits. Pour ceux-ci, voir
+  <a href="https://www.ameli.fr/">ameli.fr</a> et votre caisse.</p>
+  <p>Tous les chiffres cités sont rassemblés, datés et sourcés sur la page
+  <a href="donnees.html">Données et sources</a>, avec leur degré de fiabilité.
+  Ceux marqués « à vérifier » doivent être confrontés à leur source avant
+  d'être repris dans un débat. Textes et code sur
+  <a href="https://github.com/g-pliberal/sante">GitHub</a> (code sous licence Apache 2.0, textes sous
+  <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a>).</p>
+  <p class="retour-site">Un document du
+  <a href="https://partiliberalfrancais.fr/" target="_top">Parti libéral français</a>. Son volet
+  retraites est <a href="https://github.com/g-pliberal/retraitecomptenotionelle">ici</a>.</p>
+</footer>
+<script type="module" src="moteur/js/site.js"></script>
+<script type="module" src="moteur/js/simulateur.js"></script>
+</body>
+</html>
