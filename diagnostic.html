@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- La couleur du bandeau de tête : sur un téléphone, la barre du navigateur
+     la reprend, et la page commence où elle commence. -->
+<meta name="theme-color" content="#0b3d3a">
+<title>Le système de santé actuel — ce qu&#x27;il coûte, ce qui ne marche pas</title>
+<meta name="description" content="Comment fonctionne l&#x27;assurance maladie française, ce qu&#x27;elle coûte, et les six défauts qui se tiennent : prix invisibles, doublon de gestion, pénurie organisée, hôpital piloté par circulaire, déficit structurel, rationnement par l&#x27;attente.">
+<link rel="icon" href="moteur/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="moteur/icone.svg">
+<link rel="stylesheet" href="moteur/style.css">
+<!-- Écrit par scripts/construire_site.py depuis src/sante/. Ne pas modifier
+     ici : la prochaine construction effacerait la correction. -->
+</head>
+<body>
+<a class="evitement" href="#contenu">Aller au contenu</a>
+<header class="bandeau"><div class="interieur">
+  <p class="nom"><a href="index.html"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg><span>Santé : reprendre le choix</span></a></p>
+  <nav aria-label="Navigation principale"><span class="groupe"><span class="etiquette">Le programme</span><span class="liens"><a href="index.html">Programme</a></span></span><span class="groupe"><span class="etiquette">Le constat</span><span class="liens"><a href="diagnostic.html" aria-current="page">Le système actuel</a><a href="comparaisons.html">Ailleurs</a></span></span><span class="groupe"><span class="etiquette">L&#x27;alternative</span><span class="liens"><a href="reforme.html">La réforme</a><a href="simulateur.html">Ce que vous payez</a><a href="objections.html">Objections</a></span></span><span class="groupe"><span class="etiquette">La confiance</span><span class="liens"><a href="donnees.html">Données et sources</a></span></span></nav>
+</div></header>
+<main id="contenu" tabindex="-1">
+
+<div class="affiche"><p class="surtitre">Le système actuel</p><h1>Beaucoup d'argent, <strong class="cle-texte">peu de choix</strong>, et une file d'attente.</h1><p class="chapeau">Le système de santé français a une qualité rare : il laisse très peu de dépenses à la charge des malades. Il a aussi trois défauts qui s'aggravent — il coûte plus cher que partout ailleurs en Europe, il ne trouve plus de médecin pour six millions de personnes, et il finance les soins d'hier avec la dette de demain.</p></div>
+<nav class="plan" aria-label="Dans cette page"><p class="etiquette">Dans cette page</p><ol><li><a href="#fonctionnement" data-vers="fonctionnement">Comment ça marche aujourd&#x27;hui, exactement ?</a></li><li><a href="#cout" data-vers="cout">Combien ça coûte, et à qui ?</a></li><li><a href="#maux" data-vers="maux">Qu&#x27;est-ce qui ne marche pas ?</a></li><li><a href="#pression" data-vers="pression">Est-ce que ça peut durer ?</a></li><li><a href="#acquis" data-vers="acquis">Qu&#x27;est-ce qui marche, et qu&#x27;il ne faut pas casser ?</a></li></ol></nav>
+<section class="cle" id="fonctionnement" tabindex="-1"><h3>Comment ça marche aujourd&#x27;hui, exactement ?</h3><p class="reponse">Un monopole public rembourse environ 80 % de la dépense, une complémentaire privée obligatoire rembourse le reste, et le Parlement vote chaque année un objectif de dépense qu'il n'a aucun moyen de faire respecter.</p>
+<ul class="serree">
+  <li><strong>Vous ne choisissez pas votre assureur de base.</strong> Votre
+  caisse dépend de votre statut professionnel et de votre lieu de résidence.
+  Elle rembourse ≈ 80 % de la dépense de soins.</li>
+  <li><strong>Vous payez sans le voir.</strong> La cotisation maladie de votre
+  employeur (7 % ou 13 % du salaire brut) et la
+  <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">CSG</span><span class="bulle" role="note" hidden>Contribution sociale généralisée : un prélèvement de 9,2 % sur les revenus d&#x27;activité, qui finance notamment l&#x27;assurance maladie. Contrairement aux cotisations, elle pèse aussi sur les retraites et les revenus du capital.</span></span> (9,2 %) sont prélevées avant que votre salaire n'existe.
+  Aucune fiche de paie ne totalise ce que la santé vous coûte.</li>
+  <li><strong>Une seconde assurance rembourse le solde.</strong> La
+  complémentaire santé, obligatoire en entreprise depuis 2016, couvre le
+  <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">ticket modérateur</span><span class="bulle" role="note" hidden>La part d&#x27;une facture de soins que la Sécurité sociale ne rembourse pas, et que la complémentaire santé prend en charge à sa place — d&#x27;où deux assureurs sur la même facture.</span></span> : ≈ 12,5 % de la dépense, pour
+  ≈ 7,6 Md€ de frais de gestion par an.</li>
+  <li><strong>Le Parlement vote un objectif, pas un budget.</strong>
+  L'<span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">ONDAM</span><span class="bulle" role="note" hidden>Objectif national de dépenses d&#x27;assurance maladie : le montant que le Parlement souhaite ne pas dépasser pour les soins de l&#x27;année. C&#x27;est un objectif, pas un plafond : le dépasser n&#x27;a aucune conséquence automatique.</span></span> s'élève à ≈ 265 Md€ pour 2025. Son dépassement
+  n'emporte aucune conséquence automatique, et il a été dépassé la plupart des
+  années depuis sa création.</li>
+  <li><strong>Les prix sont administrés.</strong> Le tarif d'une consultation,
+  d'un acte, d'un séjour hospitalier est fixé par convention nationale ou par
+  arrêté. Ni le patient ni le médecin ne négocient quoi que ce soit.</li>
+</ul></section><section class="cle" id="cout" tabindex="-1"><h3>Combien ça coûte, et à qui ?</h3><p class="reponse">Environ ≈ 250 Md€ de soins consommés en un an, financés à ≈ 80 % par la Sécurité sociale, ≈ 12,5 % par les complémentaires, et ≈ 7,5 % par les ménages.</p><div class="fiches"><div class="fiche"><div class="valeur">≈ 250 Md€</div><div class="etiquette">de soins et de biens médicaux consommés en un an</div><div class="precision"><a href="donnees.html#csbm">2023 · DREES</a></div></div><div class="fiche"><div class="valeur">≈ 12 % du PIB</div><div class="etiquette">de dépense courante de santé, au sens international</div><div class="precision"><a href="donnees.html#dcs_pib">2023 · DREES / OCDE</a></div></div><div class="fiche"><div class="valeur">≈ 43 % du PIB</div><div class="etiquette">de prélèvements obligatoires, le plus haut taux de l&#x27;UE</div><div class="precision"><a href="donnees.html#prelevements">2024 · INSEE ; Eurostat</a></div></div></div>
+<p>La dépense n'est pas anormale en elle-même : un pays riche et vieillissant
+dépense beaucoup pour sa santé, et c'est légitime. Ce qui l'est moins, c'est
+l'écart avec des pays qui obtiennent des résultats comparables — près de trois
+points de PIB, soit de l'ordre de quatre-vingts milliards d'euros par an. Cet
+argent est prélevé sur le travail : la France a le taux de prélèvements
+obligatoires le plus élevé de l'Union européenne, et la santé en est, avec les
+retraites, le premier poste.</p></section><section class="cle" id="maux" tabindex="-1"><h3>Qu&#x27;est-ce qui ne marche pas ?</h3><p class="reponse">Six défauts, et ils se tiennent : ils découlent tous du fait que personne n'a, dans ce système, à la fois l'information et le pouvoir de décider.</p>
+<h4>1. Personne ne connaît le prix</h4>
+<p>Le patient ne voit pas ce que coûte son soin ; le médecin non plus, le plus
+souvent, pour ce qu'il prescrit. Un système où le prix n'apparaît nulle part
+n'a aucun moyen de distinguer ce qui est cher et utile de ce qui est cher pour
+rien. Les seules économies possibles y sont donc aveugles : une baisse de
+tarif, un déremboursement uniforme, un gel de l'enveloppe.</p>
+
+<h4>2. Deux assureurs sur la même facture</h4>
+<p>La Sécurité sociale rembourse une part, la complémentaire l'autre. Deux
+organismes lisent la même feuille de soins, tiennent deux systèmes
+d'information, emploient deux services de gestion et envoient deux décomptes.
+La complémentaire est, de plus, taxée : une taxe pèse sur une assurance rendue
+obligatoire par la loi.</p>
+
+<h4>3. La pénurie a été organisée</h4>
+<p>Le nombre de médecins formés a été plafonné pendant cinquante ans par l'État
+lui-même, au motif que l'offre de soins crée la demande. Un médecin se formant
+en dix ans, la pénurie constatée aujourd'hui a été décidée dans les années
+1990. S'y ajoutent des règles d'installation, des conventions tarifaires qui
+rendent certains exercices non viables, et une charge administrative qui prend
+au praticien un jour de travail par semaine.</p>
+
+<h4>4. L'hôpital est piloté par circulaire</h4>
+<p>Un directeur d'hôpital public ne fixe ni les tarifs de ses séjours, ni les
+salaires de ses équipes, ni, le plus souvent, ses investissements. Il applique.
+La tarification à l'activité l'a rendu comptable de son volume d'actes sans lui
+donner la maîtrise de ses coûts : la pire combinaison possible, celle qui
+produit à la fois la course au volume et l'impuissance budgétaire.</p>
+
+<h4>5. Le déficit est devenu structurel</h4>
+<p>La branche maladie est en déficit chaque année depuis plus de vingt ans, à
+deux exceptions près. Ce déficit est repris par la dette sociale, amortie par
+un prélèvement sur les revenus d'aujourd'hui pour des soins consommés il y a
+dix ou vingt ans. Aucune loi ne prévoit de retour durable à l'équilibre.</p>
+
+<h4>6. Le rationnement passe par l'attente</h4>
+<p>C'est le point le plus important, et le moins dit. Dans un système où le
+prix ne joue aucun rôle, la demande dépasse toujours l'offre, et il faut bien
+que quelque chose la contienne : c'est le délai. Six mois pour un
+ophtalmologue, des mois pour un spécialiste, des heures aux urgences faute de
+médecine de ville disponible. Le reste à charge le plus faible de l'OCDE
+coexiste ainsi avec un renoncement aux soins massif — non par manque d'argent,
+mais par manque de rendez-vous.</p></section><section class="cle" id="pression" tabindex="-1"><h3>Est-ce que ça peut durer ?</h3><p class="reponse">Non, et la raison est démographique : la dépense croît avec l'âge de la population, tandis que la base qui la finance — le travail — ne croît plus.</p>
+<p>Les ≈ 13,7 millions de personnes en <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">ALD</span><span class="bulle" role="note" hidden>Affection de longue durée : une liste de maladies graves — cancer, diabète, insuffisance cardiaque — dont les soins sont remboursés à 100 % du tarif de la Sécurité sociale. Environ un Français sur cinq en relève, et ces patients concentrent les deux tiers de la dépense remboursée.</span></span> concentrent environ les deux
+tiers des remboursements, et leur nombre augmente de 3 à 4 % par an sous le
+double effet du vieillissement et du progrès thérapeutique. C'est une bonne
+nouvelle sanitaire et une équation budgétaire impossible : la dépense suit une
+population qui vieillit, la recette suit une masse salariale qui stagne.</p>
+<p>Il n'existe que quatre façons de solder cet écart : augmenter les
+prélèvements sur le travail, rationner davantage par l'attente, rembourser
+moins, ou rendre le système plus efficace. Les trois premières ont été essayées
+sans relâche depuis trente ans. Ce site propose la quatrième.</p></section><section class="cle" id="acquis" tabindex="-1"><h3>Qu&#x27;est-ce qui marche, et qu&#x27;il ne faut pas casser ?</h3><p class="reponse">Trois choses, et aucune réforme ne doit y toucher : la couverture universelle, le reste à charge faible sur le gros risque, et la qualité des soins hospitaliers lourds.</p>
+<ul class="serree">
+  <li><strong>Tout le monde est couvert.</strong> La protection universelle
+  maladie couvre toute personne résidant régulièrement en France. C'est un
+  acquis, et il n'est pas négociable.</li>
+  <li><strong>Le <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">reste à charge</span><span class="bulle" role="note" hidden>Ce qui reste à payer par le patient une fois la Sécurité sociale et la complémentaire passées. En France, environ 7,5 % de la dépense : le plus faible de l&#x27;OCDE.</span></span> est le plus faible de l'OCDE</strong>
+  (≈ 7,5 % de la dépense). Une réforme qui l'augmenterait
+  significativement pour les maladies graves serait un échec, quel que soit son
+  effet budgétaire.</li>
+  <li><strong>L'espérance de vie est parmi les meilleures d'Europe</strong>
+  (85,7 et 80,0 ans). C'est l'étalon auquel toute réforme doit se juger,
+  avant tout autre.</li>
+  <li><strong>L'hôpital public sait traiter l'urgence vitale et le soin
+  complexe.</strong> Ce qu'il fait mal, il le fait mal par contrainte de
+  gestion, non par défaut de compétence.</li>
+</ul>
+<p>Un programme sérieux part de là. Il ne s'agit pas de remplacer un système
+qui échoue par un système inconnu, mais de corriger trois défauts précis dans
+un système qui réussit sur l'essentiel et se dégrade sur le reste.</p></section>
+
+<div class="creme">
+<p class="surtitre">Ce que vous pouvez faire</p>
+<h2 class="serif" style="margin:0">Voyez ce que ces défauts vous coûtent.</h2>
+<p>Le simulateur additionne, sur votre salaire, tout ce qui est prélevé pour la santé — cotisation employeur, part de CSG, complémentaire, participations. Le total surprend presque toujours.</p>
+<p class="actions"><a class="bouton" href="simulateur.html">Ce que vous payez vraiment</a><a href="comparaisons.html">Ce que font les autres pays</a></p>
+</div>
+
+</main>
+<footer>
+  <p><strong>Ce site est un document politique, pas une source officielle.</strong>
+  Il compare le système de santé français à une alternative libérale ; il ne
+  vaut ni conseil médical, ni information sur vos droits. Pour ceux-ci, voir
+  <a href="https://www.ameli.fr/">ameli.fr</a> et votre caisse.</p>
+  <p>Tous les chiffres cités sont rassemblés, datés et sourcés sur la page
+  <a href="donnees.html">Données et sources</a>, avec leur degré de fiabilité.
+  Ceux marqués « à vérifier » doivent être confrontés à leur source avant
+  d'être repris dans un débat. Textes et code sur
+  <a href="https://github.com/g-pliberal/sante">GitHub</a> (code sous licence Apache 2.0, textes sous
+  <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a>).</p>
+  <p class="retour-site">Un document du
+  <a href="https://partiliberalfrancais.fr/" target="_top">Parti libéral français</a>. Son volet
+  retraites est <a href="https://github.com/g-pliberal/retraitecomptenotionelle">ici</a>.</p>
+</footer>
+<script type="module" src="moteur/js/site.js"></script>
+</body>
+</html>

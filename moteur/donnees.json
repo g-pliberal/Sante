@@ -1,0 +1,38 @@
+{
+  "avertissement": "Écrit par scripts/construire_site.py depuis src/sante/donnees.py. Ne pas modifier à la main.",
+  "parametres": {
+    "smic_brut_mensuel": 1802.0,
+    "seuil_taux_plein_smic": 2.5,
+    "taux_maladie_reduit": 0.07,
+    "taux_maladie_plein": 0.13,
+    "taux_csg": 0.092,
+    "taux_csg_retraite": 0.083,
+    "assiette_csg": 0.9825,
+    "part_csg_maladie": 0.55,
+    "part_employeur_complementaire": 0.5,
+    "participations_annuelles": 100.0,
+    "cout_moyen_par_personne": 3700.0,
+    "plafond_prime_part_revenu": 0.1,
+    "franchise_part_revenu": 0.04,
+    "franchise_plafond": 1500.0,
+    "depense_moyenne_petit_risque": 450.0
+  },
+  "reserves": [
+    {
+      "parametre": "part_csg_maladie",
+      "texte": "La part de la CSG affectée à la branche maladie est fixée chaque année par la loi de financement et n'est pas un taux stable. La valeur retenue ici — 55 % — est un ORDRE DE GRANDEUR, à vérifier dans la dernière LFSS avant d'être citée."
+    },
+    {
+      "parametre": "cout_moyen_par_personne",
+      "texte": "La prime du système proposé est adossée au coût moyen des soins par habitant — la CSBM divisée par la population. C'est un chiffre vérifiable, mais une moyenne : elle ne dit pas ce que coûterait votre propre contrat, qui dépend du panier retenu et de la péréquation."
+    },
+    {
+      "parametre": "plafond_prime_part_revenu",
+      "texte": "Le plafond au-delà duquel l'allocation santé prend le relais — 10 % du revenu — est une HYPOTHÈSE de travail, pas une mesure chiffrée. Le calibrage réel d'une telle allocation relève d'un modèle budgétaire que ce dépôt ne contient pas."
+    },
+    {
+      "parametre": "depense_moyenne_petit_risque",
+      "texte": "La dépense annuelle moyenne de petit risque — consultations, pharmacie courante, analyses — est très inégalement répartie : la moitié des assurés dépense beaucoup moins, une minorité beaucoup plus. Une moyenne ne décrit aucun cas réel."
+    }
+  ]
+}
