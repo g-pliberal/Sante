@@ -15,13 +15,13 @@
     "participations_annuelles": 100.0,
     "cout_moyen_par_personne": 3700.0,
     "part_prime_nominale": 0.5,
-    "taux_contribution_revenu": 0.08,
     "part_franchise_rendue": 0.6,
     "plafond_prime_part_revenu": 0.08,
     "franchise_part_revenu": 0.04,
     "franchise_plafond": 1500.0,
     "depense_moyenne_petit_risque": 450.0,
-    "prime_nominale": 2311
+    "prime_nominale": 2311,
+    "taux_contribution_revenu": 0.0843
   },
   "reserves": [
     {
@@ -34,7 +34,7 @@
     },
     {
       "parametre": "taux_contribution_revenu",
-      "texte": "Le taux qui financerait l'autre moitié est une HYPOTHÈSE DE TRAVAIL, de l'ordre de ce qu'exigerait la moitié d'une dépense de santé de 250 milliards rapportée à l'assiette de la CSG. Son calibrage réel relève d'un modèle budgétaire que ce dépôt ne contient pas, et il dépend de l'assiette retenue — salaires seuls, ou revenus du capital et de remplacement compris."
+      "texte": "Ce taux n'est plus posé, il est DÉDUIT : c'est ce qu'il reste à lever une fois les primes encaissées, rapporté au rendement d'un point de CSG. Il suppose donc que la contribution ait l'assiette de la CSG — revenus d'activité, de remplacement ET du capital. Une assiette plus étroite exigerait un taux plus élevé, et c'est la question que la loi tranche, pas le calcul."
     },
     {
       "parametre": "cout_moyen_par_personne",

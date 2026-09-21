@@ -140,6 +140,14 @@ Réforme, réglage retenu signalé, et quatre témoins gardent l'ensemble.
 | 10 % | 13 Md€ | 40 % | 45 % |
 | 12 % | 8 Md€ | 20 % | 47 % |
 
+**Les deux paramètres de financement sont désormais déduits.** La prime — la
+part de la dépense que la loi laisse au second étage, rapportée aux adultes
+qui la paient — et le taux de la contribution — ce qu'il reste à lever, en
+points de CSG. Ni l'un ni l'autre n'est écrit dans `donnees.py`, et les deux
+l'avaient été : la prime sur le mauvais dénominateur, le taux à 8 % rond posé
+avant tout calcul quand il en fallait 8,43. Un paramètre de financement qui ne
+découle pas du financement finit par le démentir.
+
 **Le plafond est au cran le plus protecteur que l'arithmétique autorise.**
 Sous **7,5 %**, les primes ne peuvent plus porter la moitié du financement
 quelle que soit leur hauteur, et la sixième garantie devient intenable. Nous
@@ -153,18 +161,20 @@ mois. Les perdants ne sont donc plus seulement les retraités :
 
 | Cas | Aujourd'hui | Après réforme | Écart |
 | --- | --- | --- | --- |
-| Salarié, 1 500 €/mois | 2 855 € | 3 180 € | +325 € |
-| Salarié, 2 500 €/mois | 4 531 € | 4 831 € | +300 € |
-| Salarié, 2 800 €/mois | 5 034 € | 5 119 € | +85 € |
-| Salarié, 3 500 €/mois | 6 088 € | 5 791 € | −297 € |
-| Salarié, 8 000 €/mois | 18 793 € | 10 111 € | −8 682 € |
-| Retraité, 2 500 €/mois | 2 790 € | 4 831 € | +2 042 € |
+| Salarié, 1 500 €/mois | 2 855 € | 3 231 € | +376 € |
+| Salarié, 2 500 €/mois | 4 531 € | 4 916 € | +384 € |
+| Salarié, 3 000 €/mois | 5 322 € | 5 413 € | +91 € |
+| Salarié, 3 500 €/mois | 6 088 € | 5 910 € | −178 € |
+| Salarié, 8 000 €/mois | 18 793 € | 10 382 € | −8 410 € |
+| Retraité, 2 500 €/mois | 2 790 € | 4 960 € | +2 170 € |
 
-Passer de 10 % à 8 % a divisé par deux la perte des bas salaires — +325 € au
-lieu de +685 € à 1 500 € bruts — sans la supprimer : **l'écart s'inverse
-toujours autour de 3 000 € bruts par mois.** C'est la conséquence mécanique
-d'un financement déplacé vers une prime égale pour tous, et aucun réglage du
-plafond ne l'annule.
+Passer de 10 % à 8 % a presque divisé par deux la perte des bas salaires sans
+la supprimer : **l'écart s'inverse toujours autour de 3 000 € bruts par
+mois.** C'est la conséquence mécanique d'un financement déplacé vers une prime
+égale pour tous, et aucun réglage du plafond ne l'annule.
+
+*(Ces montants intègrent le taux de contribution déduit — 8,43 % sur
+l'assiette de la CSG — et non plus les 8 % posés à la main.)*
 
 Le site publie les trois effets — hauts revenus gagnants, retraités perdants,
 salaires modestes et moyens perdants — sur la page Réforme, dans l'objection
@@ -313,15 +323,11 @@ retourner contre nous.
    bouclier pour les affections longues, et le sort des retraités. Le
    troisième est le plus coûteux politiquement, et c'est celui qui n'a pas de
    réponse technique.
-5. **Réconcilier `taux_contribution_revenu` avec le chiffrage.** Le simulateur
-   applique 8 % au revenu brut ; le chiffrage dit que la contribution doit
-   lever 8,4 points de CSG. Les assiettes ne sont pas la même — le point de
-   CSG porte aussi sur le capital — mais l'écart s'est creusé avec le
-   recalibrage, et quelqu'un le relèvera.
-6. **Calibrer `taux_contribution_revenu`.** Les 8 % retenus sont l'ordre de
-   grandeur qu'exige la moitié d'une dépense de 250 Md€ rapportée à l'assiette
-   de la CSG. Un économiste doit le refaire sur l'assiette réelle avant toute
-   publication : c'est le paramètre dont dépendent tous les écarts affichés
-   par le simulateur.
-7. **Faire relire par un contradicteur réel.** Ce document est une relecture
+5. **Faire relire le chiffrage par un économiste.** Les deux paramètres de
+   financement sont maintenant déduits, mais leur dérivation repose sur deux
+   hypothèses qui relèvent du droit, pas du calcul : que la contribution ait
+   l'assiette de la CSG — capital compris —, et que la dépense à couvrir soit
+   la CSBM. Une assiette plus étroite exigerait un taux sensiblement plus
+   élevé. C'est le dernier endroit où le chiffrage peut être pris en défaut.
+6. **Faire relire par un contradicteur réel.** Ce document est une relecture
    interne ; elle trouve ce qu'elle sait chercher.

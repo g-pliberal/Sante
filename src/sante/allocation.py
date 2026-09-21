@@ -97,22 +97,66 @@ LIMITES: tuple[str, ...] = (
     "deux nombres ne se comparent pas terme à terme, et réconcilier l'un à "
     "l'autre demande de savoir ce que la loi ferait entrer dans l'assiette — "
     "les revenus du capital, notamment.",
+    "Le taux de la contribution est déduit en POINTS DE CSG, et suppose donc "
+    "que la contribution ait l'assiette de la CSG : revenus d'activité, de "
+    "remplacement et du capital. Une assiette plus étroite — les salaires "
+    "seuls — exigerait un taux sensiblement plus élevé. C'est une question de "
+    "droit, que le calcul ne tranche pas.",
     "Aucun effet de comportement n'est pris en compte, et il n'y en a pas "
     "besoin : une allocation qui plafonne un prix ne change pas la "
     "distribution des revenus la première année.",
 )
 
 
-def prime_pleine() -> float:
-    """La prime avant allocation, telle que ``donnees.py`` la déduit.
+def adultes() -> float:
+    """Ceux qui paient une prime : les mineurs n'en versent aucune."""
+    return donnees.POPULATION - donnees.MINEURS
 
-    Elle n'est pas saisie : c'est la part de la dépense que la loi laisse à la
-    prime, rapportée aux seuls adultes qui la paient. Ce module la lit, il ne
-    la recalcule pas — sans quoi les deux pourraient diverger, ce qui est
-    exactement la faute que ce dépôt s'interdit.
+
+def prime_pleine() -> float:
+    """La prime avant allocation. DÉDUITE, et jamais écrite.
+
+    C'est la part de la dépense que la loi laisse au second étage, rapportée
+    aux seuls adultes qui la paient. Le paramétrage d'origine la calait sur le
+    coût moyen par HABITANT : elle ne pouvait donc pas lever sa part, quatorze
+    millions et demi de mineurs n'en versant rien. Personne n'ayant plus à
+    écrire ce nombre, personne ne peut refaire l'erreur.
     """
-    return float(
-        donnees.PARAMETRES_SIMULATEUR["prime_nominale"])  # type: ignore[arg-type]
+    part = float(
+        donnees.PARAMETRES_SIMULATEUR["part_prime_nominale"])  # type: ignore[arg-type]
+    return round(part * donnees.DEPENSE_TOTALE / adultes())
+
+
+def taux_contribution() -> float:
+    """Le taux du premier étage. DÉDUIT lui aussi, et de la même façon.
+
+    Ce n'est pas un choix : c'est ce qu'il reste à lever une fois les primes
+    encaissées — allocation déduite — rapporté au rendement d'un point de CSG.
+    Il était écrit à la main, à 8 %, chiffre rond posé avant tout calcul ; il
+    manquait un demi-point, et l'écart s'est creusé au premier recalibrage de
+    l'allocation. Un paramètre de financement qui ne découle pas du
+    financement est un paramètre qui finira par le démentir.
+
+    Il suppose que la contribution ait l'ASSIETTE DE LA CSG — activité,
+    remplacement et capital. C'est une hypothèse de droit, pas de calcul, et
+    ``LIMITES`` le dit.
+    """
+    return round(chiffrer("personne").a_lever
+                 / (donnees.RENDEMENT_POINT_CSG * 100), 4)
+
+
+def parametres() -> dict[str, object]:
+    """La table complète : ce qui est saisi, puis ce qui s'en déduit.
+
+    C'est elle que le navigateur lit et que la page « Données et sources »
+    publie. ``donnees.PARAMETRES_SIMULATEUR`` ne porte que les saisis : les
+    deux paramètres de financement sont des conséquences, et les traiter comme
+    des réglages est précisément ce qui les a rendus faux.
+    """
+    complets = dict(donnees.PARAMETRES_SIMULATEUR)
+    complets["prime_nominale"] = prime_pleine()
+    complets["taux_contribution_revenu"] = taux_contribution()
+    return complets
 
 
 def _taux_effectif(assiette: str) -> float:
@@ -148,8 +192,7 @@ def chiffrer(assiette: str = "personne") -> Chiffrage:
     moyenne = sum(allocations) / len(allocations)
     aides = sum(1 for montant in allocations if montant > 0) / len(allocations)
 
-    adultes = donnees.POPULATION - donnees.MINEURS
-    cout = moyenne * adultes
+    cout = moyenne * adultes()
 
     # Ce que la contribution doit lever : la dépense totale, moins ce que les
     # primes rapportent RÉELLEMENT — c'est-à-dire les primes dues par les
@@ -157,7 +200,7 @@ def chiffrer(assiette: str = "personne") -> Chiffrage:
     # Les primes sont dues par les ADULTES, tandis que le coût moyen est par
     # HABITANT. Multiplier l'un par l'autre ne donne donc pas la moitié de la
     # dépense, et c'est un écart que le paramétrage doit regarder en face.
-    primes_dues = adultes * prime
+    primes_dues = adultes() * prime
     primes_encaissees = primes_dues - cout
     a_lever = donnees.DEPENSE_TOTALE - primes_encaissees
 
@@ -191,17 +234,15 @@ def encaissement_maximal(assiette: str = "personne") -> float:
     impossible — non pas mal calibrée, impossible. Il faut relever le plafond,
     ou renoncer à la promesse.
     """
-    adultes = donnees.POPULATION - donnees.MINEURS
     moyen = sum(donnees.DECILES_NIVEAU_VIE) / len(donnees.DECILES_NIVEAU_VIE)
-    return adultes * _taux_effectif(assiette) * moyen
+    return adultes() * _taux_effectif(assiette) * moyen
 
 
 def plafond_pour_partage(cible: float, assiette: str = "personne") -> float:
     """Le plafond d'allocation qu'exige un partage donné entre les deux étages."""
-    adultes = donnees.POPULATION - donnees.MINEURS
     moyen = sum(donnees.DECILES_NIVEAU_VIE) / len(donnees.DECILES_NIVEAU_VIE)
     correction = _taux_effectif(assiette) / _taux_effectif("personne")
-    return cible * donnees.DEPENSE_TOTALE / (adultes * moyen) / correction
+    return cible * donnees.DEPENSE_TOTALE / (adultes() * moyen) / correction
 
 
 def prime_pour_partage(cible: float) -> float:
@@ -213,8 +254,7 @@ def prime_pour_partage(cible: float) -> float:
     millions et demi de mineurs ne versant rien, la même moitié doit être
     portée par cinquante-quatre millions d'adultes et non par soixante-huit.
     """
-    adultes = donnees.POPULATION - donnees.MINEURS
-    return cible * donnees.DEPENSE_TOTALE / adultes
+    return cible * donnees.DEPENSE_TOTALE / adultes()
 
 
 def cout_scenario(prime: float, plafond: float,
@@ -226,12 +266,11 @@ def cout_scenario(prime: float, plafond: float,
     répond. Rien d'autre ne change.
     """
     taux = plafond * (_taux_effectif(assiette) / _taux_effectif("personne"))
-    adultes = donnees.POPULATION - donnees.MINEURS
     allocations = [max(0.0, prime - taux * niveau)
                    for niveau in donnees.DECILES_NIVEAU_VIE]
-    cout = sum(allocations) / len(allocations) * adultes
+    cout = sum(allocations) / len(allocations) * adultes()
     aides = sum(1 for montant in allocations if montant > 0) / len(allocations)
-    return cout, aides, (adultes * prime - cout) / donnees.DEPENSE_TOTALE
+    return cout, aides, (adultes() * prime - cout) / donnees.DEPENSE_TOTALE
 
 
 def repere_neerlandais() -> float:
@@ -252,6 +291,11 @@ def cout_actuel_couverture() -> float:
     taire reviendrait à se charger soi-même.
     """
     return donnees.DEPENSE_PUBLIQUE_COMPLEMENTAIRE
+
+
+def parametre_affiche(cle: str) -> str:
+    """Un paramètre, tel qu'il s'écrit dans la page — déduits compris."""
+    return donnees.formater_parametre(cle, float(parametres()[cle]))  # type: ignore[arg-type]
 
 
 # -- les chiffres que ce calcul produit --------------------------------------

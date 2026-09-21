@@ -144,7 +144,12 @@ function prelevementActuel(saisie) {
 function prelevementPropose(saisie, brutAnnuel) {
   const p = PARAMETRES;
 
-  const contribution = brutAnnuel * p.taux_contribution_revenu;
+  // La contribution a l'assiette de la CSG, et son taux en est déduit : c'est
+  // dans cette unité que le chiffrage exprime ce qu'il reste à lever. Lui
+  // donner une assiette plus étroite que celle qui a servi à le calculer
+  // ferait mentir les deux à la fois.
+  const assiette = saisie.statut === "retraite" ? 1 : p.assiette_csg;
+  const contribution = brutAnnuel * assiette * p.taux_contribution_revenu;
 
   // La prime baisse avec la franchise choisie : c'est le mécanisme suisse, et
   // c'est tout l'intérêt de la franchise. L'abattement vaut une part de la
@@ -172,7 +177,8 @@ function prelevementPropose(saisie, brutAnnuel) {
   const lignes = [
     ["Contribution santé assise sur votre revenu", contribution,
      "Elle remplace la cotisation maladie de l'employeur et la part de CSG, "
-     + "et va au fonds de péréquation — pas à votre assureur."],
+     + "a la même assiette qu'elle, et va au fonds de péréquation — pas à "
+     + "votre assureur."],
     ["Prime de votre assureur", primePleine,
      "Égale pour tous à l'intérieur d'un contrat : ni l'âge, ni le sexe, ni "
      + "l'état de santé ne la modulent. C'est la moitié de la dépense de "

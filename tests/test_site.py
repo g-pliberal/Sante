@@ -195,8 +195,8 @@ class ChiffresOrphelins(unittest.TestCase):
             textes += [pays.depense, pays.publique, pays.modele, pays.lecon,
                        pays.reserve, *pays.detail]
         textes += [texte for _, texte in donnees.RESERVES_SIMULATEUR]
-        textes += [donnees.parametre_affiche(cle)
-                   for cle in donnees.PARAMETRES_SIMULATEUR]
+        textes += [allocation.parametre_affiche(cle)
+                   for cle in allocation.parametres()]
         textes += [chiffre.valeur for chiffre in allocation.chiffres_calcules().values()]
         textes += [chiffre.precision
                    for chiffre in allocation.chiffres_calcules().values()]
@@ -287,7 +287,7 @@ class ChiffresCalcules(unittest.TestCase):
         n'applique plus.
         """
         self.assertEqual(allocation.prime_pleine(),
-                         float(donnees.PARAMETRES_SIMULATEUR["prime_nominale"]))
+                         float(allocation.parametres()["prime_nominale"]))
 
     def test_le_repere_etranger_confirme_l_ordre_de_grandeur(self) -> None:
         """Le coût calculé doit rester du même ORDRE que le seul comparable.
@@ -311,10 +311,9 @@ class ChiffresCalcules(unittest.TestCase):
         paient aucune. Le paramètre est désormais déduit ; ce témoin est là
         pour qu'il le reste.
         """
-        adultes = donnees.POPULATION - donnees.MINEURS
         attendu = (float(donnees.PARAMETRES_SIMULATEUR["part_prime_nominale"])
                    * donnees.DEPENSE_TOTALE)
-        self.assertAlmostEqual(allocation.prime_pleine() * adultes,
+        self.assertAlmostEqual(allocation.prime_pleine() * allocation.adultes(),
                                attendu, delta=attendu * 0.001)
 
     def test_le_partage_voulu_par_la_loi_reste_atteignable(self) -> None:
@@ -358,17 +357,46 @@ class Simulateur(unittest.TestCase):
 
         paquet = json.loads(
             (RACINE / "moteur" / "donnees.json").read_text(encoding="utf-8"))
-        self.assertEqual(paquet["parametres"], donnees.PARAMETRES_SIMULATEUR)
+        self.assertEqual(paquet["parametres"], allocation.parametres())
 
     def test_chaque_reserve_porte_sur_un_parametre_existant(self) -> None:
         for cle, _ in donnees.RESERVES_SIMULATEUR:
             with self.subTest(parametre=cle):
-                self.assertIn(cle, donnees.PARAMETRES_SIMULATEUR)
+                self.assertIn(cle, allocation.parametres())
 
     def test_chaque_parametre_est_decrit(self) -> None:
-        """Un paramètre sans description ne peut pas paraître dans la page."""
-        self.assertEqual(set(donnees.PARAMETRES_SIMULATEUR),
+        """Un paramètre sans description ne peut pas paraître dans la page.
+
+        La table lue ici est la COMPLÈTE : un paramètre déduit se décrit comme
+        un paramètre saisi, et se publie comme lui.
+        """
+        self.assertEqual(set(allocation.parametres()),
                          set(donnees.DESCRIPTIONS_SIMULATEUR))
+
+    def test_les_parametres_de_financement_sont_deduits(self) -> None:
+        """Ni la prime ni le taux ne doivent pouvoir être écrits à la main.
+
+        Les deux l'ont été, et les deux étaient faux. Les laisser dans la
+        table des saisis suffirait à ce que quelqu'un les y remette.
+        """
+        for cle in ("prime_nominale", "taux_contribution_revenu"):
+            with self.subTest(parametre=cle):
+                self.assertNotIn(cle, donnees.PARAMETRES_SIMULATEUR)
+                self.assertIn(cle, allocation.parametres())
+
+    def test_le_taux_leve_ce_que_le_chiffrage_demande(self) -> None:
+        """Le taux publié doit lever exactement ce qu'il reste à lever.
+
+        C'était le dernier nombre de financement posé à la main — 8 %, chiffre
+        rond écrit avant tout calcul, quand il en fallait 8,43. Un paramètre
+        de financement qui ne découle pas du financement finit par le
+        démentir.
+        """
+        resultat = allocation.chiffrer("personne")
+        leve = (allocation.taux_contribution()
+                * donnees.RENDEMENT_POINT_CSG * 100)
+        self.assertAlmostEqual(leve, resultat.a_lever,
+                               delta=resultat.a_lever * 0.001)
 
     def test_chaque_parametre_parait_dans_la_page_donnees(self) -> None:
         """La page prétend donner TOUTES les hypothèses : qu'elle les donne.
@@ -378,11 +406,11 @@ class Simulateur(unittest.TestCase):
         depuis la table des paramètres ; ce témoin est là pour qu'il le reste.
         """
         page = (RACINE / "donnees.html").read_text(encoding="utf-8")
-        for cle in donnees.PARAMETRES_SIMULATEUR:
+        for cle in allocation.parametres():
             with self.subTest(parametre=cle):
                 self.assertIn(f"<code>{cle}</code>", page)
-                self.assertIn(gabarit.echapper(donnees.parametre_affiche(cle)),
-                              page)
+                self.assertIn(
+                    gabarit.echapper(allocation.parametre_affiche(cle)), page)
 
     def test_le_calcul_n_emploie_aucun_nombre_qui_lui_soit_propre(self) -> None:
         """Le simulateur ne doit contenir aucune hypothèse écrite en dur.

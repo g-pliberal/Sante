@@ -833,7 +833,6 @@ PARAMETRES_SIMULATEUR: dict[str, object] = {
     "participations_annuelles": 100.0,
     "cout_moyen_par_personne": 3700.0,
     "part_prime_nominale": 0.5,
-    "taux_contribution_revenu": 0.08,
     "part_franchise_rendue": 0.6,
     "plafond_prime_part_revenu": 0.08,
     "franchise_part_revenu": 0.04,
@@ -841,14 +840,18 @@ PARAMETRES_SIMULATEUR: dict[str, object] = {
     "depense_moyenne_petit_risque": 450.0,
 }
 
-# La prime, DÉDUITE et non saisie. C'est ici que le paramétrage se trompait :
-# une prime calée sur la moitié du coût moyen par HABITANT ne peut pas lever la
-# moitié de la dépense, puisque les mineurs n'en versent aucune. La même
-# moitié doit être portée par les adultes seuls — et le seul moyen qu'une
-# erreur pareille ne revienne pas est que personne n'ait à écrire le nombre.
-PARAMETRES_SIMULATEUR["prime_nominale"] = round(
-    float(PARAMETRES_SIMULATEUR["part_prime_nominale"])  # type: ignore[arg-type]
-    * DEPENSE_TOTALE / (POPULATION - MINEURS))
+# Deux paramètres manquent à cette table, et c'est voulu : la PRIME et le TAUX
+# DE CONTRIBUTION ne sont pas des choix, ce sont des conséquences. La prime est
+# la part de la dépense que la loi laisse au second étage, rapportée aux
+# adultes qui la paient ; le taux est ce qu'il reste à lever une fois
+# l'allocation déduite. Les deux se calculent dans ``allocation.py``, et
+# ``allocation.parametres()`` rend la table complète — celle que le navigateur
+# lit et que la page Données publie.
+#
+# Ils ont été écrits à la main, et les deux étaient faux : la prime était calée
+# sur le coût par HABITANT alors que les mineurs n'en versent aucune, et le
+# taux était un chiffre rond posé avant tout calcul. Les déduire est le seul
+# moyen que l'erreur ne revienne pas.
 
 # Ce que chaque paramètre représente, et l'unité dans laquelle il s'écrit. La
 # page « Données et sources » est ENGENDRÉE à partir de ces deux tables : un
@@ -888,14 +891,16 @@ DESCRIPTIONS_SIMULATEUR: dict[str, tuple[str, str]] = {
                             "contribution assise sur le revenu. C'est le "
                             "partage néerlandais <strong>(hypothèse de "
                             "travail)</strong>"),
-    "prime_nominale": ("euros", "Prime annuelle avant allocation, "
-                       "<strong>déduite</strong> : cette part de la dépense "
+    "prime_nominale": ("euros", "Prime annuelle avant allocation. "
+                       "<strong>Déduite</strong> : cette part de la dépense "
                        "rapportée aux seuls adultes qui la paient, les "
                        "mineurs n'en versant aucune"),
-    "taux_contribution_revenu": ("part", "Taux de la contribution santé "
-                                 "assise sur le revenu, qui remplace la "
-                                 "cotisation employeur et la part de CSG "
-                                 "<strong>(hypothèse de travail)</strong>"),
+    "taux_contribution_revenu": ("part", "Taux de la contribution santé, "
+                                 "assis sur la même assiette que la CSG. "
+                                 "<strong>Déduit</strong> : c'est ce qu'il "
+                                 "reste à lever une fois les primes "
+                                 "encaissées, rapporté au rendement du point "
+                                 "de CSG"),
     "part_franchise_rendue": ("part", "Part de la franchise choisie qui est "
                               "rendue en baisse de prime <strong>(hypothèse de "
                               "travail)</strong>"),
@@ -920,15 +925,16 @@ def _francais(nombre: float, decimales: int) -> str:
     return texte.rstrip("0").rstrip(",") if decimales else texte
 
 
-def parametre_affiche(cle: str) -> str:
+def formater_parametre(cle: str, valeur: float) -> str:
     """La valeur d'un paramètre, TELLE QU'ELLE SE LIT dans la page.
 
-    Elle est calculée depuis le paramètre lui-même, et non recopiée : une
+    Elle est mise en forme depuis le paramètre lui-même, et non recopiée : une
     valeur recopiée à la main dans un tableau est une valeur qui finira par
     dire autre chose que le calcul — c'est arrivé, et c'est la raison de cette
-    fonction.
+    fonction. Elle prend la valeur en argument plutôt que d'aller la chercher,
+    parce que deux des paramètres ne sont pas dans cette table : ils sont
+    déduits, et ``allocation.parametres()`` les porte.
     """
-    valeur = float(PARAMETRES_SIMULATEUR[cle])  # type: ignore[arg-type]
     unite = DESCRIPTIONS_SIMULATEUR[cle][0]
     if unite == "part":
         return _francais(valeur * 100, 2) + "\u202f%"
@@ -957,12 +963,12 @@ RESERVES_SIMULATEUR: tuple[tuple[str, str], ...] = (
     ),
     (
         "taux_contribution_revenu",
-        "Le taux qui financerait l'autre moitié est une HYPOTHÈSE DE TRAVAIL, "
-        "de l'ordre de ce qu'exigerait la moitié d'une dépense de santé de "
-        "250 milliards rapportée à l'assiette de la CSG. Son calibrage réel "
-        "relève d'un modèle budgétaire que ce dépôt ne contient pas, et il "
-        "dépend de l'assiette retenue — salaires seuls, ou revenus du capital "
-        "et de remplacement compris.",
+        "Ce taux n'est plus posé, il est DÉDUIT : c'est ce qu'il reste à "
+        "lever une fois les primes encaissées, rapporté au rendement d'un "
+        "point de CSG. Il suppose donc que la contribution ait l'assiette de "
+        "la CSG — revenus d'activité, de remplacement ET du capital. Une "
+        "assiette plus étroite exigerait un taux plus élevé, et c'est la "
+        "question que la loi tranche, pas le calcul.",
     ),
     (
         "cout_moyen_par_personne",

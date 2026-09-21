@@ -1601,8 +1601,8 @@ def page_donnees() -> str:
     # pas et en taisant la moitié de ses hypothèses.
     parametres = g.tableau(
         ["Hypothèse", "Valeur", "Ce qu'elle représente"],
-        [[f"<code>{cle_param}</code>", donnees.parametre_affiche(cle_param),
-          description]
+        [[f"<code>{cle_param}</code>",
+          allocation.parametre_affiche(cle_param), description]
          for cle_param, (_, description)
          in donnees.DESCRIPTIONS_SIMULATEUR.items()],
         ["", "nombre", "long texte"],

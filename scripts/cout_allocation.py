@@ -99,19 +99,24 @@ def main() -> int:
                   for plafond in (0.05, 0.08, 0.10, 0.12)]
     for prime_essai, plafond in scenarios:
         cout, aides, part = allocation.cout_scenario(prime_essai, plafond)
-        courant = (abs(prime_essai - allocation.prime_pleine()) < 1
-                   and abs(plafond - plafond_actuel) < 1e-9)
+        retenu = (abs(prime_essai - allocation.prime_pleine()) < 1
+                  and abs(plafond - plafond_actuel) < 1e-9)
         ancien = prime_essai == allocation.PRIME_ABANDONNEE
-        marque = "  ← retenu" if courant else ("  ← abandonné" if ancien else "")
+        marque = "  ← retenu" if retenu else ("  ← abandonné" if ancien else "")
         print(f"  {prime_essai:>5.0f} €   {plafond:>5.0%}    {euros(cout)}"
               f"       {aides:>4.0%}            {part:>4.0%}{marque}")
 
-    titre("Cohérence avec le taux du simulateur")
-    taux = float(donnees.PARAMETRES_SIMULATEUR["taux_contribution_revenu"])
-    print(f"  la contribution doit lever {courant_points(courant := allocation.chiffrer())}")
-    print(f"  le simulateur applique    {taux:.1%} au revenu brut de l'assuré")
-    print("  Les deux assiettes ne sont pas la même — le point de CSG porte")
-    print("  aussi sur le capital — mais les ordres de grandeur concordent.")
+    titre("Les deux paramètres que ce calcul DÉDUIT")
+    print(f"  prime avant allocation     {allocation.prime_pleine():>6.0f} €")
+    print("     = la part de la dépense que la loi laisse au second étage,")
+    print("       rapportée aux seuls adultes qui la paient.")
+    print(f"  taux de la contribution    "
+          f"{allocation.taux_contribution():>6.2%}")
+    print(f"     = les {courant_points(courant)} qu'il reste à lever,")
+    print("       sur l'assiette de la CSG.")
+    print("\n  Aucun des deux n'est écrit dans donnees.py : les deux l'ont")
+    print("  été, et les deux étaient faux. Un paramètre de financement qui")
+    print("  ne découle pas du financement finit par le démentir.")
 
     titre("Les limites de ce calcul")
     for limite in allocation.LIMITES:
