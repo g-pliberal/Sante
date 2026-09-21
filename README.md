@@ -53,8 +53,19 @@ python3 -m unittest discover -s tests
 Ils vérifient ce qu'un site de programme politique ne peut pas se permettre de
 rater : qu'aucune page engendrée n'a divergé de son texte, qu'aucun onglet ne
 mène nulle part, que chaque chiffre cité paraît sur la page Données avec sa
-source, que les paramètres du simulateur sont les mêmes des deux côtés du
-portage, et qu'aucune page ne charge de ressource tierce.
+source — **et qu'aucun chiffre écrit au fil d'une phrase n'échappe à la
+table**, que chaque pays comparé porte son millésime et sa réserve, que toutes
+les hypothèses du simulateur sont publiées et qu'il n'en cache aucune dans son
+code, et qu'aucune page ne charge de ressource tierce.
+
+## La relecture adverse
+
+[`RELECTURE.md`](RELECTURE.md) lit le programme comme le lirait quelqu'un qui
+veut le démolir : ce qui y était faux ou périmé, ce que les témoins ne
+vérifiaient pas, et les décisions de fond qui ne sont pas prises — au premier
+rang desquelles le financement, qu'une prime forfaitaire ne peut pas porter
+seule. Ce n'est pas une page du site : c'est un document de travail, et il
+doit rester à jour tant que le programme évolue.
 
 ## Comment c'est fait
 

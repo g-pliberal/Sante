@@ -81,8 +81,21 @@ class Pays:
     modele: str
     """Le mécanisme, en une phrase."""
 
+    annee: str = ""
+    source: str = ""
+    fiabilite: str = "verifier"
+    """D'où viennent la dépense et la part publique de ce pays.
+
+    Un tableau de comparaison internationale sans millésime ni source est la
+    pièce la plus facile à retourner contre celui qui la publie : les
+    périmètres comptables diffèrent, les éditions se succèdent, et deux
+    chiffres vrais pris dans deux éditions différentes font un tableau faux.
+    """
+
     detail: list[str] = field(default_factory=list)
     lecon: str = ""
+    reserve: str = ""
+    """Ce qui interdit de lire la ligne de ce pays comme une mesure exacte."""
 
 
 # -- les chiffres ------------------------------------------------------------
@@ -141,15 +154,16 @@ CHIFFRES: tuple[Chiffre, ...] = (
     ),
     Chiffre(
         cle="deficit_maladie",
-        valeur="≈ 14 Md€",
+        valeur="≈ 15,9 Md€",
         libelle="de déficit de la branche maladie en un an",
-        annee="2024",
-        source="Commission des comptes de la sécurité sociale",
-        fiabilite="verifier",
-        precision="Le déficit de la branche maladie se creuse depuis 2020 sans "
-        "qu'aucune loi n'ait prévu son retour à l'équilibre. Le chiffre exact "
-        "varie selon qu'on regarde la branche seule ou le régime général avec "
-        "le FSV : à vérifier dans le dernier rapport avant citation.",
+        annee="2025",
+        source="Commission des comptes de la sécurité sociale, rapport 2026",
+        fiabilite="ordre",
+        precision="13,8 Md€ en 2024, 15,9 Md€ en 2025 : le déficit se creuse "
+        "sans qu'aucune loi n'ait prévu son retour à l'équilibre. Le chiffre "
+        "dépend du périmètre — branche maladie seule, ou régime général avec "
+        "le FSV, dont le solde d'ensemble s'établit à −21,6 Md€ en 2025. "
+        "C'est la branche seule qui est citée ici.",
         lien="https://www.securite-sociale.fr/la-secu-en-detail/comptes-de-la-securite-sociale",
     ),
     Chiffre(
@@ -199,6 +213,20 @@ CHIFFRES: tuple[Chiffre, ...] = (
         "faute de rendez-vous plutôt que faute d'argent.",
     ),
     Chiffre(
+        cle="part_publique_france",
+        valeur="≈ 85 %",
+        libelle="de la dépense de santé financée par les régimes publics et "
+        "obligatoires",
+        annee="2023",
+        source="OCDE, Health at a Glance ; DREES",
+        fiabilite="ordre",
+        precision="À ne pas confondre avec les ≈ 80 % remboursés par la "
+        "Sécurité sociale : la statistique internationale ajoute à l'assurance "
+        "maladie obligatoire les complémentaires que la loi rend obligatoires. "
+        "C'est ce chiffre-là, et non l'autre, qui se compare aux parts "
+        "publiques néerlandaise, suisse ou allemande.",
+    ),
+    Chiffre(
         cle="frais_gestion_oc",
         valeur="≈ 7,6 Md€",
         libelle="de frais de gestion des complémentaires en un an",
@@ -212,15 +240,44 @@ CHIFFRES: tuple[Chiffre, ...] = (
         lien="https://drees.solidarites-sante.gouv.fr/",
     ),
     Chiffre(
+        cle="frais_gestion_amo",
+        valeur="≈ 7,3 Md€",
+        libelle="de frais de gestion de l'assurance maladie obligatoire",
+        annee="2023",
+        source="Cour des comptes ; DREES, comptes de la santé",
+        fiabilite="verifier",
+        precision="À mettre en regard des frais du second étage, et non à "
+        "oublier : fusionner les deux étages ne supprime pas la gestion, il "
+        "supprime le doublon. Additionnés, les deux étages placent la France "
+        "au deuxième rang de l'OCDE pour le coût de gestion de son système de "
+        "santé, derrière les États-Unis — c'est l'argument, et il tient "
+        "précisément parce qu'on cite les deux chiffres.",
+    ),
+    Chiffre(
         cle="tsa",
-        valeur="13,27 %",
+        valeur="15,27 %",
         libelle="de taxe sur votre cotisation de complémentaire santé",
         annee="2025",
-        source="Code de la sécurité sociale, art. L.862-4 (TSA)",
+        source="Code de la sécurité sociale, art. L.862-4 (TSA) ; LFSS 2025",
+        fiabilite="publie",
+        precision="Taux applicable aux contrats dits responsables depuis la "
+        "loi de financement pour 2025, qui l'a porté de 13,27 % à 15,27 % ; "
+        "les contrats non responsables sont taxés davantage. Une taxe sur une "
+        "assurance rendue obligatoire par la loi — et une taxe dont le "
+        "rendement finance la complémentaire santé solidaire.",
+    ),
+    Chiffre(
+        cle="rendement_tsa",
+        valeur="≈ 6,5 Md€",
+        libelle="de recettes tirées de la taxe sur les complémentaires",
+        annee="2025",
+        source="Annexes de la loi de financement de la sécurité sociale",
         fiabilite="verifier",
-        precision="Taux applicable aux contrats dits responsables ; les autres "
-        "sont taxés davantage. Une taxe sur une assurance rendue obligatoire "
-        "par la loi.",
+        precision="Cette taxe finance la complémentaire santé solidaire. "
+        "Supprimer l'étage complémentaire supprime aussi cette recette : une "
+        "réforme qui le propose doit dire par quoi elle la remplace, sous "
+        "peine de déplacer le trou plutôt que de le combler. Chiffre de "
+        "seconde main : à confronter à la dernière annexe avant citation.",
     ),
     Chiffre(
         cle="ald",
@@ -294,6 +351,22 @@ CHIFFRES: tuple[Chiffre, ...] = (
         "médecine de ville disponible aux heures où l'on tombe malade.",
     ),
     Chiffre(
+        cle="delai_ophtalmo",
+        valeur="52 jours",
+        libelle="de délai médian pour un rendez-vous chez l'ophtalmologue",
+        annee="2018",
+        source="DREES, enquête Délais d'attente, Études et Résultats n° 1085",
+        fiabilite="publie",
+        precision="Deux jours chez le généraliste, 52 jours en médiane chez "
+        "l'ophtalmologue — et un écart territorial considérable, de l'ordre de "
+        "46 jours en Île-de-France contre 118 en région Centre-Val de Loire. "
+        "C'est la dernière enquête nationale de ce type : les délais se sont "
+        "aggravés depuis, mais aucun relevé officiel comparable ne le mesure, "
+        "et c'est une raison de plus de publier ces délais.",
+        lien="https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/"
+        "lenquete-delais-dattente",
+    ),
+    Chiffre(
         cle="esperance_vie",
         valeur="85,7 et 80,0 ans",
         libelle="espérance de vie à la naissance, femmes et hommes",
@@ -354,6 +427,33 @@ CHIFFRES: tuple[Chiffre, ...] = (
         "mutualise.",
     ),
     Chiffre(
+        cle="prime_pays_bas",
+        valeur="≈ 1 900 € par an",
+        libelle="de prime d'assurance de base aux Pays-Bas",
+        annee="2026",
+        source="Consumentenbond ; Zorgwijzer, primes 2026",
+        fiabilite="verifier",
+        precision="Environ 159 € par mois, franchise universelle de 385 € en "
+        "sus. La hausse de 2026 est la plus forte depuis la réforme de 2006 : "
+        "la concurrence entre assureurs discipline le service et la gestion, "
+        "elle n'annule pas la dérive du coût des soins. Le dire nous-mêmes "
+        "vaut mieux que se le faire opposer.",
+    ),
+    Chiffre(
+        cle="contribution_pays_bas",
+        valeur="6,10 %",
+        libelle="de contribution employeur assise sur le revenu, aux Pays-Bas",
+        annee="2026",
+        source="Belastingdienst, inkomensafhankelijke bijdrage Zvw",
+        fiabilite="publie",
+        precision="Plafonnée à un revenu de 79 409 € par an. La loi "
+        "néerlandaise fixe ces taux de sorte que les contributions assises sur "
+        "le revenu représentent LA MOITIÉ des ressources de l'assurance de "
+        "base ; la prime nominale n'en finance que l'autre moitié. Un modèle "
+        "néerlandais présenté comme une prime seule n'est pas le modèle "
+        "néerlandais.",
+    ),
+    Chiffre(
         cle="participation",
         valeur="2 € et 1 €",
         libelle="de participation forfaitaire par consultation et par boîte",
@@ -365,6 +465,34 @@ CHIFFRES: tuple[Chiffre, ...] = (
         "il pèse autant sur un SMIC que sur un très haut revenu.",
     ),
 )
+
+# -- les chiffres tolérés sans rangée ----------------------------------------
+#
+# La règle du site est qu'un chiffre porte sa source. Quelques-uns n'ont pas de
+# rangée à eux sans être pour autant des affirmations : une borne de formulaire,
+# une tournure comme « 100 % du gros risque », un chiffre qu'on cite pour le
+# réfuter. Ils sont ici, un par un, avec la raison — et le témoin
+# ``test_aucun_chiffre_orphelin`` refuse tous les autres. C'est cette liste, et
+# non la bonne volonté du rédacteur, qui empêche un chiffre de se glisser dans
+# une page sans qu'on sache d'où il vient.
+CHIFFRES_TOLERES: dict[str, str] = {
+    "100 %": "Tournure, et non mesure : « 100 % du gros risque couvert », "
+             "« 100 % du tarif Sécu ». Désigne l'intégralité d'une prise en "
+             "charge, pas un relevé statistique.",
+    "68 millions": "Population résidente de la France, ordre de grandeur "
+                   "employé pour opposer la taille du pays à celle de "
+                   "Singapour. INSEE, bilan démographique.",
+    "30 milliards": "Cité entre guillemets pour être RÉFUTÉ — c'est le type "
+                    "d'économie annoncée que ce programme refuse d'avancer.",
+    "50 €": "Plafond annuel des participations forfaitaires et des franchises "
+            "médicales, pris de la rangée « participation » où il figure avec "
+            "son décret.",
+    "300 €": "Borne du choix de franchise offert par le formulaire du "
+             "simulateur, comme 600 € et 1 200 € : une saisie, pas une mesure.",
+    "600 €": "Borne du choix de franchise offert par le formulaire.",
+    "200 €": "Fin de « 1 200 € », troisième borne du choix de franchise.",
+}
+
 
 PAR_CLE: dict[str, Chiffre] = {chiffre.cle: chiffre for chiffre in CHIFFRES}
 
@@ -395,6 +523,10 @@ PAYS: tuple[Pays, ...] = (
         drapeau="Zorgverzekeringswet, 2006",
         depense="≈ 10 % du PIB",
         publique="≈ 85 %",
+        annee="2023",
+        source="OCDE, Système de comptes de la santé ; Zorginstituut Nederland "
+        "(mécanisme)",
+        fiabilite="verifier",
         modele="Assurance de base obligatoire, achetée à des assureurs privés "
         "en concurrence, identique pour tous et sans sélection possible.",
         detail=[
@@ -403,24 +535,50 @@ PAYS: tuple[Pays, ...] = (
             "Une caisse de péréquation des risques verse aux assureurs ce que "
             "coûtent leurs assurés les plus malades : assurer un diabétique "
             "rapporte autant qu'assurer un sportif de vingt ans.",
-            "Une franchise universelle d'environ 400 € par an, au-delà de "
-            "laquelle tout est pris en charge ; la médecine générale en est "
-            "exclue, pour ne pas décourager le premier recours.",
+            "Une franchise universelle de 385 € par an — inchangée depuis "
+            "2016 — au-delà de laquelle tout est pris en charge ; la "
+            "médecine générale en est exclue, pour ne pas décourager le "
+            "premier recours.",
             "Une allocation santé (zorgtoeslag) paie tout ou partie de la "
             "prime des ménages modestes — plusieurs millions de foyers.",
+            "<strong>La prime nominale ne finance que la moitié du "
+            "système.</strong> L'autre moitié vient d'une contribution "
+            "assise sur le revenu, prélevée par l'employeur ("
+            + valeur("contribution_pays_bas") + " en 2026, plafonnée), qui "
+            "alimente la caisse de péréquation. La loi fixe les taux pour que "
+            "le partage reste à 50-50. C'est la pièce que les présentations "
+            "françaises du modèle néerlandais oublient le plus souvent, et "
+            "c'est elle qui porte la progressivité.",
+            "Les mineurs ne paient aucune prime : l'État verse la leur au "
+            "fonds. Une famille de quatre ne paie donc pas quatre primes.",
             "Chacun peut changer d'assureur au 1ᵉʳ janvier. Environ un "
-            "assuré sur vingt le fait chaque année, ce qui suffit à tenir les "
-            "primes.",
+            "assuré sur vingt le fait chaque année, ce qui suffit à "
+            "discipliner le service et les frais de gestion. Cela ne suspend "
+            "pas la dérive du coût des soins : la prime de base ("
+            + valeur("prime_pays_bas") + ") connaît en 2026 sa plus forte "
+            "hausse depuis la réforme de 2006, et il vaut mieux le dire que "
+            "se le faire opposer.",
         ],
+        reserve="Dépense et part publique recopiées de seconde main : elles "
+        "doivent être confrontées à UNE SEULE édition de Health at a "
+        "Glance avant toute reprise publique — la même pour les cinq "
+        "lignes du tableau.",
         lecon="C'est la démonstration que concurrence et universalité ne "
         "s'opposent pas : les Pays-Bas couvrent tout le monde, dépensent moins "
-        "que la France, et personne n'y est refusé pour son état de santé.",
+        "que la France, et personne n'y est refusé pour son état de santé. "
+        "Ce n'est pas la démonstration qu'une prime forfaitaire suffit à "
+        "financer un système de santé — aux Pays-Bas, elle n'en finance que "
+        "la moitié.",
     ),
     Pays(
         nom="Suisse",
         drapeau="LAMal, 1996",
         depense="≈ 11,5 % du PIB",
         publique="≈ 70 %",
+        annee="2023",
+        source="OCDE, Système de comptes de la santé ; Office fédéral de la "
+        "santé publique (LAMal)",
+        fiabilite="verifier",
         modele="Assurance obligatoire individuelle auprès de l'assureur de son "
         "choix, avec franchise choisie par l'assuré.",
         detail=[
@@ -437,6 +595,10 @@ PAYS: tuple[Pays, ...] = (
             "Le reste à charge y est plus élevé qu'en France, et c'est la "
             "critique principale du modèle : il faut la regarder en face.",
         ],
+        reserve="Même réserve, et elle mord ici : selon l'édition retenue, la "
+        "Suisse dépense un peu moins ou un peu plus que la France. La "
+        "phrase « trois de ces pays dépensent moins que nous » dépend "
+        "donc de l'édition, et ne doit pas être avancée sans elle.",
         lecon="La franchise choisie est le mécanisme le plus simple jamais "
         "trouvé pour rendre au patient un arbitrage qu'on lui a retiré, sans "
         "toucher au gros risque.",
@@ -446,6 +608,10 @@ PAYS: tuple[Pays, ...] = (
         drapeau="GKV / PKV",
         depense="≈ 12,5 % du PIB",
         publique="≈ 85 %",
+        annee="2023",
+        source="OCDE, Système de comptes de la santé ; Bundesministerium für "
+        "Gesundheit (GKV)",
+        fiabilite="verifier",
         modele="Une centaine de caisses d'assurance maladie en concurrence, "
         "entre lesquelles chaque assuré choisit librement.",
         detail=[
@@ -459,6 +625,9 @@ PAYS: tuple[Pays, ...] = (
             "habitant que la France, et n'a jamais pratiqué de numerus clausus "
             "aussi restrictif.",
         ],
+        reserve="Même réserve. L'Allemagne dépense davantage que la France dans "
+        "toutes les éditions récentes : c'est l'exemple qui porte sur "
+        "la concurrence entre caisses, jamais sur le coût.",
         lecon="La concurrence entre caisses ne détruit ni la solidarité ni le "
         "financement par cotisations : elle donne au cotisant le seul pouvoir "
         "qui compte, celui de partir.",
@@ -468,6 +637,9 @@ PAYS: tuple[Pays, ...] = (
         drapeau="MediSave, MediShield Life",
         depense="≈ 5 % du PIB",
         publique="≈ 50 %",
+        annee="2022",
+        source="Ministry of Health Singapore ; Banque mondiale",
+        fiabilite="verifier",
         modele="Comptes d'épargne santé individuels pour le petit risque, "
         "assurance obligatoire pour le gros, filet public pour les démunis.",
         detail=[
@@ -482,6 +654,10 @@ PAYS: tuple[Pays, ...] = (
             "sont parmi les meilleurs du monde, pour moitié moins de dépense "
             "que la France.",
         ],
+        reserve="Périmètre non aligné sur le Système de comptes de la santé de "
+        "l'OCDE, population beaucoup plus jeune, épargne santé "
+        "obligatoire comptée à part : la part de PIB singapourienne ne "
+        "se compare pas terme à terme à la française.",
         lecon="Un système peut être frugal sans être dur, à condition que le "
         "gros risque soit couvert sans condition et que les prix soient "
         "connus. Il n'est pas transposable tel quel — la démographie et "
@@ -503,6 +679,8 @@ PARAMETRES_SIMULATEUR: dict[str, object] = {
     "seuil_taux_plein_smic": 2.5,
     "taux_maladie_reduit": 0.07,
     "taux_maladie_plein": 0.13,
+    "taux_maladie_independant": 0.065,
+    "seuil_independant_smic": 1.1,
     "taux_csg": 0.092,
     "taux_csg_retraite": 0.083,
     "assiette_csg": 0.9825,
@@ -510,11 +688,84 @@ PARAMETRES_SIMULATEUR: dict[str, object] = {
     "part_employeur_complementaire": 0.5,
     "participations_annuelles": 100.0,
     "cout_moyen_par_personne": 3700.0,
+    "part_franchise_rendue": 0.6,
     "plafond_prime_part_revenu": 0.10,
     "franchise_part_revenu": 0.04,
     "franchise_plafond": 1500.0,
     "depense_moyenne_petit_risque": 450.0,
 }
+
+# Ce que chaque paramètre représente, et l'unité dans laquelle il s'écrit. La
+# page « Données et sources » est ENGENDRÉE à partir de ces deux tables : un
+# paramètre ajouté au calcul sans description casse la construction, et ne peut
+# donc pas rester invisible. Un simulateur dont une hypothèse ne figure pas
+# dans la page qui prétend les donner toutes n'est pas vérifiable.
+DESCRIPTIONS_SIMULATEUR: dict[str, tuple[str, str]] = {
+    "smic_brut_mensuel": ("euros", "SMIC brut mensuel, qui sert de référence "
+                          "au seuil de la cotisation employeur"),
+    "seuil_taux_plein_smic": ("smic", "Seuil, en SMIC annuels, au-delà duquel "
+                              "le taux plein s'applique à la totalité du "
+                              "salaire"),
+    "taux_maladie_reduit": ("part", "Cotisation maladie employeur jusqu'à ce "
+                            "seuil"),
+    "taux_maladie_plein": ("part", "Cotisation maladie employeur au-delà de ce "
+                           "seuil"),
+    "taux_maladie_independant": ("part", "Cotisation maladie-maternité des "
+                                 "indépendants, haut de la fourchette "
+                                 "progressive <strong>(ordre de "
+                                 "grandeur)</strong>"),
+    "seuil_independant_smic": ("smic", "Seuil, en SMIC annuels, à partir "
+                               "duquel cette cotisation est due"),
+    "taux_csg": ("part", "CSG sur les revenus d'activité"),
+    "taux_csg_retraite": ("part", "CSG sur les pensions, au taux normal"),
+    "assiette_csg": ("part", "Part du brut soumise à la CSG"),
+    "part_csg_maladie": ("part", "Fraction de la CSG affectée à la branche "
+                         "maladie <strong>(ordre de grandeur)</strong>"),
+    "part_employeur_complementaire": ("part", "Part minimale payée par "
+                                      "l'employeur en contrat collectif"),
+    "participations_annuelles": ("euros", "Participations forfaitaires et "
+                                 "franchises médicales, plafonds cumulés"),
+    "cout_moyen_par_personne": ("euros", "Prime de base, adossée au coût moyen "
+                                "des soins par habitant <strong>(hypothèse de "
+                                "travail)</strong>"),
+    "part_franchise_rendue": ("part", "Part de la franchise choisie qui est "
+                              "rendue en baisse de prime <strong>(hypothèse de "
+                              "travail)</strong>"),
+    "plafond_prime_part_revenu": ("part", "Part du revenu au-delà de laquelle "
+                                  "l'allocation santé prend le relais "
+                                  "<strong>(hypothèse de travail)</strong>"),
+    "franchise_part_revenu": ("part", "Plafond de reste à charge annuel, en "
+                              "part du revenu <strong>(hypothèse de "
+                              "travail)</strong>"),
+    "franchise_plafond": ("euros", "Plafond de reste à charge annuel, en "
+                          "valeur absolue <strong>(hypothèse de "
+                          "travail)</strong>"),
+    "depense_moyenne_petit_risque": ("euros", "Dépense annuelle moyenne de "
+                                     "petit risque par assuré <strong>(ordre "
+                                     "de grandeur)</strong>"),
+}
+
+
+def _francais(nombre: float, decimales: int) -> str:
+    texte = f"{nombre:,.{decimales}f}".replace(",", "\u202f").replace(".", ",")
+    return texte.rstrip("0").rstrip(",") if decimales else texte
+
+
+def parametre_affiche(cle: str) -> str:
+    """La valeur d'un paramètre, TELLE QU'ELLE SE LIT dans la page.
+
+    Elle est calculée depuis le paramètre lui-même, et non recopiée : une
+    valeur recopiée à la main dans un tableau est une valeur qui finira par
+    dire autre chose que le calcul — c'est arrivé, et c'est la raison de cette
+    fonction.
+    """
+    valeur = float(PARAMETRES_SIMULATEUR[cle])  # type: ignore[arg-type]
+    unite = DESCRIPTIONS_SIMULATEUR[cle][0]
+    if unite == "part":
+        return _francais(valeur * 100, 2) + "\u202f%"
+    if unite == "euros":
+        return _francais(valeur, 0) + "\u202f€"
+    return _francais(valeur, 2) + "\u202fSMIC"
 
 RESERVES_SIMULATEUR: tuple[tuple[str, str], ...] = (
     (
