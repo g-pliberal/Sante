@@ -19,8 +19,13 @@ cette discipline. Elle n'était pas tenue partout.
 ## 1. Les cinq points qui coûteraient le débat
 
 Ceux-ci ne sont pas des erreurs de rédaction : ce sont des décisions de fond
-qui n'ont pas été prises. Aucun n'a été modifié dans le programme — ils sont
-à vous.
+qui n'avaient pas été prises.
+
+**Trois l'ont été depuis** (1.1, 1.2, 1.5), et le programme porte désormais
+l'architecture correspondante : financement à deux étages, moitié-moitié,
+aucune prime avant 18 ans. **Deux restent ouvertes** (1.3, 1.4), et une
+troisième est apparue en chemin — voir la section 1.6, qui est la plus
+importante de ce document.
 
 ### 1.1 La prime forfaitaire ne peut pas remplacer la cotisation et la CSG
 
@@ -31,7 +36,8 @@ remplace la cotisation maladie de votre employeur, la part de CSG affectée à
 la santé et votre complémentaire ». Le simulateur adosse cette prime au coût
 moyen des soins par habitant — 3 700 €.
 
-Faites tourner le calcul sur les cas qu'un journaliste essaiera :
+Faites tourner le calcul sur les cas qu'un journaliste essaiera — voici ce que
+donnait le programme **avant correction** :
 
 | Salaire brut | Prélevé aujourd'hui | « Vos soins » sous la réforme |
 | --- | --- | --- |
@@ -59,8 +65,13 @@ et une prime nominale, plus petite, qui porte la concurrence. Le programme y
 gagne trois choses : il devient finançable, il cesse d'être attaquable comme
 une capitation, et il correspond enfin au pays qu'il cite.
 
-*(La description du modèle néerlandais a été complétée sur le site ; la
-mesure 1 du programme, elle, n'a pas été touchée.)*
+**Décidé.** Le programme adopte désormais cette architecture : une
+contribution assise sur le revenu qui remplace la cotisation employeur et la
+part de CSG et alimente le fonds de péréquation, et une prime versée à
+l'assureur choisi qui remplace la complémentaire. Le partage moitié-moitié est
+la sixième garantie inscrite dans la loi. Le simulateur calcule les deux étages
+séparément, et l'écart entre les deux colonnes est donc un résultat, non plus
+une construction.
 
 ### 1.2 Rien n'est dit des enfants ni des familles
 
@@ -70,30 +81,29 @@ verse la leur au fonds. Sans règle équivalente, l'arithmétique du site donne
 14 800 € par an pour une famille de quatre, et personne n'aura besoin de la
 calculer longtemps.
 
-**Recommandation.** Écrire la règle dans les garanties de la page d'accueil,
-au même rang que l'obligation d'accepter : *aucune prime avant 18 ans*.
+**Décidé.** *Aucune prime avant 18 ans* est la septième garantie, et
+l'objection « qui paie pour les enfants ? » figure sur la page Objections. Le
+simulateur prend le nombre d'enfants à charge et affiche leur ligne à zéro —
+une ligne absente se lirait comme une ligne oubliée.
 
-### 1.3 L'allocation santé concernerait la majorité des salariés
+### 1.3 Le coût de l'allocation santé n'est toujours pas chiffré
 
-Avec les paramètres actuels — prime plafonnée à 10 % du revenu — l'allocation
-se déclenche sous **2 933 € brut par mois**, c'est-à-dire pour plus de la
-moitié des salariés du privé. À 1 500 € brut, elle couvre 1 720 € des 3 520 €
-de prime.
+Le passage à deux étages a beaucoup amélioré ce point : la prime n'est plus de
+3 520 € mais de 1 670 €, et le plafond est descendu de 10 % à 5 % du revenu.
+L'allocation se déclenche désormais sous **2 783 € brut par mois** au lieu de
+2 933 €, et elle ne comble qu'un écart bien plus petit — 770 € à 1 500 € brut,
+contre 1 720 € auparavant.
 
-Deux conséquences que le site ne tire pas :
+Elle reste néanmoins versée à une large partie des salariés, et **son coût
+budgétaire n'est chiffré nulle part**. Le programme refuse — à raison — de
+chiffrer ses économies. Il ne peut pas refuser de chiffrer une dépense qu'il
+crée.
 
-- l'argument « la prime redevient visible » s'affaiblit, puisque la majorité
-  ne paierait pas la prime affichée ;
-- le coût budgétaire de cette allocation n'est chiffré nulle part, alors qu'il
-  se compte en dizaines de milliards.
-
-Le programme refuse — à raison — de chiffrer ses économies. Il ne peut pas
-refuser de chiffrer une dépense qu'il crée.
-
-**Recommandation.** Soit relever le plafond pour cibler réellement les ménages
-modestes, soit assumer et chiffrer. La première est la plus défendable, et
-elle découle de 1.1 : avec une contribution assise sur le revenu, la prime
-nominale est petite, et l'allocation redevient un filet plutôt qu'un régime.
+**À décider par vous.** Soit abaisser encore le plafond pour cibler les
+ménages modestes, soit produire l'estimation. La seconde voie est la plus
+solide : c'est aujourd'hui la seule dépense nouvelle du programme dont le
+montant est laissé en blanc, et « votre allocation coûte combien ? » est une
+question à laquelle il faudra répondre en direct.
 
 ### 1.4 Le bouclier fait payer ce que l'ALD rembourse
 
@@ -102,9 +112,10 @@ plafond est, pour eux, immédiatement atteint. » C'est faux deux fois — un
 plafond se paie *avant* d'être atteint, et beaucoup de patients en ALD, dont
 la dépense est modeste, ne l'atteindraient pas.
 
-Avec les paramètres du simulateur (4 % du revenu, plafonné à 1 500 €), un
-patient en ALD gagnant 2 500 € brut par mois passerait d'un remboursement
-intégral à un reste à charge pouvant aller jusqu'à 1 200 € par an.
+Avec les paramètres du simulateur (4 % du revenu, plafonné à 1 500 €) —
+inchangés par le passage à deux étages — un patient en ALD gagnant 2 500 €
+brut par mois passerait d'un remboursement intégral à un reste à charge
+pouvant aller jusqu'à 1 200 € par an.
 « Ils font payer 1 200 € par an aux malades du cancer » est le titre, et il
 serait techniquement exact.
 
@@ -119,7 +130,48 @@ la complémentaire santé solidaire — celle des ménages les plus modestes. Le
 programme faisait disparaître la taxe « avec l'étage qu'elle taxait » sans
 dire par quoi la recette est remplacée.
 
-La mention a été ajoutée au site. **Par quoi la remplacer reste à décider.**
+**Décidé.** La recette est reprise par la contribution assise sur le revenu,
+dont l'allocation santé prend le relais pour les ménages modestes ; la page
+Réforme le dit à l'endroit où l'argent est décrit.
+
+### 1.6 Les retraités paieraient davantage — et c'est le vrai coût politique
+
+Ce point n'était pas visible avant, parce que l'ancien simulateur construisait
+le total de la réforme comme égal à celui d'aujourd'hui. Les deux colonnes
+étant désormais calculées séparément, il apparaît, et il est structurel.
+
+Une pension ne supporte aucune cotisation maladie et une CSG au taux réduit,
+alors que la dépense de santé se concentre sur les âges élevés. Une
+contribution assise sur tous les revenus et une prime due par tous les adultes
+prélèvent donc nettement plus sur elle. Avec les paramètres actuels :
+
+| Cas | Prélevé aujourd'hui | Sous la réforme |
+| --- | --- | --- |
+| Salarié, 2 500 €/mois | 4 531 € | 4 200 € |
+| Salarié, 8 000 €/mois | 18 793 € | 9 650 € |
+| **Retraité, 2 500 €/mois** | **2 790 €** | **4 200 €** |
+
+Le programme dit maintenant les deux effets — les hauts revenus contribuent
+moins, les retraités davantage — sur la page Réforme, dans l'objection
+« capitation », et dans le simulateur lui-même, qui affiche la phrase quand
+c'est le cas de l'utilisateur. Aucune réponse ne l'annule : il n'en existe
+pas. Le seul argument disponible est que le financement actuel fait porter aux
+actifs la part que les pensions ne portent pas, et que ce transfert n'a jamais
+été voté comme tel.
+
+**À décider par vous.** Trois voies, et elles ne se valent pas
+politiquement :
+
+1. **Assumer.** C'est cohérent avec le reste du programme, et c'est un choix
+   qui se défend — mais il faut savoir qu'il désigne l'électorat le plus
+   nombreux et le plus votant comme perdant.
+2. **Moduler la contribution** selon la nature du revenu, comme la CSG le fait
+   déjà. Techniquement simple, mais cela entame l'argument de lisibilité.
+3. **Étaler.** Faire converger les taux sur la durée du mandat plutôt qu'à la
+   bascule.
+
+Tant que ce n'est pas tranché, la phrase du simulateur reste la bonne : nous
+n'avons pas de réponse qui l'annule, et nous le disons.
 
 ---
 
@@ -192,9 +244,14 @@ retourner contre nous.
 3. **Rafraîchir les millésimes.** Le site est calé sur 2023-2025 ; l'ONDAM et
    la LFSS ont changé depuis. Un programme publié en 2026 avec des chiffres de
    2023 se fait répondre sur la date, pas sur le fond.
-4. **Décider les cinq points de la section 1**, et écrire les objections
-   correspondantes sur la page Objections — c'est la promesse du site, et
-   elles manquent aujourd'hui. Les deux plus attendues : « votre prime est une
-   capitation » et « qui paie pour les enfants ».
-5. **Faire relire par un contradicteur réel.** Ce document est une relecture
+4. **Trancher 1.3, 1.4 et 1.6** — le calibrage de l'allocation, le plafond du
+   bouclier pour les affections longues, et le sort des retraités. Le
+   troisième est le plus coûteux politiquement, et c'est celui qui n'a pas de
+   réponse technique.
+5. **Calibrer `taux_contribution_revenu`.** Les 8 % retenus sont l'ordre de
+   grandeur qu'exige la moitié d'une dépense de 250 Md€ rapportée à l'assiette
+   de la CSG. Un économiste doit le refaire sur l'assiette réelle avant toute
+   publication : c'est le paramètre dont dépendent tous les écarts affichés
+   par le simulateur.
+6. **Faire relire par un contradicteur réel.** Ce document est une relecture
    interne ; elle trouve ce qu'elle sait chercher.

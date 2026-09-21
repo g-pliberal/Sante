@@ -59,11 +59,11 @@ PAGES = (
      "nulle part.",
      pages.simulateur),
     ("objections.html",
-     "Les dix objections, y compris les bonnes",
-     "Privatisation, sélection des risques, renoncement aux soins, médecine à "
-     "deux vitesses, absence de chiffrage : les dix objections les plus "
-     "sérieuses à ce programme, et nos réponses — y compris quand elles sont "
-     "incomplètes.",
+     f"Les {pages.nombre_objections()} objections, y compris les bonnes",
+     "Privatisation, sélection des risques, prime forfaitaire, enfants à "
+     "charge, renoncement aux soins, absence de chiffrage : les "
+     f"{pages.nombre_objections()} objections les plus sérieuses à ce "
+     "programme, et nos réponses — y compris quand elles sont incomplètes.",
      pages.objections),
     ("donnees.html",
      "Données et sources",

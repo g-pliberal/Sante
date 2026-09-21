@@ -688,8 +688,10 @@ PARAMETRES_SIMULATEUR: dict[str, object] = {
     "part_employeur_complementaire": 0.5,
     "participations_annuelles": 100.0,
     "cout_moyen_par_personne": 3700.0,
+    "part_prime_nominale": 0.5,
+    "taux_contribution_revenu": 0.08,
     "part_franchise_rendue": 0.6,
-    "plafond_prime_part_revenu": 0.10,
+    "plafond_prime_part_revenu": 0.05,
     "franchise_part_revenu": 0.04,
     "franchise_plafond": 1500.0,
     "depense_moyenne_petit_risque": 450.0,
@@ -725,15 +727,25 @@ DESCRIPTIONS_SIMULATEUR: dict[str, tuple[str, str]] = {
                                       "l'employeur en contrat collectif"),
     "participations_annuelles": ("euros", "Participations forfaitaires et "
                                  "franchises médicales, plafonds cumulés"),
-    "cout_moyen_par_personne": ("euros", "Prime de base, adossée au coût moyen "
-                                "des soins par habitant <strong>(hypothèse de "
-                                "travail)</strong>"),
+    "cout_moyen_par_personne": ("euros", "Coût moyen des soins par habitant, "
+                                "sur lequel les deux étages du financement "
+                                "sont adossés"),
+    "part_prime_nominale": ("part", "Part de ce coût portée par la prime "
+                            "versée à l'assureur ; le reste est porté par la "
+                            "contribution assise sur le revenu. C'est le "
+                            "partage néerlandais <strong>(hypothèse de "
+                            "travail)</strong>"),
+    "taux_contribution_revenu": ("part", "Taux de la contribution santé "
+                                 "assise sur le revenu, qui remplace la "
+                                 "cotisation employeur et la part de CSG "
+                                 "<strong>(hypothèse de travail)</strong>"),
     "part_franchise_rendue": ("part", "Part de la franchise choisie qui est "
                               "rendue en baisse de prime <strong>(hypothèse de "
                               "travail)</strong>"),
     "plafond_prime_part_revenu": ("part", "Part du revenu au-delà de laquelle "
-                                  "l'allocation santé prend le relais "
-                                  "<strong>(hypothèse de travail)</strong>"),
+                                  "l'allocation santé prend en charge la "
+                                  "prime <strong>(hypothèse de "
+                                  "travail)</strong>"),
     "franchise_part_revenu": ("part", "Plafond de reste à charge annuel, en "
                               "part du revenu <strong>(hypothèse de "
                               "travail)</strong>"),
@@ -776,9 +788,29 @@ RESERVES_SIMULATEUR: tuple[tuple[str, str], ...] = (
         "dans la dernière LFSS avant d'être citée.",
     ),
     (
+        "part_prime_nominale",
+        "Le partage entre la prime versée à l'assureur et la contribution "
+        "assise sur le revenu est LE choix politique de cette réforme, et non "
+        "un paramètre technique. La valeur retenue — moitié-moitié — est celle "
+        "que la loi néerlandaise impose. Plus la part de la prime est élevée, "
+        "plus le financement pèse également sur tous, quel que soit le "
+        "revenu ; plus elle est basse, moins la concurrence entre assureurs a "
+        "de prise. Il n'existe pas de valeur techniquement juste : il existe "
+        "une valeur qu'on assume.",
+    ),
+    (
+        "taux_contribution_revenu",
+        "Le taux qui financerait l'autre moitié est une HYPOTHÈSE DE TRAVAIL, "
+        "de l'ordre de ce qu'exigerait la moitié d'une dépense de santé de "
+        "250 milliards rapportée à l'assiette de la CSG. Son calibrage réel "
+        "relève d'un modèle budgétaire que ce dépôt ne contient pas, et il "
+        "dépend de l'assiette retenue — salaires seuls, ou revenus du capital "
+        "et de remplacement compris.",
+    ),
+    (
         "cout_moyen_par_personne",
-        "La prime du système proposé est adossée au coût moyen des soins par "
-        "habitant — la CSBM divisée par la population. C'est un chiffre "
+        "Le financement du système proposé est adossé au coût moyen des soins "
+        "par habitant — la CSBM divisée par la population. C'est un chiffre "
         "vérifiable, mais une moyenne : elle ne dit pas ce que coûterait votre "
         "propre contrat, qui dépend du panier retenu et de la péréquation.",
     ),

@@ -86,11 +86,15 @@ def programme() -> str:
         "<strong>Vous choisissez votre assureur santé</strong>, une fois par "
         "an, parmi tous ceux qui offrent le panier obligatoire. Rester ne "
         "demande rien ; partir prend dix minutes.",
-        "<strong>Vous payez une prime unique, écrite en clair</strong>, qui "
-        "remplace la cotisation maladie de votre employeur, la part de "
-        + g.terme("CSG") + " affectée à la santé et votre complémentaire. "
-        "Elle est visible sur votre fiche de paie, au lieu d'être répartie "
-        "entre trois lignes que personne ne lit.",
+        "<strong>Vous payez deux choses, et vous les voyez toutes les "
+        "deux</strong> : une contribution assise sur votre revenu, qui "
+        "remplace la cotisation maladie de votre employeur et la part de "
+        + g.terme("CSG") + " affectée à la santé et alimente la "
+        + g.terme("péréquation des risques") + " ; et une prime versée à "
+        "l'assureur que vous avez choisi, qui remplace votre complémentaire. "
+        "La loi fixe le partage à moitié-moitié, comme aux Pays-Bas : une "
+        "prime seule serait la même pour un SMIC et pour un très haut revenu, "
+        "et ce n'est pas ce que nous proposons.",
         "<strong>Les petits soins passent par une franchise annuelle</strong>, "
         "plafonnée selon votre revenu ; au-delà, l'assureur paie tout. Les "
         "soins lourds, eux, sont couverts dès le premier euro.",
@@ -102,7 +106,8 @@ def programme() -> str:
             ["Qui vous assure", "Un organisme imposé par votre statut",
              "Celui que vous choisissez"],
             ["Combien vous payez", "Réparti entre cotisations, CSG et mutuelle",
-             "Une prime unique, écrite"],
+             "Une contribution sur le revenu, une prime : deux lignes, "
+             "écrites"],
             ["Qui rembourse", "Deux organismes sur la même facture",
              "Un seul"],
             ["Si vous êtes gravement malade",
@@ -179,7 +184,7 @@ soins.</p>""",
         "Les garanties, écrites dans la loi",
         """
 <p>Une réforme de l'assurance maladie ne vaut que par ce qu'elle interdit à
-ceux qui l'appliqueront. Cinq règles, dans la loi et non dans un décret :</p>
+ceux qui l'appliqueront. Sept règles, dans la loi et non dans un décret :</p>
 <ol class="gestes">
   <li><span class="rang">1</span><span><strong>Obligation d'accepter.</strong>
   Aucun assureur ne peut refuser une demande d'affiliation au panier
@@ -197,6 +202,15 @@ ceux qui l'appliqueront. Cinq règles, dans la loi et non dans un décret :</p>
   <li><span class="rang">5</span><span><strong>Aide au paiement.</strong> Une
   allocation santé prend en charge tout ou partie de la prime des ménages
   modestes, comme le fait la Suisse pour un quart de sa population.</span></li>
+  <li><span class="rang">6</span><span><strong>Moitié-moitié.</strong> La
+  moitié au moins du financement reste assise sur le revenu. La prime versée à
+  l'assureur ne peut pas porter l'autre moitié à elle seule : c'est la règle
+  néerlandaise, et elle est ce qui sépare une assurance solidaire d'une
+  capitation.</span></li>
+  <li><span class="rang">7</span><span><strong>Aucune prime avant 18
+  ans.</strong> Les mineurs sont assurés sans prime, l'État versant la leur au
+  fonds de péréquation. Une famille ne paie pas autant de primes qu'elle
+  compte de têtes.</span></li>
 </ol>""",
         "garanties",
     )
@@ -679,6 +693,14 @@ def reforme() -> str:
   l'efficacité.</li>
   <li>Changement possible au 1ᵉʳ janvier, sans motif, sans frais, sans
   délai de carence.</li>
+  <li><strong>Le financement reste à moitié assis sur le revenu.</strong> La
+  prime versée à l'assureur ne porte que la moitié du coût ; l'autre moitié
+  vient d'une contribution proportionnelle au revenu, qui remplace la
+  cotisation employeur et la part de CSG et alimente la péréquation. C'est le
+  partage que la loi néerlandaise impose depuis 2006, et c'est lui qui
+  distingue cette réforme d'une capitation.</li>
+  <li>Aucune prime n'est due avant 18 ans : l'État verse celle des mineurs au
+  fonds.</li>
 </ul>""",
             "Si votre caisse vous rembourse mal, vous fait attendre, ou "
             "refuse un traitement que sa concurrente accepte, vous partez. "
@@ -835,17 +857,61 @@ def reforme() -> str:
         f"""
 <p>Une réforme de l'assurance maladie ne diminue pas la dépense de soins du
 jour au lendemain : elle change qui décide, et donc la manière dont la dépense
-évolue. Disons ce qu'on peut affirmer, et ce qu'on ne peut pas.</p>
+évolue. Disons d'abord par quels tuyaux l'argent passe, puis ce qu'on peut
+affirmer et ce qu'on ne peut pas.</p>
+<h4>Les deux étages, et leur partage</h4>
+<p>Le financement repose sur deux prélèvements, et le partage entre eux est le
+choix politique de cette réforme — pas un réglage technique.</p>
+<ul class="serree">
+  <li><strong>Une contribution assise sur le revenu</strong> remplace la
+  cotisation maladie de l'employeur ({v('cotisation_employeur')} du brut) et la
+  part de {g.terme('CSG')} affectée à la santé. Elle ne va pas à votre
+  assureur : elle alimente le fonds de {g.terme('péréquation des risques')},
+  qui verse ensuite à chaque caisse ce que coûtent réellement ses assurés.
+  C'est elle qui porte la progressivité, et c'est elle qui rend la sélection
+  des malades sans intérêt.</li>
+  <li><strong>Une prime versée à l'assureur choisi</strong> remplace la
+  cotisation de complémentaire. Elle est égale pour tous à l'intérieur d'un
+  contrat, plafonnée en part du revenu par l'allocation santé, nulle avant 18
+  ans. C'est la seule part du financement que vous pouvez emporter ailleurs,
+  et c'est donc elle qui porte la concurrence.</li>
+  <li><strong>La loi fixe le partage à moitié-moitié</strong>, comme le fait la
+  loi néerlandaise — {v('contribution_pays_bas')} de contribution employeur
+  d'un côté, {v('prime_pays_bas')} de prime de l'autre. Une prime qui
+  porterait seule le financement serait la même pour un SMIC et pour un très
+  haut revenu : ce n'est pas une assurance solidaire, c'est une capitation, et
+  ce n'est pas ce que ce programme propose.</li>
+</ul>
+<p>Un déplacement de cette ampleur fait des gagnants et des perdants, et il
+serait malhonnête de ne montrer que les premiers. Deux effets, et nous les
+écrivons avant qu'on nous les oppose : la cotisation employeur passe
+aujourd'hui de 7 % à 13 % du salaire ENTIER au-delà de 2,5 SMIC, ce qu'une
+contribution proportionnelle ne reproduit pas — <strong>les hauts revenus
+contribueraient moins</strong> ; et une pension ne supporte aujourd'hui
+aucune cotisation maladie, alors que la dépense de santé se concentre sur les
+âges élevés — <strong>les retraités contribueraient davantage</strong>. Le
+second est l'effet le plus impopulaire de cette réforme, et il n'a pas de
+réponse qui l'annule.
+<a href="simulateur.html">Le simulateur le dit pour votre cas</a>, dans les
+deux sens, et <a href="objections.html#objection-4">l'objection est écrite</a>.
+</p>
 <h4>Ce qu'on peut affirmer</h4>
 <ul class="serree">
-  <li>La fusion des deux étages supprime un doublon de gestion dont le coût est
-  documenté : {v('frais_gestion_oc')} par an pour le seul étage
-  complémentaire, auxquels s'ajoute la {v('tsa')} de taxe qui pèse sur ses
-  cotisations.</li>
-  <li>À couverture égale, le prélèvement total — cotisation employeur, part de
-  {g.terme('CSG')}, cotisation de complémentaire — est destiné à rester
-  constant la première année : la réforme redistribue le paiement, elle ne le
-  réduit pas d'emblée.</li>
+  <li>La fusion des deux étages supprime un doublon de gestion : deux systèmes
+  d'information et deux services sur chaque facture, pour
+  {v('frais_gestion_oc')} de frais au second étage et {v('frais_gestion_amo')}
+  au premier. Ce que le doublon coûte à lui seul, personne ne le sait au
+  milliard près — nous ne l'avançons donc pas.</li>
+  <li>La {v('tsa')} de taxe qui pèse aujourd'hui sur les cotisations de
+  complémentaire disparaît avec l'étage qu'elle taxait. Sa recette —
+  {v('rendement_tsa')}, qui finance la complémentaire santé solidaire — doit
+  être reprise dans le nouveau régime : elle l'est par la contribution assise
+  sur le revenu, dont l'allocation santé prend le relais.</li>
+  <li>À couverture égale, le prélèvement total est destiné à rester constant
+  la première année <em>à l'échelle du pays</em> : la réforme redistribue le
+  paiement, elle ne le réduit pas d'emblée. À l'échelle d'un assuré, en
+  revanche, il change — c'est le propre d'un changement d'assiette, et le
+  simulateur ne le cache pas.</li>
   <li>Les mesures d'offre (formation, installation, délégation d'actes) ne
   produisent pas d'économie à court terme. Elles produisent de l'accès aux
   soins, ce qui est leur seul objet.</li>
@@ -873,9 +939,9 @@ ses hypothèses</a>.</p>""",
 
 {g.appel(
     "Les objections, une par une.",
-    "Nous avons écrit les dix objections les plus sérieuses à ce programme, et "
-    "nos réponses. Celles auxquelles nous n'avons pas de bonne réponse y "
-    "figurent aussi.",
+    f"Nous avons écrit les {nombre_objections()} objections les plus sérieuses "
+    "à ce programme, et nos réponses. Celles auxquelles nous n'avons pas de "
+    "bonne réponse y figurent aussi.",
     [("Lire les objections", "objections.html", True),
      ("Ce que vous payez aujourd'hui", "simulateur.html", False)],
 )}
@@ -893,7 +959,8 @@ def simulateur() -> str:
         "Cotisation maladie de l'employeur, part de la CSG, cotisation de "
         "complémentaire, participations forfaitaires : quatre prélèvements, "
         "dont trois n'apparaissent nulle part en clair. Ce simulateur les "
-        "additionne. Tout se calcule dans votre navigateur : "
+        "additionne, puis les met en regard des deux étages du système "
+        "proposé. Tout se calcule dans votre navigateur : "
         + g.cle_texte("rien n'est envoyé nulle part") + ".",
     )
 
@@ -926,6 +993,12 @@ def simulateur() -> str:
              min="0" max="1000" step="1" value="35">
     </div>
     <div>
+      <label for="enfants">Enfants à charge<span class="aide">ils ne paient
+      aucune prime</span></label>
+      <input id="enfants" name="enfants" type="number" inputmode="numeric"
+             min="0" max="12" step="1" value="0">
+    </div>
+    <div>
       <label for="franchise">Franchise annuelle souhaitée<span class="aide">dans
       le système proposé</span></label>
       <select id="franchise" name="franchise">
@@ -937,9 +1010,10 @@ def simulateur() -> str:
     </div>
     <div class="action"><button type="submit">Calculer →</button></div>
   </div>
-  <p class="discret" style="margin:0.9rem 0 0">Deux totaux côte à côte : ce que
-  le système actuel prélève sur votre travail pour la santé, et ce que la
-  réforme proposée prélèverait sous des hypothèses écrites noir sur blanc.</p>
+  <p class="discret" style="margin:0.9rem 0 0">Deux totaux côte à côte, calculés
+  séparément : ce que le système actuel prélève sur votre travail pour la
+  santé, et ce que la réforme proposée prélèverait sous des hypothèses écrites
+  noir sur blanc. L'écart entre les deux est un résultat, pas une promesse.</p>
 </form>"""
 
     resultat = """
@@ -977,18 +1051,32 @@ l'ordre où elle s'applique.</p>
   chacune.</li>
 </ul>
 <h4>Ce que le système proposé prélèverait</h4>
+<p>Deux étages, et le partage entre eux est le choix politique de cette
+réforme. Il est fixé à moitié-moitié, comme la loi néerlandaise l'impose.</p>
 <ul class="serree">
-  <li><strong>Une prime unique</strong>, calculée en part du revenu brut, qui
-  remplace les trois premiers prélèvements ci-dessus. Le taux retenu est une
-  <strong>hypothèse de travail</strong>, choisie pour que le total reste à peu
-  près constant à couverture égale — ce n'est pas une mesure, et la page
-  Données le dit.</li>
+  <li><strong>Une contribution assise sur votre revenu</strong>, qui remplace
+  la cotisation maladie de l'employeur et la part de CSG affectée à la santé,
+  et qui alimente le fonds de péréquation — pas votre assureur. Le taux retenu
+  est une <strong>hypothèse de travail</strong> : son calibrage réel exige un
+  modèle budgétaire que ce site ne contient pas, et la page Données le dit.</li>
+  <li><strong>Une prime versée à l'assureur que vous choisissez</strong>, égale
+  pour tous à l'intérieur d'un contrat. C'est elle, et elle seule, que vous
+  emportez ailleurs si votre caisse vous déplaît.</li>
+  <li><strong>L'allocation santé</strong>, qui plafonne cette prime à une part
+  de votre revenu et se verse directement à l'assureur.</li>
   <li><strong>La franchise que vous choisissez</strong>, dans la limite de
   votre dépense réelle de petit risque. Le simulateur retient une dépense
   moyenne ; la vôtre peut être nulle comme elle peut la dépasser.</li>
-  <li><strong>Rien au-delà du bouclier</strong> : le total est plafonné en part
-  du revenu, ce que le calcul applique.</li>
+  <li><strong>Rien pour vos enfants</strong> : aucune prime n'est due avant 18
+  ans, l'État verse la leur au fonds.</li>
+  <li><strong>Rien au-delà du bouclier</strong> : le reste à charge est
+  plafonné en part du revenu, ce que le calcul applique.</li>
 </ul>
+<p>Les deux colonnes sont calculées séparément. L'écart entre elles est donc un
+résultat, pas une construction — et il n'est pas le même pour tout le monde :
+déplacer le financement d'un prélèvement assis sur le travail vers une prime
+égale pour tous fait des gagnants et des perdants. Le simulateur le dit pour
+votre cas, dans les deux sens.</p>
 {g.note(
     "Ce simulateur illustre des ORDRES DE GRANDEUR. Il ne prédit ni votre "
     "prime future, ni votre dépense de santé, et il ne chiffre pas la réforme "
@@ -1022,18 +1110,13 @@ l'ordre où elle s'applique.</p>
 
 # -- objections --------------------------------------------------------------
 
-
-def objections() -> str:
-    tete = g.affiche(
-        "Objections",
-        "Les dix objections, " + g.cle_texte("y compris les bonnes") + ".",
-        "Un programme qui ne publie que les objections auxquelles il répond "
-        "bien ne mérite pas d'être lu. Les dix suivantes sont celles qu'on "
-        "nous oppose le plus souvent ; deux d'entre elles n'ont pas de réponse "
-        "entièrement satisfaisante, et nous le disons.",
-    )
-
-    entrees = [
+# Les objections, et leur nombre.
+#
+# Elles sont hors de la fonction parce que leur NOMBRE est écrit dans le
+# titre de la page, dans son chapeau, dans son sommaire, dans l'appel de la
+# page Réforme et dans la description que lisent les moteurs de recherche.
+# Un nombre recopié à cinq endroits finit par mentir : celui-ci est déduit.
+OBJECTIONS: list[tuple[str, str, str]] = [
         ("C'est la privatisation de la Sécurité sociale.",
          "C'est la fin de son monopole sur l'assurance, pas la fin de son "
          "rôle.",
@@ -1076,6 +1159,67 @@ directement à l'assureur : l'assuré n'a aucune avance à faire.</p>
 santé solidaire, des exonérations de ticket modérateur, des plafonds et des
 listes. Une aide dont le montant décroît avec le revenu, sans seuil brutal,
 supprime les effets de seuil que le système actuel multiplie.</p>"""),
+        ("Votre prime est une capitation : le même montant pour un SMIC et "
+         "pour un très haut revenu.",
+         "Elle en serait une si elle portait tout le financement. Elle en "
+         "porte la moitié, et la loi l'y oblige.",
+         """
+<p>L'objection vise juste sur un point : une prime égale pour tous EST un
+montant égal pour tous, et c'est même à cela qu'elle sert — un prix qu'on peut
+comparer, et qu'on emporte ailleurs si l'assureur déçoit. Un prix qui varierait
+avec le revenu ne serait plus un prix, et la concurrence n'aurait plus de
+prise.</p>
+<p>Ce qui rend ce prix acceptable, c'est qu'il ne porte pas seul le
+financement. Trois règles l'encadrent, et elles sont dans la loi : la moitié au
+moins des ressources reste assise sur le revenu, par une contribution qui
+remplace la cotisation employeur et la part de {csg} ; l'allocation santé
+plafonne la prime à une part du revenu ; et aucune prime n'est due avant 18
+ans. C'est le partage néerlandais — {contribpb} de contribution employeur
+d'un côté, {primepb} de prime de l'autre — et il n'a rien d'un détail : il est
+la différence entre une assurance solidaire et une capitation.</p>
+<p><strong>Ce que nous ne prétendons pas</strong> : que l'opération soit neutre
+pour chacun. Déplacer une partie du financement d'un prélèvement assis sur le
+travail vers une prime égale pour tous change qui paie quoi, et dans deux
+directions qu'il faut nommer toutes les deux.</p>
+<ul class="serree">
+  <li>La cotisation maladie d'aujourd'hui passe de 7 % à 13 % du salaire
+  ENTIER au-delà de 2,5 SMIC. Une contribution proportionnelle ne reproduit
+  pas ce saut : <strong>les hauts revenus contribueraient moins
+  qu'aujourd'hui</strong>.</li>
+  <li>Une pension ne supporte aucune cotisation maladie et une {csg} au taux
+  réduit, alors que la dépense de santé se concentre sur les âges élevés. Une
+  contribution assise sur tous les revenus et une prime due par tous les
+  adultes prélèveraient <strong>davantage sur les retraités</strong>.</li>
+</ul>
+<p>Le second point est l'effet le plus impopulaire de cette réforme, et nous
+n'avons pas de réponse qui l'annule — seulement le constat que le financement
+actuel fait porter aux actifs la part que les pensions ne portent pas, et que
+ce transfert n'a jamais été voté comme tel. C'est le point le plus discutable
+de ce programme, et il se discute sur pièces plutôt qu'en principe :
+<a href="simulateur.html">le simulateur affiche l'écart pour votre cas</a>,
+dans les deux sens, et le taux de la contribution est une hypothèse écrite —
+rien n'interdit de le moduler si la charge doit être répartie autrement.</p>"""),
+        ("Qui paie pour les enfants ? Une famille de quatre paierait quatre "
+         "primes.",
+         "Personne ne paie de prime avant 18 ans. C'est une des garanties "
+         "inscrites dans la loi, et c'est la règle néerlandaise.",
+         """
+<p>L'objection est juste contre une prime par tête appliquée sans règle : au
+coût moyen des soins par habitant, une famille de quatre paierait quatre fois
+ce montant, et le système serait intenable pour exactement les ménages qu'il
+prétend protéger. Il faut donc une règle, et elle doit être écrite.</p>
+<p>Elle l'est : <strong>aucune prime n'est due avant 18 ans</strong>. L'État
+verse celle des mineurs au fonds de péréquation, qui reverse à leur assureur ce
+que leurs soins coûtent réellement — nettement moins que la moyenne, puisque la
+dépense de santé se concentre sur les âges élevés. Une famille paie autant de
+primes qu'elle compte d'adultes, et l'allocation santé plafonne chacune d'elles
+en part du revenu du foyer. C'est ce que font les Pays-Bas depuis 2006.</p>
+<p><strong>Ce que cela laisse ouvert</strong> : le cas de l'adulte sans revenu
+propre — étudiant, conjoint sans activité, personne au chômage de longue durée.
+L'allocation santé couvre alors l'intégralité de la prime, mais la frontière
+exacte — foyer fiscal ou personne, et à quel âge la prime commence — relève de
+la loi et n'est pas tranchée ici. Nous préférons le dire que laisser croire que
+tout est réglé.</p>"""),
         ("La concurrence coûtera plus cher : il faudra payer le marketing "
          "des assureurs.",
          "C'est un coût réel, et il doit être mis en face du coût du doublon "
@@ -1179,7 +1323,28 @@ millésime et leur degré de fiabilité ; un simulateur dont chaque hypothèse e
 écrite et modifiable ; et la liste explicite de ce que nous ne pouvons pas
 affirmer. C'est moins spectaculaire qu'un « 30 milliards d'économies », et
 c'est plus vérifiable.</p>"""),
-    ]
+]
+
+_EN_LETTRES = {10: "dix", 11: "onze", 12: "douze", 13: "treize",
+               14: "quatorze", 15: "quinze", 16: "seize"}
+
+
+def nombre_objections() -> str:
+    """Le nombre d'objections, en toutes lettres, déduit de la liste."""
+    return _EN_LETTRES[len(OBJECTIONS)]
+
+
+def objections() -> str:
+    tete = g.affiche(
+        "Objections",
+        f"Les {nombre_objections()} objections, "
+        + g.cle_texte("y compris les bonnes") + ".",
+        "Un programme qui ne publie que les objections auxquelles il répond "
+        f"bien ne mérite pas d'être lu. Les {nombre_objections()} suivantes "
+        "sont celles qu'on nous oppose le plus souvent ; trois d'entre elles "
+        "n'ont pas de réponse entièrement satisfaisante, et nous le disons.",
+    )
+
 
     corps = "".join(
         g.cle(
@@ -1187,18 +1352,21 @@ c'est plus vérifiable.</p>"""),
             reponse,
             texte
             .replace("{part}", v("part_oc"))
+            .replace("{csg}", g.terme("CSG"))
+            .replace("{contribpb}", v("contribution_pays_bas"))
+            .replace("{primepb}", v("prime_pays_bas"))
             .replace("{fraisamo}", v("frais_gestion_amo"))
             .replace("{frais}", v("frais_gestion_oc"))
             .replace("{numerus}", v("numerus"))
             .replace("{annee}", "2026"),
             identifiant=f"objection-{index + 1}",
         )
-        for index, (question, reponse, texte) in enumerate(entrees)
+        for index, (question, reponse, texte) in enumerate(OBJECTIONS)
     )
 
     return f"""
 {tete}
-{g.plan(corps, "Les dix objections")}
+{g.plan(corps, f"Les {nombre_objections()} objections")}
 {corps}
 
 {g.appel(
