@@ -71,9 +71,11 @@ doit rester à jour tant que le programme évolue.
 
 ```
 src/sante/donnees.py   les chiffres, leurs sources, leur fiabilité, les pays comparés
+src/sante/allocation.py  le chiffrage de l'allocation santé, entrées sourcées
 src/sante/gabarit.py   tout ce que le site écrit : bandeau, affiche, cartes, tableaux
 src/sante/pages.py     le texte des sept pages
 scripts/construire_site.py  assemble les pages et écrit moteur/donnees.json
+scripts/cout_allocation.py  refait le chiffrage à voix haute
 moteur/style.css       la feuille de style, reprise du site retraites
 moteur/js/site.js      le glossaire dépliable — tout le reste se lit sans JavaScript
 moteur/js/simulateur.js le seul calcul du site, dans le navigateur
@@ -109,6 +111,21 @@ Le site ne chiffre pas la réforme à l'échelle du pays, et
 [il explique pourquoi](reforme.html) : un tel chiffrage exigerait un modèle de
 la dépense de santé que ce dépôt ne contient pas. Une économie annoncée sans ce
 modèle serait inventée.
+
+**Il chiffre en revanche l'allocation santé**, qui est la seule dépense que la
+réforme crée — un programme qui refuse de chiffrer ses économies ne peut pas
+refuser de chiffrer une dépense qu'il invente. Le calcul ne demande aucun
+modèle de comportement : l'allocation vaut l'écart entre la prime et le
+plafond, sommé sur les déciles de revenu que publie l'INSEE.
+
+```sh
+python3 scripts/cout_allocation.py
+```
+
+Son résultat porte l'étiquette « estimé », qui n'est ni « publié » ni « ordre
+de grandeur » : elle dit qu'un calcul de ce dépôt l'a produit, et qu'on peut
+le refaire. Le script dit aussi ses limites, et elles sont dans le même
+fichier que la méthode.
 
 ## Licences
 

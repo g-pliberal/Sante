@@ -60,6 +60,14 @@
   l'efficacité.</li>
   <li>Changement possible au 1ᵉʳ janvier, sans motif, sans frais, sans
   délai de carence.</li>
+  <li><strong>Le financement reste à moitié assis sur le revenu.</strong> La
+  prime versée à l'assureur ne porte que la moitié du coût ; l'autre moitié
+  vient d'une contribution proportionnelle au revenu, qui remplace la
+  cotisation employeur et la part de CSG et alimente la péréquation. C'est le
+  partage que la loi néerlandaise impose depuis 2006, et c'est lui qui
+  distingue cette réforme d'une capitation.</li>
+  <li>Aucune prime n'est due avant 18 ans : l'État verse celle des mineurs au
+  fonds.</li>
 </ul>
 <h4>Ce que ça change pour vous</h4>
 <p>Si votre caisse vous rembourse mal, vous fait attendre, ou refuse un traitement que sa concurrente accepte, vous partez. C'est le seul mécanisme de pression dont dispose un assuré, et c'est celui qu'un monopole lui retire.</p>
@@ -147,17 +155,123 @@
 <details class="section" id="financement"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Qui paie, et combien</span></summary><div class="dedans">
 <p>Une réforme de l'assurance maladie ne diminue pas la dépense de soins du
 jour au lendemain : elle change qui décide, et donc la manière dont la dépense
-évolue. Disons ce qu'on peut affirmer, et ce qu'on ne peut pas.</p>
+évolue. Disons d'abord par quels tuyaux l'argent passe, puis ce qu'on peut
+affirmer et ce qu'on ne peut pas.</p>
+<h4>Les deux étages, et leur partage</h4>
+<p>Le financement repose sur deux prélèvements, et le partage entre eux est le
+choix politique de cette réforme — pas un réglage technique.</p>
+<ul class="serree">
+  <li><strong>Une contribution assise sur le revenu</strong> remplace la
+  cotisation maladie de l'employeur (7 % ou 13 % du brut) et la
+  part de <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">CSG</span><span class="bulle" role="note" hidden>Contribution sociale généralisée : un prélèvement de 9,2 % sur les revenus d&#x27;activité, qui finance notamment l&#x27;assurance maladie. Contrairement aux cotisations, elle pèse aussi sur les retraites et les revenus du capital.</span></span> affectée à la santé. Elle ne va pas à votre
+  assureur : elle alimente le fonds de <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">péréquation des risques</span><span class="bulle" role="note" hidden>Le mécanisme qui verse à un assureur ce que coûtent réellement ses assurés malades, à partir de leur âge et de leurs pathologies. Sans lui, un assureur gagne à trier ses clients ; avec lui, il ne gagne qu&#x27;à mieux les soigner.</span></span>,
+  qui verse ensuite à chaque caisse ce que coûtent réellement ses assurés.
+  C'est elle qui porte la progressivité, et c'est elle qui rend la sélection
+  des malades sans intérêt.</li>
+  <li><strong>Une prime versée à l'assureur choisi</strong> remplace la
+  cotisation de complémentaire. Elle est égale pour tous à l'intérieur d'un
+  contrat, plafonnée en part du revenu par l'allocation santé, nulle avant 18
+  ans. C'est la seule part du financement que vous pouvez emporter ailleurs,
+  et c'est donc elle qui porte la concurrence.</li>
+  <li><strong>La loi fixe un plancher et une cible.</strong> Le plancher : la
+  moitié au moins des ressources reste assise sur le revenu. La cible : le
+  partage néerlandais, moitié-moitié — 6,10 % de
+  contribution employeur d'un côté, ≈ 1 900 € par an de prime de
+  l'autre. Le chiffrage ci-dessous dit où en est le paramétrage publié : les
+  primes y portent 41 % de la dépense. Une prime
+  qui porterait SEULE le financement serait, à l'inverse, la même pour un
+  SMIC et pour un très haut revenu : ce n'est pas une assurance solidaire,
+  c'est une capitation, et ce n'est pas davantage ce que ce programme
+  propose.</li>
+</ul>
+<p>Un déplacement de cette ampleur fait des gagnants et des perdants, et il
+serait malhonnête de ne montrer que les premiers. Trois effets, et nous les
+écrivons avant qu'on nous les oppose : la cotisation employeur passe
+aujourd'hui de 7 % à 13 % du salaire ENTIER au-delà de 2,5 SMIC, ce qu'une
+contribution proportionnelle ne reproduit pas — <strong>les hauts revenus
+contribueraient moins</strong> ; une pension ne supporte aujourd'hui aucune
+cotisation maladie, alors que la dépense de santé se concentre sur les âges
+élevés — <strong>les retraités contribueraient davantage</strong> ; et
+l'allocation, resserrée pour que la réforme soit finançable, s'éteint au-dessus
+de 2 407 € bruts par mois — <strong>les salaires modestes et
+moyens versent un peu plus</strong>, l'écart s'inversant autour de trois mille
+euros bruts par mois. Les deux derniers n'ont pas de réponse qui les annule.
+<a href="simulateur.html">Le simulateur le dit pour votre cas</a>, dans les
+deux sens, et <a href="objections.html#objection-4">l'objection est écrite</a>.
+</p>
+<h4>Ce que coûte l'allocation santé</h4>
+<p>C'est la seule dépense que cette réforme crée, et un programme qui refuse
+de chiffrer ses économies ne peut pas refuser de chiffrer une dépense qu'il
+crée. Le calcul ne demande aucun modèle : l'allocation vaut l'écart entre la
+prime et le plafond, et il suffit de le sommer sur la distribution des revenus
+que l'INSEE publie. Sa méthode est dans le dépôt, ses entrées sont sourcées,
+et <code>python3 scripts/cout_allocation.py</code> le refait.</p>
+<ul class="serree">
+  <li><strong>≈ 23 Md€ par an</strong>, et
+  <strong>≈ 13 Md€ net</strong> une fois défalqués les
+  ≈ 10 Md€ d'exonérations et de complémentaire santé
+  solidaire que l'État consacre déjà à la couverture complémentaire. Le
+  zorgtoeslag néerlandais, qui coûte ≈ 6,5 Md€ pour dix-huit millions
+  d'habitants, vaudrait ≈ 25 Md€ à notre échelle : la nôtre
+  est plus serrée, et c'est un choix.</li>
+  <li><strong>60 % des adultes la toucheraient</strong>,
+  et elle s'éteint au-dessus : c'est un filet, et c'est ce qu'elle doit
+  être.</li>
+  <li><strong>Les primes portent 41 % du
+  financement</strong>, allocation déduite. C'est le nombre à surveiller : la
+  prime est le seul étage qu'un assuré peut emporter ailleurs, et chaque euro
+  que l'allocation en paie est un euro de moins sur lequel la concurrence a
+  prise.</li>
+</ul>
+<p><strong>Ce que ce calcul nous a fait corriger.</strong> Ce n'est pas le
+chiffrage d'un réglage déjà décidé : c'est lui qui a décidé du réglage, et
+nous le disons parce que c'est la seule façon de rendre un chiffrage
+croyable.</p>
+<ul class="serree">
+  <li><strong>La prime était calée sur le mauvais dénominateur.</strong> Elle
+  valait la moitié du coût moyen par HABITANT, alors que seuls les adultes la
+  paient : ≈ 14,5 millions de mineurs n'en versant aucune, la même moitié doit
+  être portée par cinquante-quatre millions d'adultes et non par
+  soixante-huit. La prime n'est plus écrite, elle est déduite — personne ne
+  peut donc refaire l'erreur.</li>
+  <li><strong>Le plafond de l'allocation rendait la loi inapplicable.</strong>
+  À 5 % du revenu, l'allocation touchait quatre adultes sur cinq et bornait ce
+  que les primes peuvent rapporter au tiers de la dépense : le partage
+  moitié-moitié inscrit dans les garanties n'était pas mal calibré, il était
+  arithmétiquement impossible. Porté à 8 %, il laisse les primes atteindre
+  ≈ 134 Md€ — au-delà de la moitié de la dépense — et la
+  garantie redevient tenable. Le plafond minimal qui la rend possible est de
+  7,5 % : nous sommes donc au réglage le plus protecteur que
+  l'arithmétique autorise.</li>
+</ul>
+<p>Ce plafond est le seul bouton de réglage de la réforme, et il arbitre entre
+deux choses qui vont en sens contraire : plus il est haut, moins l'allocation
+coûte et plus la concurrence a de prise, mais moins de monde est protégé.
+Voici le barème, pour que l'arbitrage se discute sur des nombres.</p>
+<div class="defilant"><table><caption>Ce que chaque réglage du plafond coûte, et ce qu&#x27;il protège</caption><thead><tr><th scope="col" class="nombre">Plafond de l'allocation</th><th scope="col" class="nombre">Ce qu'elle coûte</th><th scope="col" class="nombre">Adultes protégés</th><th scope="col" class="nombre">Part des primes dans le financement</th></tr></thead><tbody><tr><th scope="row" class="nombre">5 %</th><td class="nombre">≈ 50 Md€</td><td class="nombre">90 %</td><td class="nombre">30 %</td></tr><tr><th scope="row" class="nombre"><strong>8 %</strong></th><td class="nombre"><strong>≈ 23 Md€</strong></td><td class="nombre"><strong>60 %</strong></td><td class="nombre"><strong>41 %</strong></td></tr><tr><th scope="row" class="nombre">10 %</th><td class="nombre">≈ 13 Md€</td><td class="nombre">40 %</td><td class="nombre">45 %</td></tr><tr><th scope="row" class="nombre">12 %</th><td class="nombre">≈ 8 Md€</td><td class="nombre">20 %</td><td class="nombre">47 %</td></tr></tbody></table></div>
+<p class="discret">Le réglage retenu est en gras. Les autres ne sont pas moins
+défendables : au-dessus il coûte moins et protège moins, en dessous il
+protège davantage — mais sous 7,5 % les primes ne peuvent
+plus porter la moitié du financement, et la sixième garantie devient
+intenable. C'est un
+choix politique que ce tableau rend discutable au lieu de le cacher.</p>
 <h4>Ce qu'on peut affirmer</h4>
 <ul class="serree">
-  <li>La fusion des deux étages supprime un doublon de gestion dont le coût est
-  documenté : ≈ 7,6 Md€ par an pour le seul étage
-  complémentaire, auxquels s'ajoute la 15,27 % de taxe qui pèse sur ses
-  cotisations.</li>
-  <li>À couverture égale, le prélèvement total — cotisation employeur, part de
-  <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">CSG</span><span class="bulle" role="note" hidden>Contribution sociale généralisée : un prélèvement de 9,2 % sur les revenus d&#x27;activité, qui finance notamment l&#x27;assurance maladie. Contrairement aux cotisations, elle pèse aussi sur les retraites et les revenus du capital.</span></span>, cotisation de complémentaire — est destiné à rester
-  constant la première année : la réforme redistribue le paiement, elle ne le
-  réduit pas d'emblée.</li>
+  <li>La fusion des deux étages supprime un doublon de gestion : deux systèmes
+  d'information et deux services sur chaque facture, pour
+  ≈ 7,6 Md€ de frais au second étage et ≈ 7,3 Md€
+  au premier. Ce que le doublon coûte à lui seul, personne ne le sait au
+  milliard près — nous ne l'avançons donc pas.</li>
+  <li>La 15,27 % de taxe qui pèse aujourd'hui sur les cotisations de
+  complémentaire disparaît avec l'étage qu'elle taxait. Sa recette —
+  ≈ 6,5 Md€, qui finance la complémentaire santé solidaire — doit
+  être reprise dans le nouveau régime : elle l'est par la contribution assise
+  sur le revenu, dont l'allocation santé prend le relais.</li>
+  <li>À couverture égale, le prélèvement total est destiné à rester constant
+  la première année <em>à l'échelle du pays</em> : la réforme redistribue le
+  paiement, elle ne le réduit pas d'emblée. À l'échelle d'un assuré, en
+  revanche, il change — c'est le propre d'un changement d'assiette, et le
+  simulateur ne le cache pas.</li>
   <li>Les mesures d'offre (formation, installation, délégation d'actes) ne
   produisent pas d'économie à court terme. Elles produisent de l'accès aux
   soins, ce qui est leur seul objet.</li>
@@ -177,7 +291,7 @@ ses hypothèses</a>.</p></div></details>
 <div class="creme">
 <p class="surtitre">Ce que vous pouvez faire</p>
 <h2 class="serif" style="margin:0">Les objections, une par une.</h2>
-<p>Nous avons écrit les dix objections les plus sérieuses à ce programme, et nos réponses. Celles auxquelles nous n'avons pas de bonne réponse y figurent aussi.</p>
+<p>Nous avons écrit les douze objections les plus sérieuses à ce programme, et nos réponses. Celles auxquelles nous n'avons pas de bonne réponse y figurent aussi.</p>
 <p class="actions"><a class="bouton" href="objections.html">Lire les objections</a><a href="simulateur.html">Ce que vous payez aujourd&#x27;hui</a></p>
 </div>
 

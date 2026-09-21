@@ -26,10 +26,18 @@ Trois conséquences, et c'est pour elles que ce module existe :
 ``"verifier"``
     Chiffre de mémoire ou de seconde main, qu'il faut confronter à la source
     avant toute publication ou tout débat. Le site l'affiche en le disant.
+``"estime"``
+    Chiffre PRODUIT par un calcul de ce dépôt, à partir d'entrées qui sont
+    elles-mêmes dans cette table. Il n'est pas publié par une source : il est
+    reproductible, ce qui n'est pas la même chose et se dit autrement.
 
-Aucun chiffre n'est ici le produit d'un modèle : ce site ne modélise rien, il
-compare un système à un autre. Le seul calcul qu'il fait est celui du
-simulateur, et il est écrit dans ``moteur/js/simulateur.js``, à ciel ouvert.
+Ce site ne modélise rien : il compare un système à un autre. Il fait deux
+calculs, et deux seulement, tous deux à ciel ouvert — celui du simulateur,
+dans ``moteur/js/simulateur.js``, et le chiffrage de l'allocation santé, dans
+``src/sante/allocation.py``. Leurs résultats portent l'étiquette « estimé » et
+jamais « publié ». Un programme qui refuse de chiffrer ses économies ne peut
+pas refuser de chiffrer une dépense qu'il crée ; ce qu'il refuse, c'est
+d'inventer ce qui exigerait un modèle de comportement.
 """
 
 from __future__ import annotations
@@ -62,7 +70,7 @@ class Chiffre:
     lien: str = ""
 
     def __post_init__(self) -> None:
-        if self.fiabilite not in ("publie", "ordre", "verifier"):
+        if self.fiabilite not in ("publie", "ordre", "verifier", "estime"):
             raise ValueError(f"fiabilité inconnue : {self.fiabilite}")
 
 
@@ -454,6 +462,97 @@ CHIFFRES: tuple[Chiffre, ...] = (
         "néerlandais.",
     ),
     Chiffre(
+        cle="population",
+        valeur="68,6 millions",
+        libelle="d'habitants en France",
+        annee="2025",
+        source="INSEE, bilan démographique",
+        fiabilite="publie",
+        precision="Au 1ᵉʳ janvier 2025, dont 66,4 millions en France "
+        "métropolitaine et 2,3 millions dans les cinq départements d'outre-mer.",
+        lien="https://www.insee.fr/fr/statistiques/8719824",
+    ),
+    Chiffre(
+        cle="mineurs",
+        valeur="≈ 14,5 millions",
+        libelle="de personnes de moins de 18 ans",
+        annee="2025",
+        source="INSEE, bilan démographique",
+        fiabilite="ordre",
+        precision="Près de 21 % de la population. Aucune d'elles ne paie de "
+        "prime dans le système proposé : c'est ce chiffre qui fixe le nombre "
+        "d'adultes redevables, et donc ce que les primes peuvent rapporter.",
+        lien="https://www.insee.fr/fr/statistiques/8719824",
+    ),
+    Chiffre(
+        cle="niveau_vie_median",
+        valeur="26 740 €",
+        libelle="de niveau de vie annuel médian",
+        annee="2024",
+        source="INSEE, distribution des niveaux de vie",
+        fiabilite="publie",
+        precision="Le niveau de vie est le revenu disponible du ménage divisé "
+        "par ses unités de consommation. Le premier décile s'établit à "
+        "13 970 € et le neuvième à 48 580 €. C'est cette distribution, décile "
+        "par décile, qui sert d'assiette au chiffrage de l'allocation santé.",
+        lien="https://www.insee.fr/fr/statistiques/2416808",
+    ),
+    Chiffre(
+        cle="point_csg",
+        valeur="≈ 17,5 Md€",
+        libelle="ce que rapporte un point de CSG",
+        annee="2024",
+        source="Sécurité sociale, évaluation des politiques de sécurité sociale",
+        fiabilite="ordre",
+        precision="La CSG a rapporté 153,8 Md€ en 2024, dont 67 % sur les "
+        "revenus d'activité, 22 % sur les revenus de remplacement et 11 % sur "
+        "le patrimoine et les placements. Le point de CSG est l'unité dans "
+        "laquelle se compte tout financement social en France : c'est donc "
+        "dans cette unité que le coût de l'allocation santé est exprimé.",
+        lien="https://evaluation.securite-sociale.fr/home/financement/"
+        "1-4-1-valeur-du-point-de-csg-et.html",
+    ),
+    Chiffre(
+        cle="zorgtoeslag",
+        valeur="≈ 6,5 Md€",
+        libelle="ce que coûte l'allocation santé néerlandaise en un an",
+        annee="2025",
+        source="Dienst Toeslagen, aantallen en bedragen",
+        fiabilite="verifier",
+        precision="Versée à 4,76 millions de foyers sur 18 millions "
+        "d'habitants, soit environ 360 € par habitant et par an. C'est le seul "
+        "instrument comparable dont le coût soit publié : un chiffrage "
+        "français qui s'en écarterait d'un ordre de grandeur serait à refaire.",
+        lien="https://www.overtoeslagen.nl/over-ons-werk/aantallen-en-bedragen",
+    ),
+    Chiffre(
+        cle="aides_complementaire",
+        valeur="≈ 10 Md€",
+        libelle="de dépenses publiques déjà consacrées à la couverture "
+        "complémentaire",
+        annee="2021",
+        source="Cour des comptes, rapport sur les complémentaires santé",
+        fiabilite="verifier",
+        precision="Dont environ 3 Md€ d'exonérations de cotisations sociales "
+        "sur la part employeur des contrats collectifs, la complémentaire "
+        "santé solidaire, et la déduction de l'impôt sur les bénéfices. "
+        "L'allocation santé ne s'ajoute pas à ces dépenses : elle les "
+        "remplace, et son coût NET est l'écart entre les deux. Chiffre de "
+        "seconde main et daté : à reprendre dans le dernier rapport.",
+    ),
+    Chiffre(
+        cle="c2s",
+        valeur="≈ 3,2 Md€",
+        libelle="de dépense nette de complémentaire santé solidaire",
+        annee="2023",
+        source="Rapport annuel de la complémentaire santé solidaire",
+        fiabilite="verifier",
+        precision="Pour 7,45 millions de bénéficiaires, soit 13 % des "
+        "assurés. C'est le dispositif que l'allocation santé absorbe, et dont "
+        "elle élargit considérablement le champ.",
+        lien="https://www.complementaire-sante-solidaire.gouv.fr/",
+    ),
+    Chiffre(
         cle="participation",
         valeur="2 € et 1 €",
         libelle="de participation forfaitaire par consultation et par boîte",
@@ -479,9 +578,6 @@ CHIFFRES_TOLERES: dict[str, str] = {
     "100 %": "Tournure, et non mesure : « 100 % du gros risque couvert », "
              "« 100 % du tarif Sécu ». Désigne l'intégralité d'une prise en "
              "charge, pas un relevé statistique.",
-    "68 millions": "Population résidente de la France, ordre de grandeur "
-                   "employé pour opposer la taille du pays à celle de "
-                   "Singapour. INSEE, bilan démographique.",
     "30 milliards": "Cité entre guillemets pour être RÉFUTÉ — c'est le type "
                     "d'économie annoncée que ce programme refuse d'avancer.",
     "50 €": "Plafond annuel des participations forfaitaires et des franchises "
@@ -667,6 +763,54 @@ PAYS: tuple[Pays, ...] = (
 )
 
 
+# -- les entrées du chiffrage de l'allocation --------------------------------
+#
+# Elles ne paraissent pas telles quelles dans une page — ce sont des nombres de
+# calcul, pas des arguments — mais elles portent leur source comme les autres,
+# et ``src/sante/allocation.py`` ne lit rien d'autre.
+
+POPULATION = 68_600_000.0
+"""INSEE, bilan démographique 2025 — voir le chiffre ``population``."""
+
+MINEURS = 14_500_000.0
+"""INSEE, bilan démographique 2025 — voir le chiffre ``mineurs``."""
+
+DEPENSE_TOTALE = 250_000_000_000.0
+"""DREES, CSBM 2023 — voir le chiffre ``csbm``."""
+
+DECILES_NIVEAU_VIE: tuple[float, ...] = (
+    9_960.0, 15_890.0, 19_400.0, 22_430.0, 25_310.0,
+    28_290.0, 31_670.0, 36_040.0, 43_010.0, 76_970.0,
+)
+"""Niveau de vie annuel MOYEN de chacun des dix déciles, en euros.
+
+INSEE, « Niveau de vie moyen par décile », édition 2024, euros constants 2024.
+Le niveau de vie est le revenu disponible du ménage — après impôts et
+transferts — divisé par ses unités de consommation.
+"""
+
+UNITES_COUPLE = 1.5
+"""Unités de consommation d'un couple, échelle d'équivalence OCDE modifiée.
+
+1 pour le premier adulte, 0,5 par personne de 14 ans ou plus. C'est ce
+coefficient qui fait qu'une allocation assise sur le foyer coûte PLUS qu'une
+allocation assise sur la personne : deux primes pour une fois et demie le
+revenu.
+"""
+
+RENDEMENT_POINT_CSG = 17_500_000_000.0
+"""Ce que rapporte un point de CSG — voir le chiffre ``point_csg``."""
+
+ZORGTOESLAG_COUT = 6_520_000_000.0
+"""Dienst Toeslagen, exercice 2025 — voir le chiffre ``zorgtoeslag``."""
+
+POPULATION_PAYS_BAS = 18_000_000.0
+"""Ordre de grandeur, Centraal Bureau voor de Statistiek."""
+
+DEPENSE_PUBLIQUE_COMPLEMENTAIRE = 10_000_000_000.0
+"""Cour des comptes — voir le chiffre ``aides_complementaire``."""
+
+
 # -- les paramètres du simulateur --------------------------------------------
 #
 # Ils sont ici pour la même raison que les chiffres : le simulateur tourne dans
@@ -688,12 +832,26 @@ PARAMETRES_SIMULATEUR: dict[str, object] = {
     "part_employeur_complementaire": 0.5,
     "participations_annuelles": 100.0,
     "cout_moyen_par_personne": 3700.0,
+    "part_prime_nominale": 0.5,
     "part_franchise_rendue": 0.6,
-    "plafond_prime_part_revenu": 0.10,
+    "plafond_prime_part_revenu": 0.08,
     "franchise_part_revenu": 0.04,
     "franchise_plafond": 1500.0,
     "depense_moyenne_petit_risque": 450.0,
 }
+
+# Deux paramètres manquent à cette table, et c'est voulu : la PRIME et le TAUX
+# DE CONTRIBUTION ne sont pas des choix, ce sont des conséquences. La prime est
+# la part de la dépense que la loi laisse au second étage, rapportée aux
+# adultes qui la paient ; le taux est ce qu'il reste à lever une fois
+# l'allocation déduite. Les deux se calculent dans ``allocation.py``, et
+# ``allocation.parametres()`` rend la table complète — celle que le navigateur
+# lit et que la page Données publie.
+#
+# Ils ont été écrits à la main, et les deux étaient faux : la prime était calée
+# sur le coût par HABITANT alors que les mineurs n'en versent aucune, et le
+# taux était un chiffre rond posé avant tout calcul. Les déduire est le seul
+# moyen que l'erreur ne revienne pas.
 
 # Ce que chaque paramètre représente, et l'unité dans laquelle il s'écrit. La
 # page « Données et sources » est ENGENDRÉE à partir de ces deux tables : un
@@ -725,14 +883,30 @@ DESCRIPTIONS_SIMULATEUR: dict[str, tuple[str, str]] = {
                                       "l'employeur en contrat collectif"),
     "participations_annuelles": ("euros", "Participations forfaitaires et "
                                  "franchises médicales, plafonds cumulés"),
-    "cout_moyen_par_personne": ("euros", "Prime de base, adossée au coût moyen "
-                                "des soins par habitant <strong>(hypothèse de "
-                                "travail)</strong>"),
+    "cout_moyen_par_personne": ("euros", "Coût moyen des soins par habitant, "
+                                "sur lequel les deux étages du financement "
+                                "sont adossés"),
+    "part_prime_nominale": ("part", "Part de ce coût portée par la prime "
+                            "versée à l'assureur ; le reste est porté par la "
+                            "contribution assise sur le revenu. C'est le "
+                            "partage néerlandais <strong>(hypothèse de "
+                            "travail)</strong>"),
+    "prime_nominale": ("euros", "Prime annuelle avant allocation. "
+                       "<strong>Déduite</strong> : cette part de la dépense "
+                       "rapportée aux seuls adultes qui la paient, les "
+                       "mineurs n'en versant aucune"),
+    "taux_contribution_revenu": ("part", "Taux de la contribution santé, "
+                                 "assis sur la même assiette que la CSG. "
+                                 "<strong>Déduit</strong> : c'est ce qu'il "
+                                 "reste à lever une fois les primes "
+                                 "encaissées, rapporté au rendement du point "
+                                 "de CSG"),
     "part_franchise_rendue": ("part", "Part de la franchise choisie qui est "
                               "rendue en baisse de prime <strong>(hypothèse de "
                               "travail)</strong>"),
     "plafond_prime_part_revenu": ("part", "Part du revenu au-delà de laquelle "
-                                  "l'allocation santé prend le relais "
+                                  "l'allocation santé prend en charge la "
+                                  "prime. Porté de 5 % à 8 % après chiffrage "
                                   "<strong>(hypothèse de travail)</strong>"),
     "franchise_part_revenu": ("part", "Plafond de reste à charge annuel, en "
                               "part du revenu <strong>(hypothèse de "
@@ -751,15 +925,16 @@ def _francais(nombre: float, decimales: int) -> str:
     return texte.rstrip("0").rstrip(",") if decimales else texte
 
 
-def parametre_affiche(cle: str) -> str:
+def formater_parametre(cle: str, valeur: float) -> str:
     """La valeur d'un paramètre, TELLE QU'ELLE SE LIT dans la page.
 
-    Elle est calculée depuis le paramètre lui-même, et non recopiée : une
+    Elle est mise en forme depuis le paramètre lui-même, et non recopiée : une
     valeur recopiée à la main dans un tableau est une valeur qui finira par
     dire autre chose que le calcul — c'est arrivé, et c'est la raison de cette
-    fonction.
+    fonction. Elle prend la valeur en argument plutôt que d'aller la chercher,
+    parce que deux des paramètres ne sont pas dans cette table : ils sont
+    déduits, et ``allocation.parametres()`` les porte.
     """
-    valeur = float(PARAMETRES_SIMULATEUR[cle])  # type: ignore[arg-type]
     unite = DESCRIPTIONS_SIMULATEUR[cle][0]
     if unite == "part":
         return _francais(valeur * 100, 2) + "\u202f%"
@@ -776,18 +951,43 @@ RESERVES_SIMULATEUR: tuple[tuple[str, str], ...] = (
         "dans la dernière LFSS avant d'être citée.",
     ),
     (
+        "part_prime_nominale",
+        "Le partage entre la prime versée à l'assureur et la contribution "
+        "assise sur le revenu est LE choix politique de cette réforme, et non "
+        "un paramètre technique. La valeur retenue — moitié-moitié — est celle "
+        "que la loi néerlandaise impose. Plus la part de la prime est élevée, "
+        "plus le financement pèse également sur tous, quel que soit le "
+        "revenu ; plus elle est basse, moins la concurrence entre assureurs a "
+        "de prise. Il n'existe pas de valeur techniquement juste : il existe "
+        "une valeur qu'on assume.",
+    ),
+    (
+        "taux_contribution_revenu",
+        "Ce taux n'est plus posé, il est DÉDUIT : c'est ce qu'il reste à "
+        "lever une fois les primes encaissées, rapporté au rendement d'un "
+        "point de CSG. Il suppose donc que la contribution ait l'assiette de "
+        "la CSG — revenus d'activité, de remplacement ET du capital. Une "
+        "assiette plus étroite exigerait un taux plus élevé, et c'est la "
+        "question que la loi tranche, pas le calcul.",
+    ),
+    (
         "cout_moyen_par_personne",
-        "La prime du système proposé est adossée au coût moyen des soins par "
-        "habitant — la CSBM divisée par la population. C'est un chiffre "
+        "Le financement du système proposé est adossé au coût moyen des soins "
+        "par habitant — la CSBM divisée par la population. C'est un chiffre "
         "vérifiable, mais une moyenne : elle ne dit pas ce que coûterait votre "
         "propre contrat, qui dépend du panier retenu et de la péréquation.",
     ),
     (
         "plafond_prime_part_revenu",
-        "Le plafond au-delà duquel l'allocation santé prend le relais — 10 % "
-        "du revenu — est une HYPOTHÈSE de travail, pas une mesure chiffrée. "
-        "Le calibrage réel d'une telle allocation relève d'un modèle "
-        "budgétaire que ce dépôt ne contient pas.",
+        "Le plafond au-delà duquel l'allocation santé prend le relais est une "
+        "HYPOTHÈSE de travail, mais elle n'est plus arbitraire : elle a été "
+        "portée de 5 % à 8 % du revenu après chiffrage. À 5 %, l'allocation "
+        "touchait quatre adultes sur cinq et bornait ce que les primes "
+        "peuvent rapporter au tiers de la dépense, rendant le partage "
+        "moitié-moitié arithmétiquement impossible. À 8 %, elle redevient "
+        "finançable sans cesser de couvrir les revenus modestes — c'est le "
+        "réglage le plus protecteur qui tienne l'arithmétique. Le barème "
+        "complet est publié, et le calcul est dans src/sante/allocation.py.",
     ),
     (
         "depense_moyenne_petit_risque",

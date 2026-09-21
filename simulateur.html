@@ -22,7 +22,7 @@
 </div></header>
 <main id="contenu" tabindex="-1">
 
-<div class="affiche"><p class="surtitre">Ce que vous payez</p><h1>Votre santé vous coûte <strong class="cle-texte">bien plus</strong> que votre mutuelle.</h1><p class="chapeau">Cotisation maladie de l'employeur, part de la CSG, cotisation de complémentaire, participations forfaitaires : quatre prélèvements, dont trois n'apparaissent nulle part en clair. Ce simulateur les additionne. Tout se calcule dans votre navigateur : <strong class="cle-texte">rien n'est envoyé nulle part</strong>.</p></div>
+<div class="affiche"><p class="surtitre">Ce que vous payez</p><h1>Votre santé vous coûte <strong class="cle-texte">bien plus</strong> que votre mutuelle.</h1><p class="chapeau">Cotisation maladie de l'employeur, part de la CSG, cotisation de complémentaire, participations forfaitaires : quatre prélèvements, dont trois n'apparaissent nulle part en clair. Ce simulateur les additionne, puis les met en regard des deux étages du système proposé. Tout se calcule dans votre navigateur : <strong class="cle-texte">rien n'est envoyé nulle part</strong>.</p></div>
 
 
 <form class="creme simulateur-court" id="formulaire" method="get" action="#resultat">
@@ -53,6 +53,12 @@
              min="0" max="1000" step="1" value="35">
     </div>
     <div>
+      <label for="enfants">Enfants à charge<span class="aide">ils ne paient
+      aucune prime</span></label>
+      <input id="enfants" name="enfants" type="number" inputmode="numeric"
+             min="0" max="12" step="1" value="0">
+    </div>
+    <div>
       <label for="franchise">Franchise annuelle souhaitée<span class="aide">dans
       le système proposé</span></label>
       <select id="franchise" name="franchise">
@@ -64,9 +70,10 @@
     </div>
     <div class="action"><button type="submit">Calculer →</button></div>
   </div>
-  <p class="discret" style="margin:0.9rem 0 0">Deux totaux côte à côte : ce que
-  le système actuel prélève sur votre travail pour la santé, et ce que la
-  réforme proposée prélèverait sous des hypothèses écrites noir sur blanc.</p>
+  <p class="discret" style="margin:0.9rem 0 0">Deux totaux côte à côte, calculés
+  séparément : ce que le système actuel prélève sur votre travail pour la
+  santé, et ce que la réforme proposée prélèverait sous des hypothèses écrites
+  noir sur blanc. L'écart entre les deux est un résultat, pas une promesse.</p>
 </form>
 
 
@@ -102,18 +109,35 @@ l'ordre où elle s'applique.</p>
   chacune.</li>
 </ul>
 <h4>Ce que le système proposé prélèverait</h4>
+<p>Deux étages, et le partage entre eux est le choix politique de cette
+réforme. La cible est le partage néerlandais, moitié-moitié ; les primes
+portent 41 % du financement une fois l'allocation
+déduite, et <a href="reforme.html#financement">le chiffrage dit comment on y
+est arrivé</a>.</p>
 <ul class="serree">
-  <li><strong>Une prime unique</strong>, calculée en part du revenu brut, qui
-  remplace les trois premiers prélèvements ci-dessus. Le taux retenu est une
-  <strong>hypothèse de travail</strong>, choisie pour que le total reste à peu
-  près constant à couverture égale — ce n'est pas une mesure, et la page
-  Données le dit.</li>
+  <li><strong>Une contribution assise sur votre revenu</strong>, qui remplace
+  la cotisation maladie de l'employeur et la part de CSG affectée à la santé,
+  et qui alimente le fonds de péréquation — pas votre assureur. Le taux retenu
+  est une <strong>hypothèse de travail</strong> : son calibrage réel exige un
+  modèle budgétaire que ce site ne contient pas, et la page Données le dit.</li>
+  <li><strong>Une prime versée à l'assureur que vous choisissez</strong>, égale
+  pour tous à l'intérieur d'un contrat. C'est elle, et elle seule, que vous
+  emportez ailleurs si votre caisse vous déplaît.</li>
+  <li><strong>L'allocation santé</strong>, qui plafonne cette prime à une part
+  de votre revenu et se verse directement à l'assureur.</li>
   <li><strong>La franchise que vous choisissez</strong>, dans la limite de
   votre dépense réelle de petit risque. Le simulateur retient une dépense
   moyenne ; la vôtre peut être nulle comme elle peut la dépasser.</li>
-  <li><strong>Rien au-delà du bouclier</strong> : le total est plafonné en part
-  du revenu, ce que le calcul applique.</li>
+  <li><strong>Rien pour vos enfants</strong> : aucune prime n'est due avant 18
+  ans, l'État verse la leur au fonds.</li>
+  <li><strong>Rien au-delà du bouclier</strong> : le reste à charge est
+  plafonné en part du revenu, ce que le calcul applique.</li>
 </ul>
+<p>Les deux colonnes sont calculées séparément. L'écart entre elles est donc un
+résultat, pas une construction — et il n'est pas le même pour tout le monde :
+déplacer le financement d'un prélèvement assis sur le travail vers une prime
+égale pour tous fait des gagnants et des perdants. Le simulateur le dit pour
+votre cas, dans les deux sens.</p>
 <div class="note avertissement"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img"><title>Attention</title><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div><p>Ce simulateur illustre des ORDRES DE GRANDEUR. Il ne prédit ni votre prime future, ni votre dépense de santé, et il ne chiffre pas la réforme à l'échelle du pays — voir <a href='reforme.html#financement'>ce que nous pouvons affirmer et ce que nous ne pouvons pas</a>. Chacune de ses hypothèses est écrite, datée et discutable sur la page <a href='donnees.html#simulateur'>Données et sources</a>.</p></div></div></div></details>
 
 <div class="creme">

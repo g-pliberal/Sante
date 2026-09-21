@@ -12,12 +12,14 @@
 // et ne peuvent pas diverger.
 //
 // Ce que ce fichier ne prétend pas être : un modèle. Il applique quatre taux
-// publics à un revenu saisi, puis décompose le même total en deux parts — ce
-// que coûtent vos soins, ce qui finance ceux des autres. Il n'annonce aucune
-// économie : le site dit ailleurs qu'il ne sait pas chiffrer la réforme, et il
-// ne le saurait pas davantage ici. Les hypothèses sont écrites en toutes
-// lettres sous le résultat, parce qu'un chiffre dont on ignore les hypothèses
-// ne vaut rien dans un débat.
+// publics à un revenu saisi, puis calcule SÉPARÉMENT ce que prélèveraient les
+// deux étages du système proposé — une contribution assise sur le revenu, une
+// prime versée à l'assureur choisi. L'écart entre les deux colonnes est donc
+// un résultat, et non une construction : il se dit, quel que soit son signe.
+// Il n'annonce aucune économie collective — le site dit ailleurs qu'il ne sait
+// pas chiffrer la réforme, et il ne le saurait pas davantage ici. Les
+// hypothèses sont écrites en toutes lettres sous le résultat, parce qu'un
+// chiffre dont on ignore les hypothèses ne vaut rien dans un débat.
 
 const FINE = " ";
 
@@ -115,26 +117,39 @@ function prelevementActuel(saisie) {
 }
 
 /**
- * Ce que le système proposé ferait APPARAÎTRE, sous les hypothèses écrites.
+ * Ce que le système proposé prélèverait, sous les hypothèses écrites.
  *
- * Ce bloc ne promet aucune économie, et c'est le point le plus important de ce
- * fichier. La réforme proposée ne réduit pas, la première année, ce qui est
- * prélevé : elle en change la FORME. Le calcul ci-dessous décompose donc le
- * même total en deux parts que le système actuel mélange —
+ * La prime et le plafond de l'allocation ont été corrigés APRÈS chiffrage :
+ * une prime calée sur la moitié du coût par habitant ne pouvait pas lever sa
+ * moitié, puisque les mineurs n'en paient aucune, et un plafond à 5 % du
+ * revenu bornait ce que les primes peuvent rapporter au tiers de la dépense.
+ * Voir `src/sante/allocation.py`.
  *
- *   * ce que coûtent vos propres soins, c'est-à-dire la prime d'assurance
- *     adossée à la dépense moyenne par habitant, moins l'allocation santé si
- *     la prime dépasse la part du revenu que la loi accepte d'y consacrer ;
- *   * ce qui finance les soins des autres, qui est un choix politique
- *     parfaitement légitime, mais que personne, aujourd'hui, ne peut chiffrer
- *     pour son propre cas.
+ * Deux étages, et c'est tout le sujet. Une réforme qui ferait porter le
+ * financement de la santé à une prime forfaitaire seule serait une capitation :
+ * le même montant pour un SMIC et pour un très haut revenu. Ce n'est pas ce que
+ * pratiquent les pays dont ce programme s'inspire, et ce n'est pas ce qu'il
+ * propose.
  *
- * Une économie affichée ici serait une économie inventée : le site dit
- * ailleurs qu'il ne sait pas chiffrer la réforme à l'échelle du pays, et il ne
- * peut pas le savoir davantage à l'échelle d'un contribuable.
+ *   * une CONTRIBUTION ASSISE SUR LE REVENU, qui remplace la cotisation
+ *     maladie de l'employeur et la part de CSG affectée à la santé, et qui
+ *     alimente le fonds de péréquation — pas votre assureur ;
+ *   * une PRIME versée à l'assureur que vous avez choisi, égale pour tous à
+ *     l'intérieur d'un contrat, et c'est elle qui porte la concurrence.
+ *
+ * La loi néerlandaise fixe ses taux pour que le partage reste à moitié-moitié.
+ * Le paramètre `part_prime_nominale` est ce partage, et il est le choix
+ * politique de cette réforme : la page Données le dit en toutes lettres.
  */
-function prelevementPropose(saisie, brutAnnuel, totalActuel) {
+function prelevementPropose(saisie, brutAnnuel) {
   const p = PARAMETRES;
+
+  // La contribution a l'assiette de la CSG, et son taux en est déduit : c'est
+  // dans cette unité que le chiffrage exprime ce qu'il reste à lever. Lui
+  // donner une assiette plus étroite que celle qui a servi à le calculer
+  // ferait mentir les deux à la fois.
+  const assiette = saisie.statut === "retraite" ? 1 : p.assiette_csg;
+  const contribution = brutAnnuel * assiette * p.taux_contribution_revenu;
 
   // La prime baisse avec la franchise choisie : c'est le mécanisme suisse, et
   // c'est tout l'intérêt de la franchise. L'abattement vaut une part de la
@@ -143,11 +158,11 @@ function prelevementPropose(saisie, brutAnnuel, totalActuel) {
   const franchisePayee = Math.min(saisie.franchise,
                                   p.depense_moyenne_petit_risque);
   const abattement = franchisePayee * p.part_franchise_rendue;
-  const primePleine = Math.max(0, p.cout_moyen_par_personne - abattement);
+  const primePleine = Math.max(0, p.prime_nominale - abattement);
 
-  // L'allocation santé : la prime de base ne peut pas dépasser une part du
-  // revenu. En dessous de ce seuil, la collectivité paie la différence — c'est
-  // le zorgtoeslag néerlandais et la réduction de prime suisse.
+  // L'allocation santé : la prime ne peut pas dépasser une part du revenu. En
+  // dessous de ce seuil, la collectivité paie la différence — c'est le
+  // zorgtoeslag néerlandais et la réduction de prime suisse.
   const plafondPrime = brutAnnuel * p.plafond_prime_part_revenu;
   const allocation = Math.max(0, primePleine - plafondPrime);
   const primeNette = primePleine - allocation;
@@ -159,16 +174,15 @@ function prelevementPropose(saisie, brutAnnuel, totalActuel) {
                                        p.franchise_plafond);
   const resteACharge = Math.min(franchisePayee, plafondResteACharge);
 
-  const vosSoins = primeNette + resteACharge;
-  // Ce qui reste du prélèvement actuel une fois vos propres soins payés : la
-  // solidarité, positive quand vous financez celle des autres, négative quand
-  // la collectivité ajoute pour vous.
-  const solidarite = totalActuel - vosSoins;
-
   const lignes = [
-    ["Prime d'assurance, au coût moyen des soins", primePleine,
-     "La dépense de soins par habitant, diminuée de ce que la franchise "
-     + "choisie cesse de faire rembourser."],
+    ["Contribution santé assise sur votre revenu", contribution,
+     "Elle remplace la cotisation maladie de l'employeur et la part de CSG, "
+     + "a la même assiette qu'elle, et va au fonds de péréquation — pas à "
+     + "votre assureur."],
+    ["Prime de votre assureur", primePleine,
+     "Égale pour tous à l'intérieur d'un contrat : ni l'âge, ni le sexe, ni "
+     + "l'état de santé ne la modulent. C'est la moitié de la dépense de "
+     + "santé rapportée aux adultes qui la paient."],
     ["Allocation santé reçue", -allocation,
      "Elle plafonne la prime à une part de votre revenu, et se verse "
      + "directement à l'assureur : vous n'avancez rien."],
@@ -177,7 +191,16 @@ function prelevementPropose(saisie, brutAnnuel, totalActuel) {
      + `choisie et du bouclier (${euros(plafondResteACharge)} par an).`],
   ].filter(([, montant]) => montant !== 0);
 
-  return { lignes, total: vosSoins, solidarite, plafondResteACharge };
+  // Zéro, et il faut le VOIR : c'est la réponse à la question qu'on posera en
+  // premier. Une ligne absente se lit comme une ligne oubliée.
+  if (saisie.enfants > 0) {
+    lignes.push(["Prime de vos enfants à charge", 0,
+      "Aucune prime avant 18 ans : l'État verse la leur au fonds. Une famille "
+      + "ne paie pas autant de primes qu'elle compte de têtes."]);
+  }
+
+  const total = contribution + primeNette + resteACharge;
+  return { lignes, total, contribution, primeNette, resteACharge };
 }
 
 // -- rendu -------------------------------------------------------------------
@@ -218,10 +241,14 @@ function scenario(titre, categorie, total, largeur, classe, glose) {
 
 function rendre(saisie) {
   const actuel = prelevementActuel(saisie);
-  const propose = prelevementPropose(saisie, actuel.brutAnnuel, actuel.total);
+  const propose = prelevementPropose(saisie, actuel.brutAnnuel);
   const echelle = Math.max(actuel.total, propose.total, 1);
-  const partDuRevenu = actuel.total / (actuel.brutAnnuel || 1);
-  const solidarite = propose.solidarite;
+  // Sans revenu saisi, une part de revenu ne veut rien dire : la division par
+  // un dénominateur de secours affichait « 10 000 % de votre revenu brut ».
+  const partDuRevenu = actuel.brutAnnuel > 0
+    ? `Soit <strong>${pourcentage(actuel.total / actuel.brutAnnuel)}</strong> `
+      + `de votre revenu brut, et ${euros(actuel.total / 12)} par mois. `
+    : `Soit ${euros(actuel.total / 12)} par mois. `;
 
   // Les deux barres se lisent sur la MÊME échelle, celle du plus grand des
   // deux totaux. Rapporter la seconde au prélèvement actuel la faisait
@@ -234,30 +261,27 @@ function rendre(saisie) {
   const reserves = RESERVES.map(({ parametre, texte }) =>
     `<li><strong>${echapper(parametre)}</strong> — ${echapper(texte)}</li>`).join("");
 
-  const glosesSolidarite = solidarite >= 0
-    ? `Le reste — <strong>${euros(solidarite)} par an</strong> — finance les `
-      + "soins des autres, la dette de la branche maladie et les frais de "
-      + "gestion des deux étages. C'est un choix politique légitime, et "
-      + "aujourd'hui personne ne peut le chiffrer pour son propre cas."
-    : `Vos soins coûtent <strong>${euros(-solidarite)} de plus par an</strong> `
-      + "que ce que vous versez : la différence est financée par les autres "
-      + "assurés et par l'impôt. La réforme ne vous retire pas cette aide — "
-      + "elle l'écrit noir sur blanc, au lieu de la noyer dans quatre "
-      + "prélèvements.";
+  const partPrime = propose.primeNette / (propose.total || 1);
 
   return `
 <h2>Ce que la santé vous coûte</h2>
 ${scenario("Le système actuel", "prélevé pour la santé", actuel.total,
     partActuel, "actuel",
-    `Soit <strong>${pourcentage(partDuRevenu)}</strong> de votre revenu brut, `
-    + `et ${euros(actuel.total / 12)} par mois. Trois de ces quatre lignes `
-    + "n'apparaissent sur aucun document que vous recevez.")}
-${scenario("La réforme proposée — ce que vos soins coûtent",
-    "pour vos propres soins", propose.total, partSoins, "liberal",
-    "Prime d'assurance au coût moyen des soins, allocation santé déduite, "
-    + "franchise comprise. " + glosesSolidarite)}
+    partDuRevenu + "Trois de ces quatre lignes n'apparaissent sur aucun "
+    + "document que vous recevez.")}
+${scenario("La réforme proposée", "prélevé pour la santé", propose.total,
+    partSoins, "liberal",
+    `Une contribution assise sur votre revenu (${euros(propose.contribution)}) `
+    + `et une prime versée à l'assureur que vous choisissez `
+    + `(${euros(propose.primeNette)}).`
+    + (propose.primeNette > 0
+      ? ` Soit <strong>${pourcentage(partPrime)}</strong> du total qui dépend `
+        + "de votre assureur plutôt que de votre fiche de paie — et c'est sur "
+        + "cette part-là que vous pouvez agir en partant ailleurs."
+      : " À ce niveau de revenu, l'allocation santé couvre la prime en "
+        + "entier : vous choisissez votre assureur sans rien lui verser."))}
 
-${avertissementTotal(actuel.total, propose.total, solidarite)}
+${avertissementTotal(actuel.total, propose, saisie.statut)}
 
 <div class="paire">
   <div>${tableauLignes(actuel.lignes, actuel.total,
@@ -282,20 +306,56 @@ ${avertissementTotal(actuel.total, propose.total, solidarite)}
 /**
  * La phrase que ce simulateur existe pour écrire.
  *
- * Elle dit que le total ne bouge pas, et que c'est sa DÉCOMPOSITION qui
- * change. Sans elle, deux barres de longueurs différentes se lisent comme une
- * économie — ce qu'elles ne sont pas.
+ * Elle disait autrefois que le total ne bouge pas, et c'était une pétition de
+ * principe : le total était CONSTRUIT constant, puisque la part « solidarité »
+ * n'était que le reste d'une soustraction. Les deux colonnes sont désormais
+ * calculées séparément, et leur écart est donc un résultat. Il se dit.
  */
-function avertissementTotal(totalActuel, vosSoins, solidarite) {
-  const part = solidarite >= 0
-    ? `${euros(vosSoins)} pour vos soins, ${euros(solidarite)} pour ceux des autres`
-    : `${euros(vosSoins)} pour vos soins, dont ${euros(-solidarite)} financés par les autres`;
+function avertissementTotal(totalActuel, propose, statut) {
+  const ecart = propose.total - totalActuel;
+  const sens = Math.abs(ecart) < totalActuel * 0.02
+    ? "À votre niveau de revenu, les deux totaux sont du même ordre."
+    : ecart < 0
+      ? `À votre niveau de revenu, la réforme prélèverait `
+        + `<strong>${euros(-ecart)} de moins par an</strong>.`
+      : `À votre niveau de revenu, la réforme prélèverait `
+        + `<strong>${euros(ecart)} de plus par an</strong>.`;
+  // Les deux cas qu'il serait le plus tentant de taire, et les plus coûteux à
+  // taire : ils ne se découvrent pas, ils s'écrivent.
+  const p = PARAMETRES;
+  let pourquoi = "";
+  if (ecart > 0 && statut === "retraite") {
+    pourquoi = " Une pension ne supporte aujourd'hui aucune cotisation "
+      + "maladie et une CSG au taux réduit, alors que la dépense de santé se "
+      + "concentre sur les âges élevés : une contribution assise sur tous les "
+      + "revenus et une prime due par tous les adultes prélèvent donc "
+      + "davantage sur elle. C'est l'effet le plus impopulaire de cette "
+      + "réforme, et nous n'avons pas de réponse qui l'annule.";
+  } else if (ecart > 0) {
+    const seuil = p.prime_nominale / p.plafond_prime_part_revenu / 12;
+    pourquoi = " L'allocation santé s'éteint au-dessus de "
+      + `${euros(seuil)} bruts par mois, et l'écart entre les deux systèmes `
+      + "s'inverse un peu au-delà. Le plafond de l'allocation est le seul "
+      + "bouton de réglage de cette réforme, et il est déjà au cran le plus "
+      + "protecteur que l'arithmétique autorise : "
+      + "<a href=\"reforme.html#financement\">le barème est publié</a>.";
+  }
   return `<div class="note resume">
-  <p><strong>Le total ne baisse pas : il se décompose.</strong> La réforme ne
-  promet pas de vous prélever moins la première année — elle promet que les
-  ${euros(totalActuel)} prélevés aujourd'hui s'écrivent enfin : ${part}. Un
-  prélèvement qu'on ne voit pas n'est jamais discuté, et ce qui n'est jamais
-  discuté ne s'améliore pas.</p>
+  <p><strong>Ce que ce chiffre est, et ce qu'il n'est pas.</strong> ${sens}${pourquoi}
+  Cet écart n'est pas une économie : c'est la conséquence arithmétique d'un
+  taux de contribution qui est une hypothèse de travail, appliqué à un seul
+  cas. Un système qui déplace le financement d'un prélèvement assis sur le
+  travail vers une prime égale pour tous fait forcément des gagnants et des
+  perdants, et il serait malhonnête de ne montrer que les premiers. ${
+    propose.total > 0
+      ? `Ce que la réforme promet, c'est que les ${euros(propose.total)} `
+        + `soient enfin ÉCRITS : ${euros(propose.contribution)} de `
+        + `contribution, ${euros(propose.primeNette)} de prime que vous pouvez `
+        + "emporter ailleurs."
+      : "Ce que la réforme promet, c'est que ce qui est prélevé soit enfin "
+        + "écrit : une contribution et une prime, l'une et l'autre visibles."
+  } Un prélèvement qu'on ne voit pas n'est jamais discuté, et ce qui n'est
+  jamais discuté ne s'améliore pas.</p>
 </div>`;
 }
 
@@ -308,6 +368,7 @@ function lireSaisie(formulaire) {
     revenu: Math.max(0, Number(valeur("revenu")) || 0),
     mutuelle: Math.max(0, Number(valeur("mutuelle")) || 0),
     franchise: Math.max(0, Number(valeur("franchise")) || 0),
+    enfants: Math.max(0, Number(valeur("enfants")) || 0),
   };
 }
 

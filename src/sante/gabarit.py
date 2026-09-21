@@ -269,6 +269,8 @@ _FIABILITES = {
                                    "magnitude, pas une valeur exacte."),
     "verifier": ("À vérifier", "De seconde main : à confronter à la source "
                                "avant toute citation."),
+    "estime": ("Estimé", "Produit par un calcul de ce dépôt, à partir "
+                         "d'entrées sourcées : reproductible, pas publié."),
 }
 
 

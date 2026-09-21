@@ -19,7 +19,7 @@ import sys
 RACINE = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RACINE / "src"))
 
-from sante import donnees, gabarit, pages  # noqa: E402  (après sys.path)
+from sante import allocation, donnees, gabarit, pages  # noqa: E402  (après sys.path)
 
 # Chaque page : son fichier, son titre d'onglet, sa description pour les
 # moteurs de recherche et les aperçus de partage, et la fonction qui l'écrit.
@@ -59,11 +59,11 @@ PAGES = (
      "nulle part.",
      pages.simulateur),
     ("objections.html",
-     "Les dix objections, y compris les bonnes",
-     "Privatisation, sélection des risques, renoncement aux soins, médecine à "
-     "deux vitesses, absence de chiffrage : les dix objections les plus "
-     "sérieuses à ce programme, et nos réponses — y compris quand elles sont "
-     "incomplètes.",
+     f"Les {pages.nombre_objections()} objections, y compris les bonnes",
+     "Privatisation, sélection des risques, prime forfaitaire, enfants à "
+     "charge, renoncement aux soins, absence de chiffrage : les "
+     f"{pages.nombre_objections()} objections les plus sérieuses à ce "
+     "programme, et nos réponses — y compris quand elles sont incomplètes.",
      pages.objections),
     ("donnees.html",
      "Données et sources",
@@ -82,14 +82,16 @@ SCRIPTS = {
 def paquet_donnees() -> dict[str, object]:
     """Ce que le simulateur lit au chargement : ses paramètres et ses réserves.
 
-    Il est écrit depuis ``donnees.py`` pour la même raison que le reste : une
-    hypothèse qui vaut 9 % dans la page Données et 10 % dans le calcul ne
-    serait découverte par personne.
+    Il est écrit depuis ``donnees.py`` et ``allocation.py`` pour la même raison
+    que le reste : une hypothèse qui vaut 9 % dans la page Données et 10 %
+    dans le calcul ne serait découverte par personne. La table écrite ici est
+    la COMPLÈTE — les paramètres saisis, plus les deux que le chiffrage en
+    déduit.
     """
     return {
         "avertissement": "Écrit par scripts/construire_site.py depuis "
                          "src/sante/donnees.py. Ne pas modifier à la main.",
-        "parametres": donnees.PARAMETRES_SIMULATEUR,
+        "parametres": allocation.parametres(),
         "reserves": [
             {"parametre": cle, "texte": texte}
             for cle, texte in donnees.RESERVES_SIMULATEUR
