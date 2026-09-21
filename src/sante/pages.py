@@ -22,12 +22,13 @@ from .donnees import valeur as v
 def programme() -> str:
     tete = g.affiche(
         "Notre programme pour la santé",
-        "La santé la plus chère d'Europe, et "
-        + g.cle_texte("six mois")
-        + " pour un rendez-vous.",
+        "Parmi les plus chères d'Europe, et "
+        + g.cle_texte(v("delai_ophtalmo"))
+        + " pour un ophtalmologue.",
         "La France consacre à la santé près de trois points de PIB de plus que "
-        "la moyenne des pays riches, et ses habitants attendent plus longtemps "
-        "qu'ailleurs pour voir un médecin. "
+        "la moyenne des pays riches, et le délai médian pour un rendez-vous "
+        "d'ophtalmologie y est de cinquante-deux jours — deux jours chez le "
+        "généraliste, et jusqu'à quatre mois dans certaines régions. "
         + g.cle_texte("Le problème n'est pas l'argent.")
         + " C'est que personne, dans ce système, n'a le pouvoir de choisir : ni "
         "le patient, ni le médecin, ni même le directeur d'hôpital.",
@@ -216,9 +217,13 @@ lent, et chaque étape est réversible tant que la suivante n'a pas eu lieu.</p>
   service de gestion. Les organismes existants deviennent les premiers
   assureurs du nouveau régime.</li>
   <li><strong>Année 3 — le bouclier.</strong> Le plafond de reste à charge
-  proportionnel au revenu remplace le régime ALD, qu'il englobe. Aucun patient
-  en ALD ne perd de droits : le plafond est, pour eux, immédiatement
-  atteint.</li>
+  proportionnel au revenu remplace le régime ALD, qu'il englobe. C'est l'étape
+  la plus délicate du calendrier, et il faut la nommer : un patient en ALD est
+  aujourd'hui remboursé à 100 % du tarif pour les soins liés à son affection,
+  là où un bouclier fait payer jusqu'à son plafond. Le calibrage de ce plafond
+  pour les affections longues est donc une condition de la réforme, écrite
+  dans la loi et non dans un décret : aucun malade chronique ne doit sortir
+  perdant de l'échange.</li>
   <li><strong>Année 4 — le choix.</strong> Ouverture effective de la
   concurrence : chacun peut changer d'assureur au 1ᵉʳ janvier. La
   péréquation des risques est en service depuis un an, à blanc.</li>
@@ -473,7 +478,8 @@ def comparaisons() -> str:
         "Le débat français oppose le modèle actuel au « système américain ». "
         "C'est une fausse alternative : entre les deux, quatre pays au moins "
         "assurent une couverture universelle avec des assureurs en "
-        "concurrence, et trois d'entre eux dépensent moins que nous.",
+        "concurrence, sans que personne n'y soit refusé pour son état de "
+        "santé — et plusieurs dépensent moins que nous.",
     )
 
     lignes = [
@@ -482,7 +488,7 @@ def comparaisons() -> str:
     ]
     lignes.insert(0, [
         "<strong>France</strong>", f"<strong>{v('dcs_pib')}</strong>",
-        "<strong>≈ 85 %</strong>",
+        f"<strong>{v('part_publique_france')}</strong>",
         "<strong>Monopole public pour la base, assurance privée obligatoire "
         "pour le complément</strong>",
     ])
@@ -501,7 +507,11 @@ def comparaisons() -> str:
             + "".join(f"<li>{detail}</li>" for detail in pays.detail)
             + "</ul>"
             + g.note("<strong>Ce que ça prouve.</strong> " + pays.lecon,
-                     "resume"),
+                     "resume")
+            + g.note("<strong>Ce que valent ces chiffres.</strong> "
+                     + pays.reserve, "avertissement"),
+            source=f"{pays.annee} · {pays.source} · "
+                   + g.etiquette_fiabilite(pays.fiabilite),
             identifiant=pays.nom.lower().replace("-", "").replace(" ", ""),
         )
         for pays in donnees.PAYS
@@ -538,10 +548,23 @@ la péréquation des risques.</p>""",
     )
 
     corps = fiches_pays
+    avertissement_table = g.note(
+        "<strong>Ces cinq lignes sont à vérifier avant toute reprise "
+        "publique.</strong> Les parts de PIB sont recopiées de seconde main, "
+        "et les périmètres comptables nationaux ne coïncident pas. Elles "
+        "doivent être relues dans <em>une seule et même</em> édition du "
+        "Système de comptes de la santé : deux chiffres vrais pris dans deux "
+        "éditions différentes font un tableau faux, et c'est la pièce la plus "
+        "facile à retourner contre qui la publie. Le classement des pays "
+        "selon leur dépense — la Suisse notamment — en dépend.",
+        "avertissement")
+
     return f"""
 {tete}
 
 {table}
+
+{avertissement_table}
 
 {g.plan(corps, "Les quatre systèmes")}
 
@@ -609,18 +632,25 @@ def reforme() -> str:
   couverture actuel base + complémentaire responsable.</li>
   <li>Un seul organisme rembourse, un seul décompte, un seul service de
   gestion, un seul interlocuteur en cas de litige.</li>
-  <li>La taxe spéciale sur les conventions d'assurance
-  ({v('tsa')} sur votre cotisation de complémentaire) disparaît avec l'étage
-  qu'elle taxait.</li>
+  <li>La taxe de solidarité additionnelle ({v('tsa')} sur votre cotisation de
+  complémentaire) disparaît avec l'étage qu'elle taxait. Elle rapporte
+  aujourd'hui {v('rendement_tsa')} et finance la complémentaire santé
+  solidaire : cette recette doit être reprise à l'euro près dans le nouveau
+  régime, faute de quoi la réforme déplacerait un trou au lieu de le
+  combler.</li>
   <li>Les mutuelles et institutions de prévoyance existantes deviennent, si
   elles le souhaitent, les premiers assureurs du nouveau régime : elles en ont
   les réseaux, les systèmes et les adhérents.</li>
 </ul>""",
-            "Vous ne remplissez plus de dossier entre deux organismes, vous ne "
-            "recevez plus deux décomptes pour une consultation, et la part de "
-            "votre cotisation qui payait la gestion du second étage — "
-            f"{v('frais_gestion_oc')} par an pour l'ensemble des assurés — "
-            "revient dans le soin.",
+            "Vous ne remplissez plus de dossier entre deux organismes et vous "
+            "ne recevez plus deux décomptes pour une consultation. Ce que la "
+            "fusion économise n'est pas la totalité des "
+            f"{v('frais_gestion_oc')} de gestion du second étage — un assureur "
+            "unique garde des frais, et le premier étage en a déjà pour "
+            f"{v('frais_gestion_amo')} — mais le DOUBLON : deux systèmes "
+            "d'information, deux services de gestion et deux décomptes sur "
+            "chaque facture. Nous ne savons pas dire au milliard près ce que "
+            "pèse ce doublon, et nous ne l'inventons pas.",
             "Les complémentaires emploient des dizaines de milliers de "
             "personnes, dont l'emploi dépend directement de ce second étage.",
             "L'emploi ne disparaît pas : la gestion du risque, le service aux "
@@ -674,11 +704,15 @@ def reforme() -> str:
   sur un SMIC et sur un revenu élevé.</li>
   <li>Au-delà, la prise en charge est intégrale et <strong>automatique</strong> :
   aucun dossier, aucune demande, aucune liste.</li>
-  <li>Le bouclier remplace le régime {g.terme('ALD')} en l'élargissant : les
-  {v('ald')} de personnes aujourd'hui en ALD atteignent leur plafond dès le
-  début de l'année et sont donc couvertes intégralement, comme aujourd'hui ;
-  mais les malades graves qui ne figurent sur aucune liste — et ils sont
-  nombreux — le sont aussi.</li>
+  <li>Le bouclier remplace le régime {g.terme('ALD')} en l'élargissant : les malades
+  graves qui ne figurent sur aucune liste — et ils sont nombreux — sont
+  couverts comme les autres, sans dossier, sans admission et sans attente.
+  <strong>En contrepartie, il faut dire ce qu'un bouclier change pour ceux qui
+  y sont déjà</strong> : l'ALD rembourse aujourd'hui dès le premier euro les
+  soins liés à l'affection, là où un plafond se paie avant d'être atteint. Le
+  plafond applicable aux {v('ald')} de personnes en ALD doit donc être fixé de
+  sorte qu'aucune ne soit perdante — c'est une clause de la loi, pas un
+  paramètre de décret.</li>
   <li>Les participations forfaitaires actuelles ({v('participation')}), qui
   pèsent autant sur un petit revenu que sur un grand, sont supprimées et
   remplacées par ce mécanisme.</li>
@@ -1052,7 +1086,10 @@ dépense pas : c'est exact, et les Pays-Bas comme la Suisse en font
 l'expérience. Mais le système français entretient déjà un doublon complet —
 deux organismes, deux systèmes d'information, deux gestions sur chaque
 facture — dont le seul étage complémentaire coûte {{frais}} par an, auxquels
-s'ajoute la taxe qui pèse sur ses cotisations.</p>
+s'ajoutent {{fraisamo}} pour le premier étage et la taxe qui pèse sur les
+cotisations du second. Additionnés, ces frais placent la France au deuxième
+rang de l'OCDE pour le coût de gestion de son système de santé, derrière les
+États-Unis.</p>
 <p>La comparaison honnête n'est donc pas « monopole sobre contre marché
 dispendieux », mais « doublon administratif contre concurrence avec frais
 commerciaux ». Nous pensons que le second coûte moins ; nous ne prétendons pas
@@ -1150,6 +1187,7 @@ c'est plus vérifiable.</p>"""),
             reponse,
             texte
             .replace("{part}", v("part_oc"))
+            .replace("{fraisamo}", v("frais_gestion_amo"))
             .replace("{frais}", v("frais_gestion_oc"))
             .replace("{numerus}", v("numerus"))
             .replace("{annee}", "2026"),
@@ -1215,34 +1253,17 @@ def page_donnees() -> str:
         for chiffre in donnees.CHIFFRES if chiffre.precision
     )
 
+    # Engendré depuis la table des paramètres, et non recopié : c'est ici que
+    # la page mentait, en annonçant un taux de prime que le calcul n'employait
+    # pas et en taisant la moitié de ses hypothèses.
     parametres = g.tableau(
         ["Hypothèse", "Valeur", "Ce qu'elle représente"],
-        [
-            ["taux_maladie_reduit", "7 %",
-             "Cotisation maladie employeur jusqu'à 2,5 SMIC annuels"],
-            ["taux_maladie_plein", "13 %",
-             "Cotisation maladie employeur au-delà de ce seuil"],
-            ["taux_csg", "9,2 %", "CSG sur les revenus d'activité"],
-            ["assiette_csg", "98,25 %", "Part du brut soumise à la CSG"],
-            ["part_csg_maladie", "55 %",
-             "Fraction de la CSG affectée à la branche maladie "
-             "<strong>(ordre de grandeur)</strong>"],
-            ["part_employeur_complementaire", "50 %",
-             "Part minimale payée par l'employeur en contrat collectif"],
-            ["participations_annuelles", "100 €",
-             "Participations forfaitaires et franchises médicales, plafonds "
-             "cumulés"],
-            ["taux_prime_liberale", "9 %",
-             "Prime santé dans le système proposé <strong>(hypothèse de "
-             "travail)</strong>"],
-            ["franchise_part_revenu", "4 %",
-             "Plafond de reste à charge annuel, en part du revenu"],
-            ["depense_moyenne_petit_risque", "450 €",
-             "Dépense annuelle moyenne de petit risque par assuré "
-             "<strong>(ordre de grandeur)</strong>"],
-        ],
+        [[f"<code>{cle_param}</code>", donnees.parametre_affiche(cle_param),
+          description]
+         for cle_param, (_, description)
+         in donnees.DESCRIPTIONS_SIMULATEUR.items()],
         ["", "nombre", "long texte"],
-        "Les hypothèses du simulateur",
+        "Les hypothèses du simulateur, toutes",
     )
 
     reserves = "".join(

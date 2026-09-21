@@ -72,7 +72,8 @@ function prelevementActuel(saisie) {
     // progressif avec le revenu, de 0 à 6,5 %. La valeur retenue est le haut de
     // cette fourchette, appliqué au-dessus de 1,1 SMIC — un ORDRE DE GRANDEUR,
     // et la page Données le dit.
-    cotisation = brutAnnuel > 1.1 * smicAnnuel ? brutAnnuel * 0.065 : 0;
+    cotisation = brutAnnuel > p.seuil_independant_smic * smicAnnuel
+      ? brutAnnuel * p.taux_maladie_independant : 0;
   }
   // Un retraité ne verse aucune cotisation maladie sur sa pension : sa part du
   // financement passe par la CSG, dont le taux est différent.
@@ -141,7 +142,7 @@ function prelevementPropose(saisie, brutAnnuel, totalActuel) {
   // assureur ne peut pas rendre plus que ce qu'il cesse de rembourser.
   const franchisePayee = Math.min(saisie.franchise,
                                   p.depense_moyenne_petit_risque);
-  const abattement = franchisePayee * 0.6;
+  const abattement = franchisePayee * p.part_franchise_rendue;
   const primePleine = Math.max(0, p.cout_moyen_par_personne - abattement);
 
   // L'allocation santé : la prime de base ne peut pas dépasser une part du
@@ -218,14 +219,17 @@ function scenario(titre, categorie, total, largeur, classe, glose) {
 function rendre(saisie) {
   const actuel = prelevementActuel(saisie);
   const propose = prelevementPropose(saisie, actuel.brutAnnuel, actuel.total);
-  const maximum = Math.max(actuel.total, 1);
+  const echelle = Math.max(actuel.total, propose.total, 1);
   const partDuRevenu = actuel.total / (actuel.brutAnnuel || 1);
   const solidarite = propose.solidarite;
 
-  // La barre de la réforme se lit sur la même échelle que celle du prélèvement
-  // actuel : les deux parts y tiennent bout à bout, et leur somme est, par
-  // construction, le total d'aujourd'hui. C'est le seul message de ce bloc.
-  const partSoins = (propose.total / maximum) * 100;
+  // Les deux barres se lisent sur la MÊME échelle, celle du plus grand des
+  // deux totaux. Rapporter la seconde au prélèvement actuel la faisait
+  // déborder de son cadre dès que les soins d'un assuré coûtent plus que ce
+  // qu'il verse — le cas de toute pension modeste, c'est-à-dire le cas où la
+  // capture d'écran est la plus facile à retourner contre nous.
+  const partActuel = (actuel.total / echelle) * 100;
+  const partSoins = (propose.total / echelle) * 100;
 
   const reserves = RESERVES.map(({ parametre, texte }) =>
     `<li><strong>${echapper(parametre)}</strong> — ${echapper(texte)}</li>`).join("");
@@ -244,7 +248,7 @@ function rendre(saisie) {
   return `
 <h2>Ce que la santé vous coûte</h2>
 ${scenario("Le système actuel", "prélevé pour la santé", actuel.total,
-    100, "actuel",
+    partActuel, "actuel",
     `Soit <strong>${pourcentage(partDuRevenu)}</strong> de votre revenu brut, `
     + `et ${euros(actuel.total / 12)} par mois. Trois de ces quatre lignes `
     + "n'apparaissent sur aucun document que vous recevez.")}

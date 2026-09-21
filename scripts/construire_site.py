@@ -42,8 +42,8 @@ PAGES = (
     ("comparaisons.html",
      "Ailleurs : quatre systèmes universels sans monopole",
      "Pays-Bas, Suisse, Allemagne, Singapour : quatre pays couvrent toute "
-     "leur population avec des assureurs en concurrence, et trois d'entre eux "
-     "dépensent moins que la France.",
+     "leur population avec des assureurs en concurrence, sans que personne y "
+     "soit refusé pour son état de santé.",
      pages.comparaisons),
     ("reforme.html",
      "La réforme, en six mesures",
