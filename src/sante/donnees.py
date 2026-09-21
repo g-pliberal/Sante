@@ -26,10 +26,18 @@ Trois conséquences, et c'est pour elles que ce module existe :
 ``"verifier"``
     Chiffre de mémoire ou de seconde main, qu'il faut confronter à la source
     avant toute publication ou tout débat. Le site l'affiche en le disant.
+``"estime"``
+    Chiffre PRODUIT par un calcul de ce dépôt, à partir d'entrées qui sont
+    elles-mêmes dans cette table. Il n'est pas publié par une source : il est
+    reproductible, ce qui n'est pas la même chose et se dit autrement.
 
-Aucun chiffre n'est ici le produit d'un modèle : ce site ne modélise rien, il
-compare un système à un autre. Le seul calcul qu'il fait est celui du
-simulateur, et il est écrit dans ``moteur/js/simulateur.js``, à ciel ouvert.
+Ce site ne modélise rien : il compare un système à un autre. Il fait deux
+calculs, et deux seulement, tous deux à ciel ouvert — celui du simulateur,
+dans ``moteur/js/simulateur.js``, et le chiffrage de l'allocation santé, dans
+``src/sante/allocation.py``. Leurs résultats portent l'étiquette « estimé » et
+jamais « publié ». Un programme qui refuse de chiffrer ses économies ne peut
+pas refuser de chiffrer une dépense qu'il crée ; ce qu'il refuse, c'est
+d'inventer ce qui exigerait un modèle de comportement.
 """
 
 from __future__ import annotations
@@ -62,7 +70,7 @@ class Chiffre:
     lien: str = ""
 
     def __post_init__(self) -> None:
-        if self.fiabilite not in ("publie", "ordre", "verifier"):
+        if self.fiabilite not in ("publie", "ordre", "verifier", "estime"):
             raise ValueError(f"fiabilité inconnue : {self.fiabilite}")
 
 
@@ -454,6 +462,97 @@ CHIFFRES: tuple[Chiffre, ...] = (
         "néerlandais.",
     ),
     Chiffre(
+        cle="population",
+        valeur="68,6 millions",
+        libelle="d'habitants en France",
+        annee="2025",
+        source="INSEE, bilan démographique",
+        fiabilite="publie",
+        precision="Au 1ᵉʳ janvier 2025, dont 66,4 millions en France "
+        "métropolitaine et 2,3 millions dans les cinq départements d'outre-mer.",
+        lien="https://www.insee.fr/fr/statistiques/8719824",
+    ),
+    Chiffre(
+        cle="mineurs",
+        valeur="≈ 14,5 millions",
+        libelle="de personnes de moins de 18 ans",
+        annee="2025",
+        source="INSEE, bilan démographique",
+        fiabilite="ordre",
+        precision="Près de 21 % de la population. Aucune d'elles ne paie de "
+        "prime dans le système proposé : c'est ce chiffre qui fixe le nombre "
+        "d'adultes redevables, et donc ce que les primes peuvent rapporter.",
+        lien="https://www.insee.fr/fr/statistiques/8719824",
+    ),
+    Chiffre(
+        cle="niveau_vie_median",
+        valeur="26 740 €",
+        libelle="de niveau de vie annuel médian",
+        annee="2024",
+        source="INSEE, distribution des niveaux de vie",
+        fiabilite="publie",
+        precision="Le niveau de vie est le revenu disponible du ménage divisé "
+        "par ses unités de consommation. Le premier décile s'établit à "
+        "13 970 € et le neuvième à 48 580 €. C'est cette distribution, décile "
+        "par décile, qui sert d'assiette au chiffrage de l'allocation santé.",
+        lien="https://www.insee.fr/fr/statistiques/2416808",
+    ),
+    Chiffre(
+        cle="point_csg",
+        valeur="≈ 17,5 Md€",
+        libelle="ce que rapporte un point de CSG",
+        annee="2024",
+        source="Sécurité sociale, évaluation des politiques de sécurité sociale",
+        fiabilite="ordre",
+        precision="La CSG a rapporté 153,8 Md€ en 2024, dont 67 % sur les "
+        "revenus d'activité, 22 % sur les revenus de remplacement et 11 % sur "
+        "le patrimoine et les placements. Le point de CSG est l'unité dans "
+        "laquelle se compte tout financement social en France : c'est donc "
+        "dans cette unité que le coût de l'allocation santé est exprimé.",
+        lien="https://evaluation.securite-sociale.fr/home/financement/"
+        "1-4-1-valeur-du-point-de-csg-et.html",
+    ),
+    Chiffre(
+        cle="zorgtoeslag",
+        valeur="≈ 6,5 Md€",
+        libelle="ce que coûte l'allocation santé néerlandaise en un an",
+        annee="2025",
+        source="Dienst Toeslagen, aantallen en bedragen",
+        fiabilite="verifier",
+        precision="Versée à 4,76 millions de foyers sur 18 millions "
+        "d'habitants, soit environ 360 € par habitant et par an. C'est le seul "
+        "instrument comparable dont le coût soit publié : un chiffrage "
+        "français qui s'en écarterait d'un ordre de grandeur serait à refaire.",
+        lien="https://www.overtoeslagen.nl/over-ons-werk/aantallen-en-bedragen",
+    ),
+    Chiffre(
+        cle="aides_complementaire",
+        valeur="≈ 10 Md€",
+        libelle="de dépenses publiques déjà consacrées à la couverture "
+        "complémentaire",
+        annee="2021",
+        source="Cour des comptes, rapport sur les complémentaires santé",
+        fiabilite="verifier",
+        precision="Dont environ 3 Md€ d'exonérations de cotisations sociales "
+        "sur la part employeur des contrats collectifs, la complémentaire "
+        "santé solidaire, et la déduction de l'impôt sur les bénéfices. "
+        "L'allocation santé ne s'ajoute pas à ces dépenses : elle les "
+        "remplace, et son coût NET est l'écart entre les deux. Chiffre de "
+        "seconde main et daté : à reprendre dans le dernier rapport.",
+    ),
+    Chiffre(
+        cle="c2s",
+        valeur="≈ 3,2 Md€",
+        libelle="de dépense nette de complémentaire santé solidaire",
+        annee="2023",
+        source="Rapport annuel de la complémentaire santé solidaire",
+        fiabilite="verifier",
+        precision="Pour 7,45 millions de bénéficiaires, soit 13 % des "
+        "assurés. C'est le dispositif que l'allocation santé absorbe, et dont "
+        "elle élargit considérablement le champ.",
+        lien="https://www.complementaire-sante-solidaire.gouv.fr/",
+    ),
+    Chiffre(
         cle="participation",
         valeur="2 € et 1 €",
         libelle="de participation forfaitaire par consultation et par boîte",
@@ -479,9 +578,6 @@ CHIFFRES_TOLERES: dict[str, str] = {
     "100 %": "Tournure, et non mesure : « 100 % du gros risque couvert », "
              "« 100 % du tarif Sécu ». Désigne l'intégralité d'une prise en "
              "charge, pas un relevé statistique.",
-    "68 millions": "Population résidente de la France, ordre de grandeur "
-                   "employé pour opposer la taille du pays à celle de "
-                   "Singapour. INSEE, bilan démographique.",
     "30 milliards": "Cité entre guillemets pour être RÉFUTÉ — c'est le type "
                     "d'économie annoncée que ce programme refuse d'avancer.",
     "50 €": "Plafond annuel des participations forfaitaires et des franchises "
@@ -665,6 +761,54 @@ PAYS: tuple[Pays, ...] = (
         "ce qui fait la qualité.",
     ),
 )
+
+
+# -- les entrées du chiffrage de l'allocation --------------------------------
+#
+# Elles ne paraissent pas telles quelles dans une page — ce sont des nombres de
+# calcul, pas des arguments — mais elles portent leur source comme les autres,
+# et ``src/sante/allocation.py`` ne lit rien d'autre.
+
+POPULATION = 68_600_000.0
+"""INSEE, bilan démographique 2025 — voir le chiffre ``population``."""
+
+MINEURS = 14_500_000.0
+"""INSEE, bilan démographique 2025 — voir le chiffre ``mineurs``."""
+
+DEPENSE_TOTALE = 250_000_000_000.0
+"""DREES, CSBM 2023 — voir le chiffre ``csbm``."""
+
+DECILES_NIVEAU_VIE: tuple[float, ...] = (
+    9_960.0, 15_890.0, 19_400.0, 22_430.0, 25_310.0,
+    28_290.0, 31_670.0, 36_040.0, 43_010.0, 76_970.0,
+)
+"""Niveau de vie annuel MOYEN de chacun des dix déciles, en euros.
+
+INSEE, « Niveau de vie moyen par décile », édition 2024, euros constants 2024.
+Le niveau de vie est le revenu disponible du ménage — après impôts et
+transferts — divisé par ses unités de consommation.
+"""
+
+UNITES_COUPLE = 1.5
+"""Unités de consommation d'un couple, échelle d'équivalence OCDE modifiée.
+
+1 pour le premier adulte, 0,5 par personne de 14 ans ou plus. C'est ce
+coefficient qui fait qu'une allocation assise sur le foyer coûte PLUS qu'une
+allocation assise sur la personne : deux primes pour une fois et demie le
+revenu.
+"""
+
+RENDEMENT_POINT_CSG = 17_500_000_000.0
+"""Ce que rapporte un point de CSG — voir le chiffre ``point_csg``."""
+
+ZORGTOESLAG_COUT = 6_520_000_000.0
+"""Dienst Toeslagen, exercice 2025 — voir le chiffre ``zorgtoeslag``."""
+
+POPULATION_PAYS_BAS = 18_000_000.0
+"""Ordre de grandeur, Centraal Bureau voor de Statistiek."""
+
+DEPENSE_PUBLIQUE_COMPLEMENTAIRE = 10_000_000_000.0
+"""Cour des comptes — voir le chiffre ``aides_complementaire``."""
 
 
 # -- les paramètres du simulateur --------------------------------------------

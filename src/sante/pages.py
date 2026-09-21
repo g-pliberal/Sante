@@ -12,7 +12,8 @@ qu'est-ce que vous répondez à mes objections.
 
 from __future__ import annotations
 
-from . import donnees, gabarit as g
+from . import allocation, donnees, gabarit as g
+from .allocation import valeur_calculee as vc
 from .donnees import valeur as v
 
 
@@ -92,9 +93,10 @@ def programme() -> str:
         + g.terme("CSG") + " affectée à la santé et alimente la "
         + g.terme("péréquation des risques") + " ; et une prime versée à "
         "l'assureur que vous avez choisi, qui remplace votre complémentaire. "
-        "La loi fixe le partage à moitié-moitié, comme aux Pays-Bas : une "
-        "prime seule serait la même pour un SMIC et pour un très haut revenu, "
-        "et ce n'est pas ce que nous proposons.",
+        "La loi fixe un plancher — la moitié au moins assise sur le revenu — "
+        "et vise le partage néerlandais, moitié-moitié : une prime seule "
+        "serait la même pour un SMIC et pour un très haut revenu, et ce n'est "
+        "pas ce que nous proposons.",
         "<strong>Les petits soins passent par une franchise annuelle</strong>, "
         "plafonnée selon votre revenu ; au-delà, l'assureur paie tout. Les "
         "soins lourds, eux, sont couverts dès le premier euro.",
@@ -533,12 +535,13 @@ def comparaisons() -> str:
 
     limites = g.depliant(
         "Ce que ces exemples ne prouvent pas",
-        """
+        f"""
 <p>Une comparaison internationale est un argument faible si l'on en tire plus
 qu'elle ne contient. Quatre réserves, et elles sont sérieuses :</p>
 <ul class="serree">
   <li><strong>Les populations diffèrent.</strong> Singapour est une cité-État
-  jeune ; la France est un pays vieillissant de 68 millions d'habitants. La
+  jeune ; la France est un pays vieillissant de {v('population')}
+  d'habitants. La
   comparaison des dépenses en part de PIB ne corrige pas la structure d'âge.</li>
   <li><strong>Les périmètres comptables diffèrent.</strong> Ce qui est compté
   comme dépense de santé — soins de longue durée, dépendance, indemnités
@@ -875,12 +878,17 @@ choix politique de cette réforme — pas un réglage technique.</p>
   contrat, plafonnée en part du revenu par l'allocation santé, nulle avant 18
   ans. C'est la seule part du financement que vous pouvez emporter ailleurs,
   et c'est donc elle qui porte la concurrence.</li>
-  <li><strong>La loi fixe le partage à moitié-moitié</strong>, comme le fait la
-  loi néerlandaise — {v('contribution_pays_bas')} de contribution employeur
-  d'un côté, {v('prime_pays_bas')} de prime de l'autre. Une prime qui
-  porterait seule le financement serait la même pour un SMIC et pour un très
-  haut revenu : ce n'est pas une assurance solidaire, c'est une capitation, et
-  ce n'est pas ce que ce programme propose.</li>
+  <li><strong>La loi fixe un plancher et une cible.</strong> Le plancher : la
+  moitié au moins des ressources reste assise sur le revenu. La cible : le
+  partage néerlandais, moitié-moitié — {v('contribution_pays_bas')} de
+  contribution employeur d'un côté, {v('prime_pays_bas')} de prime de
+  l'autre. Le paramétrage actuel n'y est pas, et le chiffrage ci-dessous dit
+  de combien : les primes n'y portent guère plus du quart de la
+  dépense. Une prime
+  qui porterait SEULE le financement serait, à l'inverse, la même pour un
+  SMIC et pour un très haut revenu : ce n'est pas une assurance solidaire,
+  c'est une capitation, et ce n'est pas davantage ce que ce programme
+  propose.</li>
 </ul>
 <p>Un déplacement de cette ampleur fait des gagnants et des perdants, et il
 serait malhonnête de ne montrer que les premiers. Deux effets, et nous les
@@ -895,6 +903,43 @@ réponse qui l'annule.
 <a href="simulateur.html">Le simulateur le dit pour votre cas</a>, dans les
 deux sens, et <a href="objections.html#objection-4">l'objection est écrite</a>.
 </p>
+<h4>Ce que coûte l'allocation santé</h4>
+<p>C'est la seule dépense que cette réforme crée, et un programme qui refuse
+de chiffrer ses économies ne peut pas refuser de chiffrer une dépense qu'il
+crée. Le calcul ne demande aucun modèle : l'allocation vaut l'écart entre la
+prime et le plafond, et il suffit de le sommer sur la distribution des revenus
+que l'INSEE publie. Sa méthode est dans le dépôt, ses entrées sont sourcées,
+et <code>python3 scripts/cout_allocation.py</code> le refait.</p>
+<ul class="serree">
+  <li><strong>{vc('allocation_cout')} par an</strong>, telle que la réforme la paramètre
+  aujourd'hui, et <strong>{vc('allocation_net')} net</strong> une fois défalqués les
+  {v('aides_complementaire')} d'exonérations et de complémentaire santé solidaire que
+  l'État consacre déjà à la couverture complémentaire. Le repère néerlandais
+  — le zorgtoeslag néerlandais, qui coûte {v('zorgtoeslag')} pour dix-huit
+  millions d'habitants — vaudrait {vc('allocation_repere')} à notre échelle :
+  le même ordre de grandeur, ce qui est la seule chose qu'on demande à un
+  repère.</li>
+  <li><strong>{vc('allocation_aides')} des adultes la toucheraient.</strong> À un plafond de 5 %
+  du revenu, huit déciles de niveau de vie sur dix passent dessous : ce n'est
+  pas un filet, c'est un régime quasi universel. Nous le disons parce que
+  c'est la première chose qu'un contradicteur relèvera, et qu'elle est
+  exacte.</li>
+  <li><strong>Et elle borne ce que les primes peuvent rapporter.</strong>
+  Au-delà d'un certain montant, tout le monde est au plafond : chaque euro
+  ajouté à la prime est repris par l'allocation, et l'assureur n'encaisse rien
+  de plus. Les primes ne peuvent donc pas dépasser {vc('prime_encaissement_max')}, soit le tiers de
+  la dépense de santé, quelle que soit leur hauteur.</li>
+</ul>
+<p><strong>Ce que ce calcul oblige à corriger.</strong> Le partage
+moitié-moitié entre la prime et la contribution n'est pas seulement mal
+calibré à ce plafond : il est arithmétiquement impossible. Deux réglages le
+rendraient atteignable, et le chiffrage les évalue — caler la prime sur les
+adultes qui la paient plutôt que sur l'ensemble des habitants, puisque
+{v('mineurs')} de mineurs n'en versent aucune ; et relever le plafond de
+l'allocation pour qu'elle redevienne un filet. À 10 % du revenu, elle ne
+coûterait plus que {vc('allocation_recalibree')} et ne toucherait plus que deux adultes sur
+cinq. <strong>Ce réglage n'est pas adopté</strong> : il est chiffré, publié,
+et soumis à la discussion.</p>
 <h4>Ce qu'on peut affirmer</h4>
 <ul class="serree">
   <li>La fusion des deux étages supprime un doublon de gestion : deux systèmes
@@ -1052,7 +1097,9 @@ l'ordre où elle s'applique.</p>
 </ul>
 <h4>Ce que le système proposé prélèverait</h4>
 <p>Deux étages, et le partage entre eux est le choix politique de cette
-réforme. Il est fixé à moitié-moitié, comme la loi néerlandaise l'impose.</p>
+réforme. La cible est le partage néerlandais, moitié-moitié ; le paramétrage
+retenu ici n'y est pas encore, et
+<a href="reforme.html#financement">le chiffrage dit pourquoi</a>.</p>
 <ul class="serree">
   <li><strong>Une contribution assise sur votre revenu</strong>, qui remplace
   la cotisation maladie de l'employeur et la part de CSG affectée à la santé,
@@ -1176,7 +1223,11 @@ remplace la cotisation employeur et la part de {csg} ; l'allocation santé
 plafonne la prime à une part du revenu ; et aucune prime n'est due avant 18
 ans. C'est le partage néerlandais — {contribpb} de contribution employeur
 d'un côté, {primepb} de prime de l'autre — et il n'a rien d'un détail : il est
-la différence entre une assurance solidaire et une capitation.</p>
+la différence entre une assurance solidaire et une capitation. Le paramétrage
+que nous publions n'atteint d'ailleurs pas cette cible : les primes n'y
+portent guère plus du quart du financement, et
+<a href="reforme.html#financement">notre propre chiffrage le dit</a> plutôt
+que d'attendre qu'on nous le trouve.</p>
 <p><strong>Ce que nous ne prétendons pas</strong> : que l'opération soit neutre
 pour chacun. Déplacer une partie du financement d'un prélèvement assis sur le
 travail vers une prime égale pour tous change qui paie quoi, et dans deux
@@ -1322,7 +1373,17 @@ littérature varient trop pour qu'on en tire un chiffre de tract.</p>
 millésime et leur degré de fiabilité ; un simulateur dont chaque hypothèse est
 écrite et modifiable ; et la liste explicite de ce que nous ne pouvons pas
 affirmer. C'est moins spectaculaire qu'un « 30 milliards d'économies », et
-c'est plus vérifiable.</p>"""),
+c'est plus vérifiable.</p>
+<p><strong>Une chose est chiffrée, en revanche, et elle devait l'être</strong> :
+l'allocation santé, seule dépense que cette réforme crée. Un programme qui
+refuse de chiffrer ses économies ne peut pas refuser de chiffrer une dépense
+qu'il invente. Elle coûterait {allocationcout} par an, {allocationnet} net des
+aides qu'elle remplace, et elle toucherait {allocationaides} des adultes. Le
+calcul ne demande aucun modèle de comportement — c'est une soustraction faite
+sur les déciles de revenu de l'INSEE — et il est dans le dépôt, entrées
+comprises : <code>python3 scripts/cout_allocation.py</code>.
+<a href="reforme.html#financement">Ce qu'il nous oblige à corriger</a> y est
+écrit aussi.</p>"""),
 ]
 
 _EN_LETTRES = {10: "dix", 11: "onze", 12: "douze", 13: "treize",
@@ -1353,6 +1414,9 @@ def objections() -> str:
             texte
             .replace("{part}", v("part_oc"))
             .replace("{csg}", g.terme("CSG"))
+            .replace("{allocationcout}", vc("allocation_cout"))
+            .replace("{allocationnet}", vc("allocation_net"))
+            .replace("{allocationaides}", vc("allocation_aides"))
             .replace("{contribpb}", v("contribution_pays_bas"))
             .replace("{primepb}", v("prime_pays_bas"))
             .replace("{fraisamo}", v("frais_gestion_amo"))
@@ -1382,6 +1446,64 @@ def objections() -> str:
 # -- données et sources ------------------------------------------------------
 
 
+def donnees_calculees() -> str:
+    """Les chiffres que ce dépôt produit lui-même, et comment il les produit.
+
+    Ils ont leur propre section, et leur propre étiquette — « estimé » —
+    parce qu'un chiffre calculé n'a pas la même garantie qu'un chiffre
+    recopié d'une publication officielle. Le mélanger aux autres reviendrait à
+    lui prêter une autorité qu'il n'a pas ; le cacher reviendrait à refuser de
+    chiffrer une dépense qu'on crée.
+    """
+    chiffres = allocation.chiffres_calcules()
+    table = g.tableau(
+        ["Chiffre", "Ce qu'il mesure", "Comment il est obtenu", "Fiabilité"],
+        [[f'<span id="{cle}">{chiffre_calcule.valeur}</span>',
+          chiffre_calcule.libelle,
+          "<code>src/sante/allocation.py</code>",
+          g.etiquette_fiabilite(chiffre_calcule.fiabilite)]
+         for cle, chiffre_calcule in chiffres.items()],
+        ["nombre", "long texte", "", ""],
+        "Les chiffres que ce site calcule",
+    )
+    details = "".join(
+        g.depliant(f"{chiffre_calcule.valeur} — {chiffre_calcule.libelle}",
+                   f"<p>{chiffre_calcule.precision}</p>"
+                   f'<p class="discret">{chiffre_calcule.source} · '
+                   f"{g.etiquette_fiabilite(chiffre_calcule.fiabilite)}</p>",
+                   f"detail-{cle}")
+        for cle, chiffre_calcule in chiffres.items()
+    )
+    limites = "".join(f"<li>{limite}</li>" for limite in allocation.LIMITES)
+    return f"""
+<h2 id="calculs">Les chiffres que ce site calcule</h2>
+<p>Ce site ne modélise rien, et il tient à cette règle. Il fait pourtant deux
+calculs, et il faut dire lesquels : celui du simulateur, et le chiffrage de
+l'allocation santé. La raison est la même dans les deux cas — un programme qui
+refuse de chiffrer ses économies ne peut pas refuser de chiffrer une dépense
+qu'il crée. Ce qu'il refuse, c'est d'inventer ce qui exigerait un modèle de
+comportement : l'élasticité de la dépense de soins au reste à charge, la
+réaction des offreurs. Une somme d'arithmétique sur une distribution publiée
+n'est pas de cet ordre.</p>
+<p>Ces chiffres portent donc l'étiquette {g.etiquette_fiabilite('estime')},
+qui n'est ni « publié » ni « ordre de grandeur » : elle dit qu'un calcul de ce
+dépôt les a produits, et que <code>python3 scripts/cout_allocation.py</code>
+les refait. Leurs entrées sont dans la table ci-dessus, avec leurs sources.</p>
+{table}
+<h3>Le détail, chiffre par chiffre</h3>
+{details}
+<h3>Ce que ce calcul ne sait pas faire</h3>
+<ul class="serree">{limites}</ul>
+{g.note(
+    "Ces limites ne jouent pas toutes dans le même sens, et deux d'entre "
+    "elles tirent le coût vers le bas : l'assiette fiscale est plus large que "
+    "le revenu disponible, et les déciles modestes comptent plus d'enfants "
+    "que d'adultes. Le chiffre publié est donc un MAJORANT, ce qui est la "
+    "bonne façon de se tromper quand on chiffre sa propre dépense.",
+    "avertissement")}
+"""
+
+
 def page_donnees() -> str:
     tete = g.affiche(
         "Données et sources",
@@ -1409,6 +1531,11 @@ def page_donnees() -> str:
         ["nombre", "texte", "date", "long texte", ""],
         "Tous les chiffres cités sur ce site",
     )
+
+    # Les chiffres que le dépôt CALCULE, et qui ne sont donc publiés nulle part
+    # ailleurs. Ils ont leur table à eux : les mêler aux chiffres recopiés
+    # laisserait croire qu'une source extérieure les garantit.
+    calcules = donnees_calculees()
 
     precisions = "".join(
         g.depliant(
@@ -1497,6 +1624,8 @@ def page_donnees() -> str:
 
 <h2>Le détail, chiffre par chiffre</h2>
 {precisions}
+
+{calcules}
 
 <h2 id="simulateur">Les hypothèses du simulateur</h2>
 <p>Le simulateur applique des taux publics à un revenu saisi, puis compare le

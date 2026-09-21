@@ -21,7 +21,7 @@ RACINE = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RACINE / "src"))
 sys.path.insert(0, str(RACINE / "scripts"))
 
-from sante import donnees, gabarit  # noqa: E402
+from sante import allocation, donnees, gabarit  # noqa: E402
 import construire_site  # noqa: E402
 
 
@@ -197,6 +197,10 @@ class ChiffresOrphelins(unittest.TestCase):
         textes += [texte for _, texte in donnees.RESERVES_SIMULATEUR]
         textes += [donnees.parametre_affiche(cle)
                    for cle in donnees.PARAMETRES_SIMULATEUR]
+        textes += [chiffre.valeur for chiffre in allocation.chiffres_calcules().values()]
+        textes += [chiffre.precision
+                   for chiffre in allocation.chiffres_calcules().values()]
+        textes += list(allocation.LIMITES)
         textes += list(donnees.CHIFFRES_TOLERES)
         return {self.normaliser(trouve.group(0))
                 for texte in textes for trouve in self.MOTIF.finditer(texte)}
@@ -233,6 +237,53 @@ class ChiffresOrphelins(unittest.TestCase):
                 self.assertTrue(raison.strip(), "tolérance sans justification")
                 self.assertIn(self.normaliser(chiffre_lu), vus,
                               "tolérance qui ne sert plus : la retirer")
+
+
+class ChiffresCalcules(unittest.TestCase):
+    """Un chiffre que ce dépôt produit doit dire qu'il le produit.
+
+    C'est la seule entorse du site à sa règle — « il ne modélise rien » — et
+    elle n'est tenable qu'à une condition : que le résultat porte l'étiquette
+    « estimé », que sa méthode soit publiée, et qu'il ne se glisse jamais dans
+    la table des chiffres recopiés d'une source officielle.
+    """
+
+    def test_aucun_chiffre_calcule_ne_se_fait_passer_pour_publie(self) -> None:
+        cles_publiees = {chiffre.cle for chiffre in donnees.CHIFFRES}
+        for cle, chiffre in allocation.chiffres_calcules().items():
+            with self.subTest(chiffre=cle):
+                self.assertEqual(chiffre.fiabilite, "estime")
+                self.assertNotIn(cle, cles_publiees)
+                self.assertIn("allocation.py", chiffre.source)
+
+    def test_chaque_chiffre_calcule_parait_avec_sa_methode(self) -> None:
+        page = (RACINE / "donnees.html").read_text(encoding="utf-8")
+        for cle, chiffre in allocation.chiffres_calcules().items():
+            with self.subTest(chiffre=cle):
+                self.assertIn(f'id="{cle}"', page)
+                self.assertIn(chiffre.precision, page)
+        self.assertIn("scripts/cout_allocation.py", page)
+
+    def test_le_chiffrage_est_coherent_avec_le_simulateur(self) -> None:
+        """La prime chiffrée et la prime calculée doivent être la même.
+
+        Le chiffrage lit les paramètres du simulateur : si quelqu'un change la
+        part de la prime nominale sans y penser, le coût publié doit bouger
+        avec, et non rester là où il était.
+        """
+        parametres = donnees.PARAMETRES_SIMULATEUR
+        self.assertAlmostEqual(
+            allocation.prime_pleine(),
+            float(parametres["cout_moyen_par_personne"])
+            * float(parametres["part_prime_nominale"]))
+
+    def test_le_repere_etranger_confirme_l_ordre_de_grandeur(self) -> None:
+        """Un chiffrage qui s'écarterait du seul dispositif comparable est faux."""
+        calcule = allocation.chiffrer("personne").cout
+        repere = allocation.repere_neerlandais()
+        self.assertLess(abs(calcule - repere) / repere, 0.5,
+                        "le coût calculé s'écarte de plus de moitié du "
+                        "zorgtoeslag transposé : refaire le calcul")
 
 
 class Comparaisons(unittest.TestCase):

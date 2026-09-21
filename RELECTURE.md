@@ -23,9 +23,9 @@ qui n'avaient pas été prises.
 
 **Trois l'ont été depuis** (1.1, 1.2, 1.5), et le programme porte désormais
 l'architecture correspondante : financement à deux étages, moitié-moitié,
-aucune prime avant 18 ans. **Deux restent ouvertes** (1.3, 1.4), et une
-troisième est apparue en chemin — voir la section 1.6, qui est la plus
-importante de ce document.
+aucune prime avant 18 ans. **Une reste ouverte** (1.4), **une est chiffrée et attend
+un arbitrage** (1.3), et **une troisième est apparue en chemin** — voir la
+section 1.6, qui est la plus importante de ce document.
 
 ### 1.1 La prime forfaitaire ne peut pas remplacer la cotisation et la CSG
 
@@ -86,7 +86,7 @@ l'objection « qui paie pour les enfants ? » figure sur la page Objections. Le
 simulateur prend le nombre d'enfants à charge et affiche leur ligne à zéro —
 une ligne absente se lirait comme une ligne oubliée.
 
-### 1.3 Le coût de l'allocation santé n'est toujours pas chiffré
+### 1.3 Le coût de l'allocation santé — chiffré, et ce qu'il révèle
 
 Le passage à deux étages a beaucoup amélioré ce point : la prime n'est plus de
 3 520 € mais de 1 670 €, et le plafond est descendu de 10 % à 5 % du revenu.
@@ -99,11 +99,54 @@ budgétaire n'est chiffré nulle part**. Le programme refuse — à raison — d
 chiffrer ses économies. Il ne peut pas refuser de chiffrer une dépense qu'il
 crée.
 
-**À décider par vous.** Soit abaisser encore le plafond pour cibler les
-ménages modestes, soit produire l'estimation. La seconde voie est la plus
-solide : c'est aujourd'hui la seule dépense nouvelle du programme dont le
-montant est laissé en blanc, et « votre allocation coûte combien ? » est une
-question à laquelle il faudra répondre en direct.
+**Chiffré.** `src/sante/allocation.py` somme l'écart entre la prime et le
+plafond sur les dix déciles de niveau de vie publiés par l'INSEE, et
+`python3 scripts/cout_allocation.py` le refait. Aucun modèle de comportement
+n'intervient : c'est une soustraction faite dix fois.
+
+| | Avec les paramètres actuels |
+| --- | --- |
+| Coût brut, assiette individuelle | **29 Md€/an** |
+| Coût brut, assiette de foyer | 43 Md€/an |
+| Net des 10 Md€ déjà dépensés (Cour des comptes) | **19 Md€/an** |
+| Adultes concernés | **80 %** |
+| Repère : le zorgtoeslag néerlandais transposé | 25 Md€/an |
+
+Le repère néerlandais confirme l'ordre de grandeur, ce qui est la seule chose
+qu'on lui demande. Deux des limites du calcul tirent vers le bas — l'assiette
+fiscale est plus large que le revenu disponible, et les déciles modestes
+comptent plus d'enfants que d'adultes : **le chiffre publié est un majorant**,
+ce qui est la bonne façon de se tromper quand on chiffre sa propre dépense.
+
+**Mais le calcul a trouvé autre chose, et c'est plus grave que le coût.**
+
+À un plafond de 5 % du revenu, les primes ne peuvent pas rapporter plus de
+**84 Md€, soit le tiers de la dépense de santé — quelle que soit leur
+hauteur**. Au-delà d'un certain montant, tout le monde est au plafond : chaque
+euro ajouté à la prime est intégralement repris par l'allocation, et
+l'assureur n'encaisse rien de plus. Le partage moitié-moitié inscrit dans les
+garanties n'est donc pas mal calibré : il est **arithmétiquement impossible**.
+
+S'y ajoute une erreur de calage plus simple : la prime vaut la moitié du coût
+moyen par HABITANT, alors que seuls les adultes la paient. Quatorze millions et
+demi de mineurs ne versant rien, la même moitié doit être portée par 54
+millions d'adultes et non par 68 — la prime juste est de 2 311 €, pas 1 850 €.
+
+**À décider par vous.** Le chiffrage évalue la sortie, et le site la publie
+sans l'adopter :
+
+| Prime | Plafond | Allocation | Adultes aidés | Part des primes |
+| --- | --- | --- | --- | --- |
+| 1 850 € | 5 % | 29 Md€ | 80 % | 28 % |
+| 2 311 € | 8 % | 22 Md€ | 60 % | 41 % |
+| **2 311 €** | **10 %** | **13 Md€** | **40 %** | **45 %** |
+| 2 311 € | 12 % | 8 Md€ | 20 % | 47 % |
+
+La ligne à 10 % est celle que je recommande : l'allocation redevient un filet
+plutôt qu'un régime, son coût passe sous celui des aides qu'elle remplace, et
+les primes portent enfin près de la moitié du financement — donc la
+concurrence retrouve la prise que l'allocation lui retirait. C'est un
+paramétrage, pas une refonte : deux nombres dans `PARAMETRES_SIMULATEUR`.
 
 ### 1.4 Le bouclier fait payer ce que l'ALD rembourse
 
@@ -248,10 +291,12 @@ retourner contre nous.
    bouclier pour les affections longues, et le sort des retraités. Le
    troisième est le plus coûteux politiquement, et c'est celui qui n'a pas de
    réponse technique.
-5. **Calibrer `taux_contribution_revenu`.** Les 8 % retenus sont l'ordre de
+5. **Trancher le recalibrage de l'allocation** (tableau en 1.3). Deux nombres
+   à changer, et ils décident si l'allocation est un filet ou un régime.
+6. **Calibrer `taux_contribution_revenu`.** Les 8 % retenus sont l'ordre de
    grandeur qu'exige la moitié d'une dépense de 250 Md€ rapportée à l'assiette
    de la CSG. Un économiste doit le refaire sur l'assiette réelle avant toute
    publication : c'est le paramètre dont dépendent tous les écarts affichés
    par le simulateur.
-6. **Faire relire par un contradicteur réel.** Ce document est une relecture
+7. **Faire relire par un contradicteur réel.** Ce document est une relecture
    interne ; elle trouve ce qu'elle sait chercher.

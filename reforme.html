@@ -173,12 +173,17 @@ choix politique de cette réforme — pas un réglage technique.</p>
   contrat, plafonnée en part du revenu par l'allocation santé, nulle avant 18
   ans. C'est la seule part du financement que vous pouvez emporter ailleurs,
   et c'est donc elle qui porte la concurrence.</li>
-  <li><strong>La loi fixe le partage à moitié-moitié</strong>, comme le fait la
-  loi néerlandaise — 6,10 % de contribution employeur
-  d'un côté, ≈ 1 900 € par an de prime de l'autre. Une prime qui
-  porterait seule le financement serait la même pour un SMIC et pour un très
-  haut revenu : ce n'est pas une assurance solidaire, c'est une capitation, et
-  ce n'est pas ce que ce programme propose.</li>
+  <li><strong>La loi fixe un plancher et une cible.</strong> Le plancher : la
+  moitié au moins des ressources reste assise sur le revenu. La cible : le
+  partage néerlandais, moitié-moitié — 6,10 % de
+  contribution employeur d'un côté, ≈ 1 900 € par an de prime de
+  l'autre. Le paramétrage actuel n'y est pas, et le chiffrage ci-dessous dit
+  de combien : les primes n'y portent guère plus du quart de la
+  dépense. Une prime
+  qui porterait SEULE le financement serait, à l'inverse, la même pour un
+  SMIC et pour un très haut revenu : ce n'est pas une assurance solidaire,
+  c'est une capitation, et ce n'est pas davantage ce que ce programme
+  propose.</li>
 </ul>
 <p>Un déplacement de cette ampleur fait des gagnants et des perdants, et il
 serait malhonnête de ne montrer que les premiers. Deux effets, et nous les
@@ -193,6 +198,43 @@ réponse qui l'annule.
 <a href="simulateur.html">Le simulateur le dit pour votre cas</a>, dans les
 deux sens, et <a href="objections.html#objection-4">l'objection est écrite</a>.
 </p>
+<h4>Ce que coûte l'allocation santé</h4>
+<p>C'est la seule dépense que cette réforme crée, et un programme qui refuse
+de chiffrer ses économies ne peut pas refuser de chiffrer une dépense qu'il
+crée. Le calcul ne demande aucun modèle : l'allocation vaut l'écart entre la
+prime et le plafond, et il suffit de le sommer sur la distribution des revenus
+que l'INSEE publie. Sa méthode est dans le dépôt, ses entrées sont sourcées,
+et <code>python3 scripts/cout_allocation.py</code> le refait.</p>
+<ul class="serree">
+  <li><strong>≈ 29 Md€ par an</strong>, telle que la réforme la paramètre
+  aujourd'hui, et <strong>≈ 19 Md€ net</strong> une fois défalqués les
+  ≈ 10 Md€ d'exonérations et de complémentaire santé solidaire que
+  l'État consacre déjà à la couverture complémentaire. Le repère néerlandais
+  — le zorgtoeslag néerlandais, qui coûte ≈ 6,5 Md€ pour dix-huit
+  millions d'habitants — vaudrait ≈ 25 Md€ à notre échelle :
+  le même ordre de grandeur, ce qui est la seule chose qu'on demande à un
+  repère.</li>
+  <li><strong>80 % des adultes la toucheraient.</strong> À un plafond de 5 %
+  du revenu, huit déciles de niveau de vie sur dix passent dessous : ce n'est
+  pas un filet, c'est un régime quasi universel. Nous le disons parce que
+  c'est la première chose qu'un contradicteur relèvera, et qu'elle est
+  exacte.</li>
+  <li><strong>Et elle borne ce que les primes peuvent rapporter.</strong>
+  Au-delà d'un certain montant, tout le monde est au plafond : chaque euro
+  ajouté à la prime est repris par l'allocation, et l'assureur n'encaisse rien
+  de plus. Les primes ne peuvent donc pas dépasser ≈ 84 Md€, soit le tiers de
+  la dépense de santé, quelle que soit leur hauteur.</li>
+</ul>
+<p><strong>Ce que ce calcul oblige à corriger.</strong> Le partage
+moitié-moitié entre la prime et la contribution n'est pas seulement mal
+calibré à ce plafond : il est arithmétiquement impossible. Deux réglages le
+rendraient atteignable, et le chiffrage les évalue — caler la prime sur les
+adultes qui la paient plutôt que sur l'ensemble des habitants, puisque
+≈ 14,5 millions de mineurs n'en versent aucune ; et relever le plafond de
+l'allocation pour qu'elle redevienne un filet. À 10 % du revenu, elle ne
+coûterait plus que ≈ 13 Md€ et ne toucherait plus que deux adultes sur
+cinq. <strong>Ce réglage n'est pas adopté</strong> : il est chiffré, publié,
+et soumis à la discussion.</p>
 <h4>Ce qu'on peut affirmer</h4>
 <ul class="serree">
   <li>La fusion des deux étages supprime un doublon de gestion : deux systèmes
