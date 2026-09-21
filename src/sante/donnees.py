@@ -835,7 +835,7 @@ PARAMETRES_SIMULATEUR: dict[str, object] = {
     "part_prime_nominale": 0.5,
     "taux_contribution_revenu": 0.08,
     "part_franchise_rendue": 0.6,
-    "plafond_prime_part_revenu": 0.10,
+    "plafond_prime_part_revenu": 0.08,
     "franchise_part_revenu": 0.04,
     "franchise_plafond": 1500.0,
     "depense_moyenne_petit_risque": 450.0,
@@ -901,7 +901,7 @@ DESCRIPTIONS_SIMULATEUR: dict[str, tuple[str, str]] = {
                               "travail)</strong>"),
     "plafond_prime_part_revenu": ("part", "Part du revenu au-delà de laquelle "
                                   "l'allocation santé prend en charge la "
-                                  "prime. Porté de 5 % à 10 % après chiffrage "
+                                  "prime. Porté de 5 % à 8 % après chiffrage "
                                   "<strong>(hypothèse de travail)</strong>"),
     "franchise_part_revenu": ("part", "Plafond de reste à charge annuel, en "
                               "part du revenu <strong>(hypothèse de "
@@ -975,11 +975,13 @@ RESERVES_SIMULATEUR: tuple[tuple[str, str], ...] = (
         "plafond_prime_part_revenu",
         "Le plafond au-delà duquel l'allocation santé prend le relais est une "
         "HYPOTHÈSE de travail, mais elle n'est plus arbitraire : elle a été "
-        "portée de 5 % à 10 % du revenu après chiffrage. À 5 %, l'allocation "
+        "portée de 5 % à 8 % du revenu après chiffrage. À 5 %, l'allocation "
         "touchait quatre adultes sur cinq et bornait ce que les primes "
         "peuvent rapporter au tiers de la dépense, rendant le partage "
-        "moitié-moitié arithmétiquement impossible. À 10 %, elle redevient un "
-        "filet. Le calcul est dans src/sante/allocation.py.",
+        "moitié-moitié arithmétiquement impossible. À 8 %, elle redevient "
+        "finançable sans cesser de couvrir les revenus modestes — c'est le "
+        "réglage le plus protecteur qui tienne l'arithmétique. Le barème "
+        "complet est publié, et le calcul est dans src/sante/allocation.py.",
     ),
     (
         "depense_moyenne_petit_risque",

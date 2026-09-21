@@ -281,6 +281,9 @@ def chiffres_calcules() -> dict[str, donnees.Chiffre]:
     """Ce que le chiffrage publie, prêt à être cité par une page."""
     courant = chiffrer("personne")
     foyer = chiffrer("foyer")
+    plafond = float(
+        donnees.PARAMETRES_SIMULATEUR["plafond_prime_part_revenu"])  # type: ignore[arg-type]
+    sous_plafond = round(courant.adultes_aides * 10)
     avant_cout, avant_aides, _ = cout_scenario(PRIME_ABANDONNEE,
                                                PLAFOND_ABANDONNE)
     source = ("Calcul de ce dépôt : src/sante/allocation.py, entrées dans "
@@ -298,7 +301,8 @@ def chiffres_calcules() -> dict[str, donnees.Chiffre]:
             "paramétrée",
             "Somme, sur les dix déciles de niveau de vie publiés par l'INSEE, "
             f"de l'écart entre la prime ({prime_pleine():.0f} €) et le "
-            "plafond de 10 % du revenu, multipliée par les 54 millions "
+            f"plafond de {plafond:.0%} du revenu, multipliée par les 54 "
+            "millions "
             "d'adultes redevables. Assise sur le foyer plutôt que sur la "
             f"personne, elle coûterait {foyer.cout / 1e9:.0f} Md€ : un couple "
             "doit deux primes pour une fois et demie le revenu d'un "
@@ -319,13 +323,34 @@ def chiffres_calcules() -> dict[str, donnees.Chiffre]:
             "allocation_aides",
             f"{courant.adultes_aides * 100:.0f}\u202f%",
             "des adultes toucheraient l'allocation",
-            "Quatre déciles de niveau de vie sur dix passent sous le plafond, "
-            "et l'allocation s'éteint au-dessus : c'est un filet, et c'est ce "
-            "qu'elle doit être. Le premier paramétrage de ce programme, avec "
+            f"{sous_plafond} déciles de niveau de vie sur dix passent sous "
+            "le plafond, et l'allocation s'éteint au-dessus : c'est un filet, "
+            "et c'est ce qu'elle doit être. Le premier paramétrage de ce "
+            "programme, avec "
             f"une prime de {PRIME_ABANDONNEE:.0f} € et un plafond de "
             f"{PLAFOND_ABANDONNE:.0%}, en aurait touché "
             f"{avant_aides:.0%} pour {avant_cout / 1e9:.0f} Md€ : c'est le "
             "chiffrage qui a fait changer le réglage, et non l'inverse.",
+        ),
+        chiffre(
+            "plafond_minimal",
+            f"{plafond_pour_partage(0.5) * 100:.1f}\u202f%".replace(".", ","),
+            "le plafond au-dessous duquel la sixième garantie devient intenable",
+            "En dessous de ce taux de plafonnement, les primes ne peuvent plus "
+            "porter la moitié du financement, quelle que soit leur hauteur : "
+            "la garantie qui promet ce partage devient impossible à tenir. "
+            "C'est la borne que le premier paramétrage franchissait sans le "
+            "savoir, et c'est elle qui limite la générosité de l'allocation.",
+        ),
+        chiffre(
+            "seuil_allocation",
+            f"{prime_pleine() / plafond / 12:,.0f}\u202f€".replace(",", "\u202f"),
+            "le revenu mensuel brut au-dessus duquel l'allocation s'éteint",
+            "C'est la prime divisée par le plafond : au-dessus, la prime tient "
+            "dans la part du revenu que la loi accepte d'y consacrer, et "
+            "l'allocation n'a plus lieu d'être. Ce seuil est la vraie mesure "
+            "de la générosité du dispositif, et il se déduit — il n'est écrit "
+            "nulle part, donc il ne peut pas démentir le calcul.",
         ),
         chiffre(
             "part_prime_financement",

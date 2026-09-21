@@ -316,6 +316,7 @@ function avertissementTotal(totalActuel, propose, statut) {
         + `<strong>${euros(ecart)} de plus par an</strong>.`;
   // Les deux cas qu'il serait le plus tentant de taire, et les plus coûteux à
   // taire : ils ne se découvrent pas, ils s'écrivent.
+  const p = PARAMETRES;
   let pourquoi = "";
   if (ecart > 0 && statut === "retraite") {
     pourquoi = " Une pension ne supporte aujourd'hui aucune cotisation "
@@ -325,11 +326,12 @@ function avertissementTotal(totalActuel, propose, statut) {
       + "davantage sur elle. C'est l'effet le plus impopulaire de cette "
       + "réforme, et nous n'avons pas de réponse qui l'annule.";
   } else if (ecart > 0) {
-    pourquoi = " À ce niveau de revenu, l'allocation santé ne couvre plus la "
-      + "prime : elle s'éteint un peu au-dessus du SMIC, et l'écart entre les "
-      + "deux systèmes s'inverse autour de trois mille euros bruts par mois. "
-      + "Le plafond de l'allocation est le seul bouton de réglage de cette "
-      + "réforme — le relever protège plus de monde et coûte plus cher, et "
+    const seuil = p.prime_nominale / p.plafond_prime_part_revenu / 12;
+    pourquoi = " L'allocation santé s'éteint au-dessus de "
+      + `${euros(seuil)} bruts par mois, et l'écart entre les deux systèmes `
+      + "s'inverse un peu au-delà. Le plafond de l'allocation est le seul "
+      + "bouton de réglage de cette réforme, et il est déjà au cran le plus "
+      + "protecteur que l'arithmétique autorise : "
       + "<a href=\"reforme.html#financement\">le barème est publié</a>.";
   }
   return `<div class="note resume">

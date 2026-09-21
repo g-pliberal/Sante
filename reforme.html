@@ -178,7 +178,7 @@ choix politique de cette réforme — pas un réglage technique.</p>
   partage néerlandais, moitié-moitié — 6,10 % de
   contribution employeur d'un côté, ≈ 1 900 € par an de prime de
   l'autre. Le chiffrage ci-dessous dit où en est le paramétrage publié : les
-  primes y portent 45 % de la dépense. Une prime
+  primes y portent 41 % de la dépense. Une prime
   qui porterait SEULE le financement serait, à l'inverse, la même pour un
   SMIC et pour un très haut revenu : ce n'est pas une assurance solidaire,
   c'est une capitation, et ce n'est pas davantage ce que ce programme
@@ -192,10 +192,10 @@ contribution proportionnelle ne reproduit pas — <strong>les hauts revenus
 contribueraient moins</strong> ; une pension ne supporte aujourd'hui aucune
 cotisation maladie, alors que la dépense de santé se concentre sur les âges
 élevés — <strong>les retraités contribueraient davantage</strong> ; et
-l'allocation, resserrée pour que la réforme soit finançable, s'éteint un peu
-au-dessus du SMIC — <strong>les salaires modestes et moyens versent un peu
-plus</strong>, l'écart s'inversant autour de trois mille euros bruts par mois.
-Les deux derniers n'ont pas de réponse qui les annule.
+l'allocation, resserrée pour que la réforme soit finançable, s'éteint au-dessus
+de 2 407 € bruts par mois — <strong>les salaires modestes et
+moyens versent un peu plus</strong>, l'écart s'inversant autour de trois mille
+euros bruts par mois. Les deux derniers n'ont pas de réponse qui les annule.
 <a href="simulateur.html">Le simulateur le dit pour votre cas</a>, dans les
 deux sens, et <a href="objections.html#objection-4">l'objection est écrite</a>.
 </p>
@@ -207,17 +207,17 @@ prime et le plafond, et il suffit de le sommer sur la distribution des revenus
 que l'INSEE publie. Sa méthode est dans le dépôt, ses entrées sont sourcées,
 et <code>python3 scripts/cout_allocation.py</code> le refait.</p>
 <ul class="serree">
-  <li><strong>≈ 13 Md€ par an</strong>, et
-  <strong>≈ 3 Md€ net</strong> une fois défalqués les
+  <li><strong>≈ 23 Md€ par an</strong>, et
+  <strong>≈ 13 Md€ net</strong> une fois défalqués les
   ≈ 10 Md€ d'exonérations et de complémentaire santé
   solidaire que l'État consacre déjà à la couverture complémentaire. Le
   zorgtoeslag néerlandais, qui coûte ≈ 6,5 Md€ pour dix-huit millions
   d'habitants, vaudrait ≈ 25 Md€ à notre échelle : la nôtre
   est plus serrée, et c'est un choix.</li>
-  <li><strong>40 % des adultes la toucheraient</strong>,
+  <li><strong>60 % des adultes la toucheraient</strong>,
   et elle s'éteint au-dessus : c'est un filet, et c'est ce qu'elle doit
   être.</li>
-  <li><strong>Les primes portent 45 % du
+  <li><strong>Les primes portent 41 % du
   financement</strong>, allocation déduite. C'est le nombre à surveiller : la
   prime est le seul étage qu'un assuré peut emporter ailleurs, et chaque euro
   que l'allocation en paie est un euro de moins sur lequel la concurrence a
@@ -238,19 +238,23 @@ croyable.</p>
   À 5 % du revenu, l'allocation touchait quatre adultes sur cinq et bornait ce
   que les primes peuvent rapporter au tiers de la dépense : le partage
   moitié-moitié inscrit dans les garanties n'était pas mal calibré, il était
-  arithmétiquement impossible. Porté à 10 %, il laisse les primes atteindre
-  ≈ 167 Md€ — les deux tiers de la dépense — et la
-  garantie redevient tenable.</li>
+  arithmétiquement impossible. Porté à 8 %, il laisse les primes atteindre
+  ≈ 134 Md€ — au-delà de la moitié de la dépense — et la
+  garantie redevient tenable. Le plafond minimal qui la rend possible est de
+  7,5 % : nous sommes donc au réglage le plus protecteur que
+  l'arithmétique autorise.</li>
 </ul>
 <p>Ce plafond est le seul bouton de réglage de la réforme, et il arbitre entre
 deux choses qui vont en sens contraire : plus il est haut, moins l'allocation
 coûte et plus la concurrence a de prise, mais moins de monde est protégé.
 Voici le barème, pour que l'arbitrage se discute sur des nombres.</p>
-<div class="defilant"><table><caption>Ce que chaque réglage du plafond coûte, et ce qu&#x27;il protège</caption><thead><tr><th scope="col" class="nombre">Plafond de l'allocation</th><th scope="col" class="nombre">Ce qu'elle coûte</th><th scope="col" class="nombre">Adultes protégés</th><th scope="col" class="nombre">Part des primes dans le financement</th></tr></thead><tbody><tr><th scope="row" class="nombre">5 %</th><td class="nombre">≈ 50 Md€</td><td class="nombre">90 %</td><td class="nombre">30 %</td></tr><tr><th scope="row" class="nombre">8 %</th><td class="nombre">≈ 23 Md€</td><td class="nombre">60 %</td><td class="nombre">41 %</td></tr><tr><th scope="row" class="nombre"><strong>10 %</strong></th><td class="nombre"><strong>≈ 13 Md€</strong></td><td class="nombre"><strong>40 %</strong></td><td class="nombre"><strong>45 %</strong></td></tr><tr><th scope="row" class="nombre">12 %</th><td class="nombre">≈ 8 Md€</td><td class="nombre">20 %</td><td class="nombre">47 %</td></tr></tbody></table></div>
-<p class="discret">Le réglage retenu est celui de la troisième ligne. Les
-autres ne sont pas moins défendables : ils coûtent plus et protègent plus, et
-c'est un choix politique que ce tableau rend discutable au lieu de le
-cacher.</p>
+<div class="defilant"><table><caption>Ce que chaque réglage du plafond coûte, et ce qu&#x27;il protège</caption><thead><tr><th scope="col" class="nombre">Plafond de l'allocation</th><th scope="col" class="nombre">Ce qu'elle coûte</th><th scope="col" class="nombre">Adultes protégés</th><th scope="col" class="nombre">Part des primes dans le financement</th></tr></thead><tbody><tr><th scope="row" class="nombre">5 %</th><td class="nombre">≈ 50 Md€</td><td class="nombre">90 %</td><td class="nombre">30 %</td></tr><tr><th scope="row" class="nombre"><strong>8 %</strong></th><td class="nombre"><strong>≈ 23 Md€</strong></td><td class="nombre"><strong>60 %</strong></td><td class="nombre"><strong>41 %</strong></td></tr><tr><th scope="row" class="nombre">10 %</th><td class="nombre">≈ 13 Md€</td><td class="nombre">40 %</td><td class="nombre">45 %</td></tr><tr><th scope="row" class="nombre">12 %</th><td class="nombre">≈ 8 Md€</td><td class="nombre">20 %</td><td class="nombre">47 %</td></tr></tbody></table></div>
+<p class="discret">Le réglage retenu est en gras. Les autres ne sont pas moins
+défendables : au-dessus il coûte moins et protège moins, en dessous il
+protège davantage — mais sous 7,5 % les primes ne peuvent
+plus porter la moitié du financement, et la sixième garantie devient
+intenable. C'est un
+choix politique que ce tableau rend discutable au lieu de le cacher.</p>
 <h4>Ce qu'on peut affirmer</h4>
 <ul class="serree">
   <li>La fusion des deux étages supprime un doublon de gestion : deux systèmes

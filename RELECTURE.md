@@ -96,15 +96,16 @@ n'intervient : c'est une soustraction faite dix fois.
 | | Paramétrage d'origine | **Après recalibrage** |
 | --- | --- | --- |
 | Prime avant allocation | 1 850 € | **2 311 €** |
-| Plafond de l'allocation | 5 % du revenu | **10 %** |
-| Coût brut, assiette individuelle | 29 Md€/an | **13 Md€/an** |
-| Net des 10 Md€ déjà dépensés | 19 Md€/an | **3 Md€/an** |
-| Adultes concernés | 80 % | **40 %** |
-| Part des primes dans le financement | 28 % | **45 %** |
+| Plafond de l'allocation | 5 % du revenu | **8 %** |
+| Coût brut, assiette individuelle | 29 Md€/an | **23 Md€/an** |
+| Net des 10 Md€ déjà dépensés | 19 Md€/an | **13 Md€/an** |
+| Adultes concernés | 80 % | **60 %** |
+| Part des primes dans le financement | 28 % | **41 %** |
+| Seuil d'extinction de l'allocation | — | **2 407 € bruts/mois** |
 
 Repère : le zorgtoeslag néerlandais transposé à notre population vaut
-25 Md€/an. L'allocation française est désormais plus serrée que la
-néerlandaise, et c'est un choix assumé.
+25 Md€/an. L'allocation française est désormais du même ordre, un peu plus
+serrée.
 
 Le repère néerlandais confirme l'ordre de grandeur, ce qui est la seule chose
 qu'on lui demande. Deux des limites du calcul tirent vers le bas — l'assiette
@@ -129,39 +130,45 @@ millions d'adultes et non par 68 — la prime juste est de 2 311 €, pas 1 850 
 **Appliqué.** Les deux corrections sont dans le programme. La prime n'est plus
 écrite : elle est **déduite** de la part que la loi lui assigne et du nombre
 d'adultes qui la paient, si bien que l'erreur de dénominateur ne peut pas
-revenir. Le plafond est passé à 10 %. Le barème complet est publié sur la page
-Réforme, réglage retenu signalé, et trois témoins gardent l'ensemble.
+revenir. Le plafond est fixé à 8 %. Le barème complet est publié sur la page
+Réforme, réglage retenu signalé, et quatre témoins gardent l'ensemble.
 
 | Plafond | Allocation | Adultes protégés | Part des primes |
 | --- | --- | --- | --- |
 | 5 % | 50 Md€ | 90 % | 30 % |
-| 8 % | 23 Md€ | 60 % | 41 % |
-| **10 %** | **13 Md€** | **40 %** | **45 %** |
+| **8 %** | **23 Md€** | **60 %** | **41 %** |
+| 10 % | 13 Md€ | 40 % | 45 % |
 | 12 % | 8 Md€ | 20 % | 47 % |
 
-**Ce que le recalibrage a coûté, et qui n'est pas dans les tableaux.** La prime
-a augmenté d'un quart et l'allocation s'éteint désormais un peu au-dessus du
-SMIC. Les perdants ne sont donc plus seulement les retraités :
+**Le plafond est au cran le plus protecteur que l'arithmétique autorise.**
+Sous **7,5 %**, les primes ne peuvent plus porter la moitié du financement
+quelle que soit leur hauteur, et la sixième garantie devient intenable. Nous
+sommes donc à trois dixièmes de point de cette borne, et il n'y a plus de
+marge de générosité de ce côté : la seule façon de protéger davantage serait
+de baisser la prime, donc de renoncer au partage moitié-moitié.
 
-| Cas | Aujourd'hui | Après réforme |
-| --- | --- | --- |
-| Salarié, 1 500 €/mois | 2 855 € | 3 540 € |
-| Salarié, 2 500 €/mois | 4 531 € | 4 831 € |
-| Salarié, 3 500 €/mois | 6 088 € | 5 791 € |
-| Salarié, 8 000 €/mois | 18 793 € | 10 111 € |
-| Retraité, 2 500 €/mois | 2 790 € | 4 831 € |
+**Ce que le recalibrage coûte, et qui n'est dans aucun tableau.** La prime a
+augmenté d'un quart, et l'allocation s'éteint au-dessus de 2 407 € bruts par
+mois. Les perdants ne sont donc plus seulement les retraités :
 
-L'écart s'inverse autour de 3 000 € bruts par mois. C'est la conséquence
-mécanique d'un financement déplacé vers une prime égale pour tous, et le
-plafond de l'allocation est le seul bouton qui la corrige : à 8 %, les
-salaires modestes sont protégés, mais l'allocation coûte 23 Md€ au lieu de 13.
+| Cas | Aujourd'hui | Après réforme | Écart |
+| --- | --- | --- | --- |
+| Salarié, 1 500 €/mois | 2 855 € | 3 180 € | +325 € |
+| Salarié, 2 500 €/mois | 4 531 € | 4 831 € | +300 € |
+| Salarié, 2 800 €/mois | 5 034 € | 5 119 € | +85 € |
+| Salarié, 3 500 €/mois | 6 088 € | 5 791 € | −297 € |
+| Salarié, 8 000 €/mois | 18 793 € | 10 111 € | −8 682 € |
+| Retraité, 2 500 €/mois | 2 790 € | 4 831 € | +2 042 € |
+
+Passer de 10 % à 8 % a divisé par deux la perte des bas salaires — +325 € au
+lieu de +685 € à 1 500 € bruts — sans la supprimer : **l'écart s'inverse
+toujours autour de 3 000 € bruts par mois.** C'est la conséquence mécanique
+d'un financement déplacé vers une prime égale pour tous, et aucun réglage du
+plafond ne l'annule.
+
 Le site publie les trois effets — hauts revenus gagnants, retraités perdants,
 salaires modestes et moyens perdants — sur la page Réforme, dans l'objection
 « capitation », et dans le simulateur lui-même selon le cas du lecteur.
-
-**Reste à décider par vous** : si ce déplacement vers les salaires modestes
-est acceptable, ou s'il faut remonter le plafond à 8 % et financer les 10 Md€
-de plus. Je n'ai pas tranché cela à votre place.
 
 ### 1.4 Le bouclier fait payer ce que l'ALD rembourse
 
@@ -306,9 +313,11 @@ retourner contre nous.
    bouclier pour les affections longues, et le sort des retraités. Le
    troisième est le plus coûteux politiquement, et c'est celui qui n'a pas de
    réponse technique.
-5. **Trancher le plafond de l'allocation** (barème en 1.3). Il est à 10 % ;
-   le remonter à 8 % protège les salaires modestes et coûte 10 Md€ de plus.
-   C'est le dernier arbitrage purement distributif du programme.
+5. **Réconcilier `taux_contribution_revenu` avec le chiffrage.** Le simulateur
+   applique 8 % au revenu brut ; le chiffrage dit que la contribution doit
+   lever 8,4 points de CSG. Les assiettes ne sont pas la même — le point de
+   CSG porte aussi sur le capital — mais l'écart s'est creusé avec le
+   recalibrage, et quelqu'un le relèvera.
 6. **Calibrer `taux_contribution_revenu`.** Les 8 % retenus sont l'ordre de
    grandeur qu'exige la moitié d'une dépense de 250 Md€ rapportée à l'assiette
    de la CSG. Un économiste doit le refaire sur l'assiette réelle avant toute

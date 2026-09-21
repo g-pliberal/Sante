@@ -915,10 +915,10 @@ contribution proportionnelle ne reproduit pas — <strong>les hauts revenus
 contribueraient moins</strong> ; une pension ne supporte aujourd'hui aucune
 cotisation maladie, alors que la dépense de santé se concentre sur les âges
 élevés — <strong>les retraités contribueraient davantage</strong> ; et
-l'allocation, resserrée pour que la réforme soit finançable, s'éteint un peu
-au-dessus du SMIC — <strong>les salaires modestes et moyens versent un peu
-plus</strong>, l'écart s'inversant autour de trois mille euros bruts par mois.
-Les deux derniers n'ont pas de réponse qui les annule.
+l'allocation, resserrée pour que la réforme soit finançable, s'éteint au-dessus
+de {vc('seuil_allocation')} bruts par mois — <strong>les salaires modestes et
+moyens versent un peu plus</strong>, l'écart s'inversant autour de trois mille
+euros bruts par mois. Les deux derniers n'ont pas de réponse qui les annule.
 <a href="simulateur.html">Le simulateur le dit pour votre cas</a>, dans les
 deux sens, et <a href="objections.html#objection-4">l'objection est écrite</a>.
 </p>
@@ -961,19 +961,23 @@ croyable.</p>
   À 5 % du revenu, l'allocation touchait quatre adultes sur cinq et bornait ce
   que les primes peuvent rapporter au tiers de la dépense : le partage
   moitié-moitié inscrit dans les garanties n'était pas mal calibré, il était
-  arithmétiquement impossible. Porté à 10 %, il laisse les primes atteindre
-  {vc('prime_encaissement_max')} — les deux tiers de la dépense — et la
-  garantie redevient tenable.</li>
+  arithmétiquement impossible. Porté à 8 %, il laisse les primes atteindre
+  {vc('prime_encaissement_max')} — au-delà de la moitié de la dépense — et la
+  garantie redevient tenable. Le plafond minimal qui la rend possible est de
+  {vc('plafond_minimal')} : nous sommes donc au réglage le plus protecteur que
+  l'arithmétique autorise.</li>
 </ul>
 <p>Ce plafond est le seul bouton de réglage de la réforme, et il arbitre entre
 deux choses qui vont en sens contraire : plus il est haut, moins l'allocation
 coûte et plus la concurrence a de prise, mais moins de monde est protégé.
 Voici le barème, pour que l'arbitrage se discute sur des nombres.</p>
 {bareme}
-<p class="discret">Le réglage retenu est celui de la troisième ligne. Les
-autres ne sont pas moins défendables : ils coûtent plus et protègent plus, et
-c'est un choix politique que ce tableau rend discutable au lieu de le
-cacher.</p>
+<p class="discret">Le réglage retenu est en gras. Les autres ne sont pas moins
+défendables : au-dessus il coûte moins et protège moins, en dessous il
+protège davantage — mais sous {vc('plafond_minimal')} les primes ne peuvent
+plus porter la moitié du financement, et la sixième garantie devient
+intenable. C'est un
+choix politique que ce tableau rend discutable au lieu de le cacher.</p>
 <h4>Ce qu'on peut affirmer</h4>
 <ul class="serree">
   <li>La fusion des deux étages supprime un doublon de gestion : deux systèmes
@@ -1277,11 +1281,12 @@ directions qu'il faut nommer toutes les deux.</p>
   contribution assise sur tous les revenus et une prime due par tous les
   adultes prélèveraient <strong>davantage sur les retraités</strong>.</li>
   <li>Et le resserrement de l'allocation, que notre chiffrage a imposé pour
-  que la réforme soit finançable, a un prix : au plafond retenu, elle s'éteint
-  un peu au-dessus du SMIC. <strong>Les salaires modestes et moyens versent
+  que la réforme soit finançable, a un prix : elle s'éteint au-dessus de
+  {seuilalloc} bruts par mois. <strong>Les salaires modestes et moyens versent
   donc un peu plus qu'aujourd'hui</strong>, l'écart s'inversant autour de
   trois mille euros bruts par mois. Ce plafond est le seul bouton de réglage
-  de cette réforme : le relever protège plus de monde et coûte plus cher, et
+  de cette réforme, et il est déjà au cran le plus protecteur que
+  l'arithmétique autorise :
   <a href="reforme.html#financement">le chiffrage donne le barème</a>.</li>
 </ul>
 <p>Les deux derniers points sont les effets les plus impopulaires de cette
@@ -1459,6 +1464,7 @@ def objections() -> str:
             .replace("{allocationcout}", vc("allocation_cout"))
             .replace("{allocationnet}", vc("allocation_net"))
             .replace("{allocationaides}", vc("allocation_aides"))
+            .replace("{seuilalloc}", vc("seuil_allocation"))
             .replace("{contribpb}", v("contribution_pays_bas"))
             .replace("{primepb}", v("prime_pays_bas"))
             .replace("{fraisamo}", v("frais_gestion_amo"))
