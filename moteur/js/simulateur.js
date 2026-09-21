@@ -119,6 +119,12 @@ function prelevementActuel(saisie) {
 /**
  * Ce que le système proposé prélèverait, sous les hypothèses écrites.
  *
+ * La prime et le plafond de l'allocation ont été corrigés APRÈS chiffrage :
+ * une prime calée sur la moitié du coût par habitant ne pouvait pas lever sa
+ * moitié, puisque les mineurs n'en paient aucune, et un plafond à 5 % du
+ * revenu bornait ce que les primes peuvent rapporter au tiers de la dépense.
+ * Voir `src/sante/allocation.py`.
+ *
  * Deux étages, et c'est tout le sujet. Une réforme qui ferait porter le
  * financement de la santé à une prime forfaitaire seule serait une capitation :
  * le même montant pour un SMIC et pour un très haut revenu. Ce n'est pas ce que
@@ -147,8 +153,7 @@ function prelevementPropose(saisie, brutAnnuel) {
   const franchisePayee = Math.min(saisie.franchise,
                                   p.depense_moyenne_petit_risque);
   const abattement = franchisePayee * p.part_franchise_rendue;
-  const primePleine = Math.max(
-    0, p.cout_moyen_par_personne * p.part_prime_nominale - abattement);
+  const primePleine = Math.max(0, p.prime_nominale - abattement);
 
   // L'allocation santé : la prime ne peut pas dépasser une part du revenu. En
   // dessous de ce seuil, la collectivité paie la différence — c'est le
@@ -170,7 +175,8 @@ function prelevementPropose(saisie, brutAnnuel) {
      + "et va au fonds de péréquation — pas à votre assureur."],
     ["Prime de votre assureur", primePleine,
      "Égale pour tous à l'intérieur d'un contrat : ni l'âge, ni le sexe, ni "
-     + "l'état de santé ne la modulent. C'est elle qui porte la concurrence."],
+     + "l'état de santé ne la modulent. C'est la moitié de la dépense de "
+     + "santé rapportée aux adultes qui la paient."],
     ["Allocation santé reçue", -allocation,
      "Elle plafonne la prime à une part de votre revenu, et se verse "
      + "directement à l'assureur : vous n'avancez rien."],
@@ -308,17 +314,26 @@ function avertissementTotal(totalActuel, propose, statut) {
         + `<strong>${euros(-ecart)} de moins par an</strong>.`
       : `À votre niveau de revenu, la réforme prélèverait `
         + `<strong>${euros(ecart)} de plus par an</strong>.`;
-  // Le cas qu'il serait le plus tentant de taire, et le plus coûteux à taire.
-  const retraite = statut === "retraite" && ecart > 0
-    ? " Une pension ne supporte aujourd'hui aucune cotisation maladie et une "
-      + "CSG au taux réduit, alors que la dépense de santé se concentre sur "
-      + "les âges élevés : une contribution assise sur tous les revenus et "
-      + "une prime due par tous les adultes prélèvent donc davantage sur "
-      + "elle. C'est l'effet le plus impopulaire de cette réforme, et nous "
-      + "n'avons pas de réponse qui l'annule."
-    : "";
+  // Les deux cas qu'il serait le plus tentant de taire, et les plus coûteux à
+  // taire : ils ne se découvrent pas, ils s'écrivent.
+  let pourquoi = "";
+  if (ecart > 0 && statut === "retraite") {
+    pourquoi = " Une pension ne supporte aujourd'hui aucune cotisation "
+      + "maladie et une CSG au taux réduit, alors que la dépense de santé se "
+      + "concentre sur les âges élevés : une contribution assise sur tous les "
+      + "revenus et une prime due par tous les adultes prélèvent donc "
+      + "davantage sur elle. C'est l'effet le plus impopulaire de cette "
+      + "réforme, et nous n'avons pas de réponse qui l'annule.";
+  } else if (ecart > 0) {
+    pourquoi = " À ce niveau de revenu, l'allocation santé ne couvre plus la "
+      + "prime : elle s'éteint un peu au-dessus du SMIC, et l'écart entre les "
+      + "deux systèmes s'inverse autour de trois mille euros bruts par mois. "
+      + "Le plafond de l'allocation est le seul bouton de réglage de cette "
+      + "réforme — le relever protège plus de monde et coûte plus cher, et "
+      + "<a href=\"reforme.html#financement\">le barème est publié</a>.";
+  }
   return `<div class="note resume">
-  <p><strong>Ce que ce chiffre est, et ce qu'il n'est pas.</strong> ${sens}${retraite}
+  <p><strong>Ce que ce chiffre est, et ce qu'il n'est pas.</strong> ${sens}${pourquoi}
   Cet écart n'est pas une économie : c'est la conséquence arithmétique d'un
   taux de contribution qui est une hypothèse de travail, appliqué à un seul
   cas. Un système qui déplace le financement d'un prélèvement assis sur le

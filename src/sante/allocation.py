@@ -104,10 +104,15 @@ LIMITES: tuple[str, ...] = (
 
 
 def prime_pleine() -> float:
-    """La prime avant allocation : la part du coût moyen que la loi lui laisse."""
-    parametres = donnees.PARAMETRES_SIMULATEUR
-    return (float(parametres["cout_moyen_par_personne"])  # type: ignore[arg-type]
-            * float(parametres["part_prime_nominale"]))  # type: ignore[arg-type]
+    """La prime avant allocation, telle que ``donnees.py`` la déduit.
+
+    Elle n'est pas saisie : c'est la part de la dépense que la loi laisse à la
+    prime, rapportée aux seuls adultes qui la paient. Ce module la lit, il ne
+    la recalcule pas — sans quoi les deux pourraient diverger, ce qui est
+    exactement la faute que ce dépôt s'interdit.
+    """
+    return float(
+        donnees.PARAMETRES_SIMULATEUR["prime_nominale"])  # type: ignore[arg-type]
 
 
 def _taux_effectif(assiette: str) -> float:
@@ -256,13 +261,16 @@ def cout_actuel_couverture() -> float:
 # étiquette « estimé ». Un chiffre calculé qui se présenterait comme un chiffre
 # publié serait un faux ; un chiffre calculé qu'on tairait serait un aveu.
 
-PLAFOND_RECALIBRE = 0.10
-"""Plafond d'allocation du scénario recalibré, en part du revenu.
+PLAFOND_ABANDONNE = 0.05
+"""Le plafond que le programme appliquait avant d'avoir chiffré l'allocation.
 
-Il n'est pas dans ``PARAMETRES_SIMULATEUR`` parce que le programme ne l'a pas
-adopté : c'est une proposition que le chiffrage rend possible d'examiner, et
-elle attend une décision.
+Il est gardé ici pour une seule raison : pouvoir montrer ce que le chiffrage a
+changé. Un programme qui corrige un paramètre sans dire lequel ni pourquoi
+demande qu'on le croie sur parole.
 """
+
+PRIME_ABANDONNEE = 1850.0
+"""La prime d'alors, calée sur le coût par habitant et non par adulte."""
 
 
 def _milliards(montant: float) -> str:
@@ -273,9 +281,8 @@ def chiffres_calcules() -> dict[str, donnees.Chiffre]:
     """Ce que le chiffrage publie, prêt à être cité par une page."""
     courant = chiffrer("personne")
     foyer = chiffrer("foyer")
-    prime_juste = prime_pour_partage(0.5)
-    recalibre, aides_recalibre, part_recalibre = cout_scenario(
-        prime_juste, PLAFOND_RECALIBRE)
+    avant_cout, avant_aides, _ = cout_scenario(PRIME_ABANDONNEE,
+                                               PLAFOND_ABANDONNE)
     source = ("Calcul de ce dépôt : src/sante/allocation.py, entrées dans "
               "src/sante/donnees.py")
 
@@ -291,7 +298,7 @@ def chiffres_calcules() -> dict[str, donnees.Chiffre]:
             "paramétrée",
             "Somme, sur les dix déciles de niveau de vie publiés par l'INSEE, "
             f"de l'écart entre la prime ({prime_pleine():.0f} €) et le "
-            "plafond de 5 % du revenu, multipliée par les 54 millions "
+            "plafond de 10 % du revenu, multipliée par les 54 millions "
             "d'adultes redevables. Assise sur le foyer plutôt que sur la "
             f"personne, elle coûterait {foyer.cout / 1e9:.0f} Md€ : un couple "
             "doit deux primes pour une fois et demie le revenu d'un "
@@ -312,10 +319,25 @@ def chiffres_calcules() -> dict[str, donnees.Chiffre]:
             "allocation_aides",
             f"{courant.adultes_aides * 100:.0f}\u202f%",
             "des adultes toucheraient l'allocation",
-            "Huit déciles de niveau de vie sur dix passent sous le plafond de "
-            "5 % : ce n'est pas un filet, c'est un régime quasi universel. "
-            "C'est la première chose qu'un contradicteur relèvera, et elle "
-            "est exacte.",
+            "Quatre déciles de niveau de vie sur dix passent sous le plafond, "
+            "et l'allocation s'éteint au-dessus : c'est un filet, et c'est ce "
+            "qu'elle doit être. Le premier paramétrage de ce programme, avec "
+            f"une prime de {PRIME_ABANDONNEE:.0f} € et un plafond de "
+            f"{PLAFOND_ABANDONNE:.0%}, en aurait touché "
+            f"{avant_aides:.0%} pour {avant_cout / 1e9:.0f} Md€ : c'est le "
+            "chiffrage qui a fait changer le réglage, et non l'inverse.",
+        ),
+        chiffre(
+            "part_prime_financement",
+            f"{courant.part_prime_reelle * 100:.0f}\u202f%",
+            "du financement porté par les primes, allocation déduite",
+            "C'est le nombre que la réforme doit surveiller : la prime est le "
+            "seul étage qu'un assuré peut emporter ailleurs, et chaque euro "
+            "que l'allocation en paie est un euro de moins sur lequel la "
+            "concurrence a prise. Le premier paramétrage tombait à 28 %, ce "
+            "qui vidait le mécanisme de sa substance tout en coûtant plus "
+            "cher. Le partage moitié-moitié visé par la loi est désormais "
+            "approché, et surtout il est devenu atteignable.",
         ),
         chiffre(
             "prime_encaissement_max", _milliards(encaissement_maximal()),
@@ -324,9 +346,11 @@ def chiffres_calcules() -> dict[str, donnees.Chiffre]:
             "plafond : chaque euro ajouté est repris par l'allocation, et "
             "l'assureur n'encaisse rien de plus. Les primes sont donc bornées "
             f"à {encaissement_maximal() / donnees.DEPENSE_TOTALE:.0%} de la "
-            "dépense de santé, quelle que soit leur hauteur. Un partage "
-            "moitié-moitié entre prime et contribution n'est pas mal calibré "
-            "à ce plafond : il est impossible.",
+            "dépense de santé, quelle que soit leur hauteur. C'est ce plafond "
+            f"qui a fait abandonner le réglage précédent : à "
+            f"{PLAFOND_ABANDONNE:.0%}, il tombait au tiers de la dépense, et "
+            "le partage moitié-moitié voulu par la loi devenait non pas mal "
+            "calibré mais arithmétiquement impossible.",
         ),
         chiffre(
             "allocation_repere", _milliards(repere_neerlandais()),
@@ -337,19 +361,34 @@ def chiffres_calcules() -> dict[str, donnees.Chiffre]:
             "c'est le seul instrument comparable dont le coût soit publié, et "
             "il sert à savoir si notre calcul est du bon ordre. Il l'est.",
         ),
-        chiffre(
-            "allocation_recalibree", _milliards(recalibre),
-            "de coût annuel si l'allocation redevenait un filet",
-            f"Avec une prime de {prime_juste:.0f} € — la moitié de la dépense "
-            "rapportée aux adultes qui la paient, et non aux habitants — et "
-            f"un plafond porté à {PLAFOND_RECALIBRE:.0%} du revenu, "
-            f"l'allocation ne toucherait plus que {aides_recalibre:.0%} des "
-            "adultes, les primes porteraient "
-            f"{part_recalibre:.0%} du financement, et le coût tomberait "
-            "sous celui des aides actuelles. C'est une proposition, pas une "
-            "mesure : le programme ne l'a pas adoptée.",
-        ),
     )}
+
+
+PLAFONDS_ESSAYES: tuple[float, ...] = (0.05, 0.08, 0.10, 0.12)
+"""Les réglages du plafond que le site met en regard les uns des autres."""
+
+
+def bareme_plafond() -> tuple[dict[str, object], ...]:
+    """Ce que chaque réglage du plafond coûte, et ce qu'il protège.
+
+    Rendu ici et non dans la page, pour une raison qui a déjà servi : un
+    tableau de nombres recopié dans un gabarit est un tableau qui finira par
+    dire autre chose que le calcul. La page met en forme, elle ne calcule pas,
+    et le témoin qui interdit les chiffres orphelins lit la même table.
+    """
+    retenu = float(
+        donnees.PARAMETRES_SIMULATEUR["plafond_prime_part_revenu"])  # type: ignore[arg-type]
+    lignes = []
+    for plafond in PLAFONDS_ESSAYES:
+        cout, aides, part = cout_scenario(prime_pleine(), plafond)
+        lignes.append({
+            "plafond": f"{plafond * 100:.0f}\u202f%",
+            "cout": _milliards(cout),
+            "aides": f"{aides * 100:.0f}\u202f%",
+            "part": f"{part * 100:.0f}\u202f%",
+            "retenu": abs(plafond - retenu) < 1e-9,
+        })
+    return tuple(lignes)
 
 
 def valeur_calculee(cle: str) -> str:

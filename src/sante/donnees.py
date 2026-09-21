@@ -835,11 +835,20 @@ PARAMETRES_SIMULATEUR: dict[str, object] = {
     "part_prime_nominale": 0.5,
     "taux_contribution_revenu": 0.08,
     "part_franchise_rendue": 0.6,
-    "plafond_prime_part_revenu": 0.05,
+    "plafond_prime_part_revenu": 0.10,
     "franchise_part_revenu": 0.04,
     "franchise_plafond": 1500.0,
     "depense_moyenne_petit_risque": 450.0,
 }
+
+# La prime, DÉDUITE et non saisie. C'est ici que le paramétrage se trompait :
+# une prime calée sur la moitié du coût moyen par HABITANT ne peut pas lever la
+# moitié de la dépense, puisque les mineurs n'en versent aucune. La même
+# moitié doit être portée par les adultes seuls — et le seul moyen qu'une
+# erreur pareille ne revienne pas est que personne n'ait à écrire le nombre.
+PARAMETRES_SIMULATEUR["prime_nominale"] = round(
+    float(PARAMETRES_SIMULATEUR["part_prime_nominale"])  # type: ignore[arg-type]
+    * DEPENSE_TOTALE / (POPULATION - MINEURS))
 
 # Ce que chaque paramètre représente, et l'unité dans laquelle il s'écrit. La
 # page « Données et sources » est ENGENDRÉE à partir de ces deux tables : un
@@ -879,6 +888,10 @@ DESCRIPTIONS_SIMULATEUR: dict[str, tuple[str, str]] = {
                             "contribution assise sur le revenu. C'est le "
                             "partage néerlandais <strong>(hypothèse de "
                             "travail)</strong>"),
+    "prime_nominale": ("euros", "Prime annuelle avant allocation, "
+                       "<strong>déduite</strong> : cette part de la dépense "
+                       "rapportée aux seuls adultes qui la paient, les "
+                       "mineurs n'en versant aucune"),
     "taux_contribution_revenu": ("part", "Taux de la contribution santé "
                                  "assise sur le revenu, qui remplace la "
                                  "cotisation employeur et la part de CSG "
@@ -888,8 +901,8 @@ DESCRIPTIONS_SIMULATEUR: dict[str, tuple[str, str]] = {
                               "travail)</strong>"),
     "plafond_prime_part_revenu": ("part", "Part du revenu au-delà de laquelle "
                                   "l'allocation santé prend en charge la "
-                                  "prime <strong>(hypothèse de "
-                                  "travail)</strong>"),
+                                  "prime. Porté de 5 % à 10 % après chiffrage "
+                                  "<strong>(hypothèse de travail)</strong>"),
     "franchise_part_revenu": ("part", "Plafond de reste à charge annuel, en "
                               "part du revenu <strong>(hypothèse de "
                               "travail)</strong>"),
@@ -960,10 +973,13 @@ RESERVES_SIMULATEUR: tuple[tuple[str, str], ...] = (
     ),
     (
         "plafond_prime_part_revenu",
-        "Le plafond au-delà duquel l'allocation santé prend le relais — 10 % "
-        "du revenu — est une HYPOTHÈSE de travail, pas une mesure chiffrée. "
-        "Le calibrage réel d'une telle allocation relève d'un modèle "
-        "budgétaire que ce dépôt ne contient pas.",
+        "Le plafond au-delà duquel l'allocation santé prend le relais est une "
+        "HYPOTHÈSE de travail, mais elle n'est plus arbitraire : elle a été "
+        "portée de 5 % à 10 % du revenu après chiffrage. À 5 %, l'allocation "
+        "touchait quatre adultes sur cinq et bornait ce que les primes "
+        "peuvent rapporter au tiers de la dépense, rendant le partage "
+        "moitié-moitié arithmétiquement impossible. À 10 %, elle redevient un "
+        "filet. Le calcul est dans src/sante/allocation.py.",
     ),
     (
         "depense_moyenne_petit_risque",

@@ -855,6 +855,24 @@ def reforme() -> str:
         ),
     ])
 
+    # Le barème du plafond d'allocation, engendré par le chiffrage lui-même :
+    # un arbitrage qu'on publie en nombres se discute ; le même en adjectifs
+    # se subit.
+    lignes_bareme = []
+    for ligne in allocation.bareme_plafond():
+        accent = (lambda texte: f"<strong>{texte}</strong>"
+                  ) if ligne["retenu"] else str
+        lignes_bareme.append([accent(str(ligne[colonne]))
+                              for colonne in ("plafond", "cout", "aides",
+                                              "part")])
+    bareme = g.tableau(
+        ["Plafond de l'allocation", "Ce qu'elle coûte",
+         "Adultes protégés", "Part des primes dans le financement"],
+        lignes_bareme,
+        ["nombre", "nombre", "nombre", "nombre"],
+        "Ce que chaque réglage du plafond coûte, et ce qu'il protège",
+    )
+
     financement = g.depliant(
         "Qui paie, et combien",
         f"""
@@ -882,24 +900,25 @@ choix politique de cette réforme — pas un réglage technique.</p>
   moitié au moins des ressources reste assise sur le revenu. La cible : le
   partage néerlandais, moitié-moitié — {v('contribution_pays_bas')} de
   contribution employeur d'un côté, {v('prime_pays_bas')} de prime de
-  l'autre. Le paramétrage actuel n'y est pas, et le chiffrage ci-dessous dit
-  de combien : les primes n'y portent guère plus du quart de la
-  dépense. Une prime
+  l'autre. Le chiffrage ci-dessous dit où en est le paramétrage publié : les
+  primes y portent {vc('part_prime_financement')} de la dépense. Une prime
   qui porterait SEULE le financement serait, à l'inverse, la même pour un
   SMIC et pour un très haut revenu : ce n'est pas une assurance solidaire,
   c'est une capitation, et ce n'est pas davantage ce que ce programme
   propose.</li>
 </ul>
 <p>Un déplacement de cette ampleur fait des gagnants et des perdants, et il
-serait malhonnête de ne montrer que les premiers. Deux effets, et nous les
+serait malhonnête de ne montrer que les premiers. Trois effets, et nous les
 écrivons avant qu'on nous les oppose : la cotisation employeur passe
 aujourd'hui de 7 % à 13 % du salaire ENTIER au-delà de 2,5 SMIC, ce qu'une
 contribution proportionnelle ne reproduit pas — <strong>les hauts revenus
-contribueraient moins</strong> ; et une pension ne supporte aujourd'hui
-aucune cotisation maladie, alors que la dépense de santé se concentre sur les
-âges élevés — <strong>les retraités contribueraient davantage</strong>. Le
-second est l'effet le plus impopulaire de cette réforme, et il n'a pas de
-réponse qui l'annule.
+contribueraient moins</strong> ; une pension ne supporte aujourd'hui aucune
+cotisation maladie, alors que la dépense de santé se concentre sur les âges
+élevés — <strong>les retraités contribueraient davantage</strong> ; et
+l'allocation, resserrée pour que la réforme soit finançable, s'éteint un peu
+au-dessus du SMIC — <strong>les salaires modestes et moyens versent un peu
+plus</strong>, l'écart s'inversant autour de trois mille euros bruts par mois.
+Les deux derniers n'ont pas de réponse qui les annule.
 <a href="simulateur.html">Le simulateur le dit pour votre cas</a>, dans les
 deux sens, et <a href="objections.html#objection-4">l'objection est écrite</a>.
 </p>
@@ -911,35 +930,50 @@ prime et le plafond, et il suffit de le sommer sur la distribution des revenus
 que l'INSEE publie. Sa méthode est dans le dépôt, ses entrées sont sourcées,
 et <code>python3 scripts/cout_allocation.py</code> le refait.</p>
 <ul class="serree">
-  <li><strong>{vc('allocation_cout')} par an</strong>, telle que la réforme la paramètre
-  aujourd'hui, et <strong>{vc('allocation_net')} net</strong> une fois défalqués les
-  {v('aides_complementaire')} d'exonérations et de complémentaire santé solidaire que
-  l'État consacre déjà à la couverture complémentaire. Le repère néerlandais
-  — le zorgtoeslag néerlandais, qui coûte {v('zorgtoeslag')} pour dix-huit
-  millions d'habitants — vaudrait {vc('allocation_repere')} à notre échelle :
-  le même ordre de grandeur, ce qui est la seule chose qu'on demande à un
-  repère.</li>
-  <li><strong>{vc('allocation_aides')} des adultes la toucheraient.</strong> À un plafond de 5 %
-  du revenu, huit déciles de niveau de vie sur dix passent dessous : ce n'est
-  pas un filet, c'est un régime quasi universel. Nous le disons parce que
-  c'est la première chose qu'un contradicteur relèvera, et qu'elle est
-  exacte.</li>
-  <li><strong>Et elle borne ce que les primes peuvent rapporter.</strong>
-  Au-delà d'un certain montant, tout le monde est au plafond : chaque euro
-  ajouté à la prime est repris par l'allocation, et l'assureur n'encaisse rien
-  de plus. Les primes ne peuvent donc pas dépasser {vc('prime_encaissement_max')}, soit le tiers de
-  la dépense de santé, quelle que soit leur hauteur.</li>
+  <li><strong>{vc('allocation_cout')} par an</strong>, et
+  <strong>{vc('allocation_net')} net</strong> une fois défalqués les
+  {v('aides_complementaire')} d'exonérations et de complémentaire santé
+  solidaire que l'État consacre déjà à la couverture complémentaire. Le
+  zorgtoeslag néerlandais, qui coûte {v('zorgtoeslag')} pour dix-huit millions
+  d'habitants, vaudrait {vc('allocation_repere')} à notre échelle : la nôtre
+  est plus serrée, et c'est un choix.</li>
+  <li><strong>{vc('allocation_aides')} des adultes la toucheraient</strong>,
+  et elle s'éteint au-dessus : c'est un filet, et c'est ce qu'elle doit
+  être.</li>
+  <li><strong>Les primes portent {vc('part_prime_financement')} du
+  financement</strong>, allocation déduite. C'est le nombre à surveiller : la
+  prime est le seul étage qu'un assuré peut emporter ailleurs, et chaque euro
+  que l'allocation en paie est un euro de moins sur lequel la concurrence a
+  prise.</li>
 </ul>
-<p><strong>Ce que ce calcul oblige à corriger.</strong> Le partage
-moitié-moitié entre la prime et la contribution n'est pas seulement mal
-calibré à ce plafond : il est arithmétiquement impossible. Deux réglages le
-rendraient atteignable, et le chiffrage les évalue — caler la prime sur les
-adultes qui la paient plutôt que sur l'ensemble des habitants, puisque
-{v('mineurs')} de mineurs n'en versent aucune ; et relever le plafond de
-l'allocation pour qu'elle redevienne un filet. À 10 % du revenu, elle ne
-coûterait plus que {vc('allocation_recalibree')} et ne toucherait plus que deux adultes sur
-cinq. <strong>Ce réglage n'est pas adopté</strong> : il est chiffré, publié,
-et soumis à la discussion.</p>
+<p><strong>Ce que ce calcul nous a fait corriger.</strong> Ce n'est pas le
+chiffrage d'un réglage déjà décidé : c'est lui qui a décidé du réglage, et
+nous le disons parce que c'est la seule façon de rendre un chiffrage
+croyable.</p>
+<ul class="serree">
+  <li><strong>La prime était calée sur le mauvais dénominateur.</strong> Elle
+  valait la moitié du coût moyen par HABITANT, alors que seuls les adultes la
+  paient : {v('mineurs')} de mineurs n'en versant aucune, la même moitié doit
+  être portée par cinquante-quatre millions d'adultes et non par
+  soixante-huit. La prime n'est plus écrite, elle est déduite — personne ne
+  peut donc refaire l'erreur.</li>
+  <li><strong>Le plafond de l'allocation rendait la loi inapplicable.</strong>
+  À 5 % du revenu, l'allocation touchait quatre adultes sur cinq et bornait ce
+  que les primes peuvent rapporter au tiers de la dépense : le partage
+  moitié-moitié inscrit dans les garanties n'était pas mal calibré, il était
+  arithmétiquement impossible. Porté à 10 %, il laisse les primes atteindre
+  {vc('prime_encaissement_max')} — les deux tiers de la dépense — et la
+  garantie redevient tenable.</li>
+</ul>
+<p>Ce plafond est le seul bouton de réglage de la réforme, et il arbitre entre
+deux choses qui vont en sens contraire : plus il est haut, moins l'allocation
+coûte et plus la concurrence a de prise, mais moins de monde est protégé.
+Voici le barème, pour que l'arbitrage se discute sur des nombres.</p>
+{bareme}
+<p class="discret">Le réglage retenu est celui de la troisième ligne. Les
+autres ne sont pas moins défendables : ils coûtent plus et protègent plus, et
+c'est un choix politique que ce tableau rend discutable au lieu de le
+cacher.</p>
 <h4>Ce qu'on peut affirmer</h4>
 <ul class="serree">
   <li>La fusion des deux étages supprime un doublon de gestion : deux systèmes
@@ -1097,9 +1131,10 @@ l'ordre où elle s'applique.</p>
 </ul>
 <h4>Ce que le système proposé prélèverait</h4>
 <p>Deux étages, et le partage entre eux est le choix politique de cette
-réforme. La cible est le partage néerlandais, moitié-moitié ; le paramétrage
-retenu ici n'y est pas encore, et
-<a href="reforme.html#financement">le chiffrage dit pourquoi</a>.</p>
+réforme. La cible est le partage néerlandais, moitié-moitié ; les primes
+portent {vc('part_prime_financement')} du financement une fois l'allocation
+déduite, et <a href="reforme.html#financement">le chiffrage dit comment on y
+est arrivé</a>.</p>
 <ul class="serree">
   <li><strong>Une contribution assise sur votre revenu</strong>, qui remplace
   la cotisation maladie de l'employeur et la part de CSG affectée à la santé,
@@ -1223,11 +1258,11 @@ remplace la cotisation employeur et la part de {csg} ; l'allocation santé
 plafonne la prime à une part du revenu ; et aucune prime n'est due avant 18
 ans. C'est le partage néerlandais — {contribpb} de contribution employeur
 d'un côté, {primepb} de prime de l'autre — et il n'a rien d'un détail : il est
-la différence entre une assurance solidaire et une capitation. Le paramétrage
-que nous publions n'atteint d'ailleurs pas cette cible : les primes n'y
-portent guère plus du quart du financement, et
-<a href="reforme.html#financement">notre propre chiffrage le dit</a> plutôt
-que d'attendre qu'on nous le trouve.</p>
+la différence entre une assurance solidaire et une capitation. Notre premier
+paramétrage n'atteignait d'ailleurs pas cette cible — les primes n'y portaient
+que le quart du financement — et c'est
+<a href="reforme.html#financement">notre propre chiffrage qui l'a trouvé</a>,
+avant qu'on nous le trouve.</p>
 <p><strong>Ce que nous ne prétendons pas</strong> : que l'opération soit neutre
 pour chacun. Déplacer une partie du financement d'un prélèvement assis sur le
 travail vers une prime égale pour tous change qui paie quoi, et dans deux
@@ -1241,11 +1276,18 @@ directions qu'il faut nommer toutes les deux.</p>
   réduit, alors que la dépense de santé se concentre sur les âges élevés. Une
   contribution assise sur tous les revenus et une prime due par tous les
   adultes prélèveraient <strong>davantage sur les retraités</strong>.</li>
+  <li>Et le resserrement de l'allocation, que notre chiffrage a imposé pour
+  que la réforme soit finançable, a un prix : au plafond retenu, elle s'éteint
+  un peu au-dessus du SMIC. <strong>Les salaires modestes et moyens versent
+  donc un peu plus qu'aujourd'hui</strong>, l'écart s'inversant autour de
+  trois mille euros bruts par mois. Ce plafond est le seul bouton de réglage
+  de cette réforme : le relever protège plus de monde et coûte plus cher, et
+  <a href="reforme.html#financement">le chiffrage donne le barème</a>.</li>
 </ul>
-<p>Le second point est l'effet le plus impopulaire de cette réforme, et nous
-n'avons pas de réponse qui l'annule — seulement le constat que le financement
-actuel fait porter aux actifs la part que les pensions ne portent pas, et que
-ce transfert n'a jamais été voté comme tel. C'est le point le plus discutable
+<p>Les deux derniers points sont les effets les plus impopulaires de cette
+réforme, et nous n'avons pas de réponse qui les annule — seulement le constat
+que le financement actuel fait porter aux actifs la part que les pensions ne
+portent pas, et que ce transfert n'a jamais été voté comme tel. C'est le point le plus discutable
 de ce programme, et il se discute sur pièces plutôt qu'en principe :
 <a href="simulateur.html">le simulateur affiche l'écart pour votre cas</a>,
 dans les deux sens, et le taux de la contribution est une hypothèse écrite —

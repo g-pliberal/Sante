@@ -27,6 +27,11 @@ def euros(montant: float) -> str:
     return f"{montant / MILLIARD:>6.1f} Md€"
 
 
+def courant_points(resultat) -> str:
+    return (f"{resultat.a_lever / MILLIARD:.0f} Md€, soit "
+            f"{resultat.points_csg:.1f} points de CSG")
+
+
 def titre(texte: str) -> None:
     print(f"\n{texte}\n{'─' * len(texte)}")
 
@@ -68,24 +73,45 @@ def main() -> int:
           f"  = {courant.part_prime_reelle:>4.0%} de la dépense")
     print(f"  reste à lever par la contribution {euros(courant.a_lever)}"
           f" = {courant.points_csg:.1f} points de CSG")
-    print(f"\n  PLAFOND STRUCTUREL : à ce taux de plafonnement, les primes ne")
-    print(f"  peuvent pas rapporter plus de {euros(allocation.encaissement_maximal())}"
-          f", soit {allocation.encaissement_maximal() / donnees.DEPENSE_TOTALE:.0%} de la")
-    print("  dépense — quelle que soit leur hauteur, chaque euro ajouté")
-    print("  au-delà étant repris par l'allocation. Le partage moitié-moitié")
-    print("  n'est pas mal calibré à ce plafond : il est impossible.")
+    plafond_actuel = float(
+        donnees.PARAMETRES_SIMULATEUR["plafond_prime_part_revenu"])
+    maximum = allocation.encaissement_maximal()
+    print(f"\n  PLAFOND STRUCTUREL : à {plafond_actuel:.0%} de plafonnement, les "
+          "primes ne peuvent")
+    print(f"  pas rapporter plus de {euros(maximum)}, soit "
+          f"{maximum / donnees.DEPENSE_TOTALE:.0%} de la dépense —")
+    print("  quelle que soit leur hauteur, chaque euro ajouté au-delà étant")
+    print("  repris par l'allocation. Le partage moitié-moitié voulu par la")
+    print("  loi est donc " + ("ATTEIGNABLE." if maximum >= donnees.DEPENSE_TOTALE / 2
+                               else "IMPOSSIBLE à ce plafond."))
+    print(f"  Il exige un plafond d'au moins "
+          f"{allocation.plafond_pour_partage(0.5):.1%}.")
 
-    titre("Ce qu'il faudrait pour que les primes en portent la moitié")
-    juste = allocation.prime_pour_partage(0.5)
-    print(f"  prime calée sur les ADULTES et non sur les habitants : {juste:.0f} €")
-    print(f"  plafond minimal pour que ce soit atteignable : "
-          f"{allocation.plafond_pour_partage(0.5):.1%}\n")
-    print("  plafond   allocation   adultes aidés   part des primes")
-    for plafond in (0.05, 0.08, 0.10, 0.12):
-        cout, aides, part = allocation.cout_scenario(juste, plafond)
-        marque = " ←" if abs(plafond - allocation.PLAFOND_RECALIBRE) < 1e-9 else ""
-        print(f"   {plafond:>5.0%}    {euros(cout)}       {aides:>4.0%}"
-              f"            {part:>4.0%}{marque}")
+    titre("Ce que le chiffrage a fait changer")
+    print(f"  Le programme appliquait une prime de {allocation.PRIME_ABANDONNEE:.0f} €"
+          f" — la moitié du coût par")
+    print("  HABITANT — et un plafond de "
+          f"{allocation.PLAFOND_ABANDONNE:.0%}. Les deux ont été corrigés après")
+    print("  ce calcul, et non avant : c'est le chiffrage qui a décidé.\n")
+    print("  prime    plafond   allocation   adultes aidés   part des primes")
+    scenarios = [(allocation.PRIME_ABANDONNEE, allocation.PLAFOND_ABANDONNE)]
+    scenarios += [(allocation.prime_pleine(), plafond)
+                  for plafond in (0.05, 0.08, 0.10, 0.12)]
+    for prime_essai, plafond in scenarios:
+        cout, aides, part = allocation.cout_scenario(prime_essai, plafond)
+        courant = (abs(prime_essai - allocation.prime_pleine()) < 1
+                   and abs(plafond - plafond_actuel) < 1e-9)
+        ancien = prime_essai == allocation.PRIME_ABANDONNEE
+        marque = "  ← retenu" if courant else ("  ← abandonné" if ancien else "")
+        print(f"  {prime_essai:>5.0f} €   {plafond:>5.0%}    {euros(cout)}"
+              f"       {aides:>4.0%}            {part:>4.0%}{marque}")
+
+    titre("Cohérence avec le taux du simulateur")
+    taux = float(donnees.PARAMETRES_SIMULATEUR["taux_contribution_revenu"])
+    print(f"  la contribution doit lever {courant_points(courant := allocation.chiffrer())}")
+    print(f"  le simulateur applique    {taux:.1%} au revenu brut de l'assuré")
+    print("  Les deux assiettes ne sont pas la même — le point de CSG porte")
+    print("  aussi sur le capital — mais les ordres de grandeur concordent.")
 
     titre("Les limites de ce calcul")
     for limite in allocation.LIMITES:

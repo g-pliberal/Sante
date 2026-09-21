@@ -201,6 +201,8 @@ class ChiffresOrphelins(unittest.TestCase):
         textes += [chiffre.precision
                    for chiffre in allocation.chiffres_calcules().values()]
         textes += list(allocation.LIMITES)
+        textes += [str(valeur) for ligne in allocation.bareme_plafond()
+                   for valeur in ligne.values()]
         textes += list(donnees.CHIFFRES_TOLERES)
         return {self.normaliser(trouve.group(0))
                 for texte in textes for trouve in self.MOTIF.finditer(texte)}
@@ -264,26 +266,70 @@ class ChiffresCalcules(unittest.TestCase):
                 self.assertIn(chiffre.precision, page)
         self.assertIn("scripts/cout_allocation.py", page)
 
-    def test_le_chiffrage_est_coherent_avec_le_simulateur(self) -> None:
-        """La prime chiffrée et la prime calculée doivent être la même.
+    def test_le_bareme_designe_le_reglage_retenu(self) -> None:
+        """Le tableau des réglages doit montrer lequel le programme applique.
 
-        Le chiffrage lit les paramètres du simulateur : si quelqu'un change la
-        part de la prime nominale sans y penser, le coût publié doit bouger
-        avec, et non rester là où il était.
+        Un barème qui n'indique pas la ligne choisie donne l'impression que
+        tout se vaut, et laisse le lecteur croire qu'on lui cache laquelle.
         """
-        parametres = donnees.PARAMETRES_SIMULATEUR
-        self.assertAlmostEqual(
-            allocation.prime_pleine(),
-            float(parametres["cout_moyen_par_personne"])
-            * float(parametres["part_prime_nominale"]))
+        lignes = allocation.bareme_plafond()
+        retenues = [ligne for ligne in lignes if ligne["retenu"]]
+        self.assertEqual(len(retenues), 1)
+        page = (RACINE / "reforme.html").read_text(encoding="utf-8")
+        for ligne in lignes:
+            with self.subTest(plafond=ligne["plafond"]):
+                self.assertIn(str(ligne["cout"]), page)
+
+    def test_le_chiffrage_lit_la_prime_du_simulateur(self) -> None:
+        """Le chiffrage et le calcul du navigateur doivent lire le même nombre.
+
+        Sans quoi le coût publié resterait celui d'une prime que le simulateur
+        n'applique plus.
+        """
+        self.assertEqual(allocation.prime_pleine(),
+                         float(donnees.PARAMETRES_SIMULATEUR["prime_nominale"]))
 
     def test_le_repere_etranger_confirme_l_ordre_de_grandeur(self) -> None:
-        """Un chiffrage qui s'écarterait du seul dispositif comparable est faux."""
+        """Le coût calculé doit rester du même ORDRE que le seul comparable.
+
+        Pas égal : l'allocation proposée est volontairement plus serrée que le
+        zorgtoeslag, et un écart du simple au double est un choix, pas une
+        faute. Un écart d'un facteur trois, en revanche, voudrait dire que le
+        calcul ou ses entrées sont à refaire — c'est cela que ce témoin garde.
+        """
         calcule = allocation.chiffrer("personne").cout
         repere = allocation.repere_neerlandais()
-        self.assertLess(abs(calcule - repere) / repere, 0.5,
-                        "le coût calculé s'écarte de plus de moitié du "
+        self.assertLess(max(calcule, repere) / min(calcule, repere), 3.0,
+                        "le coût calculé s'écarte d'un facteur trois du "
                         "zorgtoeslag transposé : refaire le calcul")
+
+    def test_la_prime_est_deduite_et_non_saisie(self) -> None:
+        """La prime doit lever la part du financement que la loi lui assigne.
+
+        C'est la faute que le chiffrage a trouvée : une prime calée sur le coût
+        moyen par HABITANT ne peut pas lever sa part, puisque les mineurs n'en
+        paient aucune. Le paramètre est désormais déduit ; ce témoin est là
+        pour qu'il le reste.
+        """
+        adultes = donnees.POPULATION - donnees.MINEURS
+        attendu = (float(donnees.PARAMETRES_SIMULATEUR["part_prime_nominale"])
+                   * donnees.DEPENSE_TOTALE)
+        self.assertAlmostEqual(allocation.prime_pleine() * adultes,
+                               attendu, delta=attendu * 0.001)
+
+    def test_le_partage_voulu_par_la_loi_reste_atteignable(self) -> None:
+        """Le plafond ne doit pas interdire le partage que les garanties visent.
+
+        Au-delà d'un certain montant de prime, tout le monde est au plafond et
+        chaque euro ajouté est repris par l'allocation : ce que les primes
+        peuvent rapporter est borné. Si cette borne passe sous la moitié de la
+        dépense, la sixième garantie devient impossible à tenir — ce qui était
+        le cas avant le chiffrage, et ne doit plus le redevenir.
+        """
+        self.assertGreaterEqual(allocation.encaissement_maximal(),
+                                donnees.DEPENSE_TOTALE / 2,
+                                "à ce plafond, les primes ne peuvent pas "
+                                "porter la moitié du financement")
 
 
 class Comparaisons(unittest.TestCase):
